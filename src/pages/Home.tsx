@@ -1,77 +1,118 @@
-import { useState } from "react";
-import { Mic } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { ChevronRight } from "lucide-react";
 import BottomNav from "@/components/BottomNav";
+import { Card } from "@/components/ui/card";
 
 const Home = () => {
   const navigate = useNavigate();
-  const [isPressed, setIsPressed] = useState(false);
-  const [xp] = useState(45);
-
-  const handleTap = () => {
-    navigate("/tap-flow");
+  
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return "good morning.";
+    if (hour < 18) return "good afternoon.";
+    return "good evening.";
   };
 
-  const handleVoiceStart = () => {
-    setIsPressed(true);
-  };
+  const days = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
+  const today = new Date();
+  const currentDay = today.getDay();
+  const currentDate = today.getDate();
 
-  const handleVoiceEnd = () => {
-    setIsPressed(false);
-    navigate("/voice-flow");
+  const getDayInfo = (offset: number) => {
+    const date = new Date(today);
+    date.setDate(today.getDate() + offset - 3);
+    return {
+      day: days[date.getDay()],
+      date: date.getDate(),
+      isCurrent: offset === 3,
+    };
   };
 
   return (
-    <div className="min-h-screen bg-gradient-calm flex flex-col pb-20">
+    <div className="min-h-screen bg-background pb-24">
       {/* Header */}
       <div className="p-6 flex justify-between items-center">
-        <div>
-          <p className="text-sm text-muted-foreground">Total XP</p>
-          <p className="text-2xl font-bold text-primary">{xp}</p>
-        </div>
-        <div className="w-12 h-12 rounded-full bg-gradient-primary flex items-center justify-center text-white font-bold">
-          U
+        <h1 className="text-2xl font-light text-foreground">{getGreeting()}</h1>
+        <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center">
+          <span className="text-sm font-medium">U</span>
         </div>
       </div>
 
-      {/* Main Gut Button */}
-      <div className="flex-1 flex flex-col items-center justify-center px-8 -mt-10">
-        <div className="text-center space-y-6 mb-12">
-          <h1 className="text-3xl font-bold text-foreground">
-            What's your gut saying<br />right now?
-          </h1>
+      {/* Calendar Week View */}
+      <div className="px-6 mb-6">
+        <div className="flex justify-between">
+          {[0, 1, 2, 3, 4, 5, 6].map((offset) => {
+            const dayInfo = getDayInfo(offset);
+            return (
+              <div
+                key={offset}
+                className={`flex flex-col items-center gap-1 ${
+                  dayInfo.isCurrent ? "text-foreground" : "text-muted-foreground"
+                }`}
+              >
+                <span className="text-xs font-light">{dayInfo.day}</span>
+                <span className={`text-sm font-medium ${
+                  dayInfo.isCurrent ? "w-8 h-8 flex items-center justify-center rounded-full bg-foreground text-background" : ""
+                }`}>
+                  {dayInfo.date}
+                </span>
+              </div>
+            );
+          })}
         </div>
+      </div>
 
-        {/* The Gut Button */}
-        <div className="relative mb-16">
-          <button
-            onClick={handleTap}
-            onTouchStart={handleVoiceStart}
-            onTouchEnd={handleVoiceEnd}
-            onMouseDown={handleVoiceStart}
-            onMouseUp={handleVoiceEnd}
-            onMouseLeave={() => setIsPressed(false)}
-            className={`w-64 h-64 rounded-full bg-gradient-primary shadow-glow flex items-center justify-center transition-all duration-300 ${
-              isPressed ? "scale-95" : "scale-100 hover:scale-105"
-            } animate-pulse-glow`}
-          >
-            <Mic className="w-24 h-24 text-white" />
-          </button>
-
-          {/* Pulsing rings */}
-          <div className="absolute inset-0 rounded-full border-2 border-primary/30 animate-ping" />
-          <div className="absolute inset-0 rounded-full border border-primary/20 animate-pulse" style={{ animationDelay: "0.5s" }} />
-        </div>
-
-        {/* Instructions */}
-        <div className="text-center space-y-3">
-          <div className="flex items-center justify-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-            <p className="text-foreground font-medium">Tap to Log</p>
+      {/* Main Check-in Card */}
+      <div className="px-6 space-y-4">
+        <Card
+          onClick={() => navigate("/check-in")}
+          className="bg-card border-border p-8 cursor-pointer hover:bg-card/80 transition-colors rounded-3xl"
+        >
+          <div className="space-y-6">
+            <div className="space-y-2">
+              <p className="text-xs text-muted-foreground font-light tracking-wide uppercase">
+                Morning Preparation
+              </p>
+              <h2 className="text-2xl font-medium text-foreground">
+                New day, fresh start!
+              </h2>
+            </div>
+            <button className="px-8 py-3 bg-foreground text-background rounded-full text-sm font-medium hover:bg-foreground/90 transition-colors">
+              Begin
+            </button>
           </div>
-          <div className="flex items-center justify-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-accent animate-pulse" style={{ animationDelay: "0.3s" }} />
-            <p className="text-foreground font-medium">Hold to Speak</p>
+        </Card>
+
+        {/* Reflection Prompt */}
+        <Card className="bg-card border-border p-6 rounded-3xl">
+          <div className="space-y-3">
+            <p className="text-sm text-muted-foreground font-light">
+              on glowing reviews.
+            </p>
+            <p className="text-base text-foreground/80 leading-relaxed font-light">
+              Are you the type of person who leaves reviews often?
+            </p>
+            <button className="px-6 py-2.5 bg-secondary text-foreground rounded-full text-sm font-medium hover:bg-secondary/80 transition-colors inline-flex items-center gap-2">
+              Reflect
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+        </Card>
+
+        {/* Get Inspired Section */}
+        <div className="pt-4">
+          <p className="text-xs text-muted-foreground font-light tracking-wide uppercase mb-4">
+            Get Inspired
+          </p>
+          <div className="flex gap-3 overflow-x-auto pb-2">
+            {["Morning", "Evening", "Quick", "Deep"].map((type) => (
+              <button
+                key={type}
+                className="px-5 py-2.5 bg-secondary text-foreground rounded-full text-sm font-medium hover:bg-secondary/80 transition-colors whitespace-nowrap"
+              >
+                {type}
+              </button>
+            ))}
           </div>
         </div>
       </div>

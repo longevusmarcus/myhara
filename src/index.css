@@ -8,60 +8,39 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 240 10% 8%;
-    --foreground: 240 10% 95%;
+    /* Stoic-inspired dark theme - softer, more minimal */
+    --background: 0 0% 7%;
+    --foreground: 0 0% 95%;
 
-    --card: 240 10% 10%;
-    --card-foreground: 240 10% 95%;
+    --card: 0 0% 12%;
+    --card-foreground: 0 0% 95%;
 
-    --popover: 240 15% 12%;
-    --popover-foreground: 240 10% 95%;
+    --popover: 0 0% 12%;
+    --popover-foreground: 0 0% 95%;
 
-    --primary: 262 83% 58%;
-    --primary-foreground: 240 10% 95%;
+    --primary: 240 5% 85%;
+    --primary-foreground: 0 0% 10%;
 
-    --secondary: 240 45% 20%;
-    --secondary-foreground: 240 10% 95%;
+    --secondary: 0 0% 18%;
+    --secondary-foreground: 0 0% 95%;
 
-    --muted: 240 15% 15%;
-    --muted-foreground: 240 5% 60%;
+    --muted: 0 0% 20%;
+    --muted-foreground: 0 0% 55%;
 
-    --accent: 25 95% 53%;
-    --accent-foreground: 240 10% 95%;
+    --accent: 240 5% 25%;
+    --accent-foreground: 0 0% 95%;
 
-    --success: 142 76% 36%;
-    --success-foreground: 240 10% 95%;
+    --success: 142 70% 45%;
+    --success-foreground: 0 0% 95%;
 
     --destructive: 0 62% 50%;
-    --destructive-foreground: 240 10% 95%;
+    --destructive-foreground: 0 0% 95%;
 
-    --border: 240 15% 18%;
-    --input: 240 15% 18%;
-    --ring: 262 83% 58%;
+    --border: 0 0% 20%;
+    --input: 0 0% 20%;
+    --ring: 0 0% 60%;
 
-    --radius: 1rem;
-
-    /* Custom semantic tokens for gut tracking app */
-    --gut-deep-bg: 240 12% 6%;
-    --gut-glass-bg: 240 10% 12% / 0.5;
-    --gut-glow: 262 83% 58% / 0.3;
-    --gut-signal-tight: 0 84% 60%;
-    --gut-signal-dropped: 221 83% 53%;
-    --gut-signal-warm: 25 95% 53%;
-    --gut-signal-numb: 240 5% 40%;
-    
-    /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(262 83% 58%), hsl(243 75% 59%));
-    --gradient-warm: linear-gradient(135deg, hsl(262 83% 58%), hsl(25 95% 53%));
-    --gradient-calm: linear-gradient(180deg, hsl(240 10% 8%), hsl(240 15% 10%));
-    
-    /* Shadows and glows */
-    --shadow-glow: 0 0 40px hsl(var(--gut-glow));
-    --shadow-card: 0 10px 40px -10px hsl(240 50% 4% / 0.6);
-    
-    /* Animations */
-    --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-bounce: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    --radius: 1.25rem;
   }
 }
 

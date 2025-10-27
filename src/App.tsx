@@ -6,8 +6,8 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import Onboarding from "./components/Onboarding";
 import Home from "./pages/Home";
-import TapFlow from "./pages/TapFlow";
-import VoiceFlow from "./pages/VoiceFlow";
+import CheckIn from "./pages/CheckIn";
+import Insights from "./pages/Insights";
 import GutMap from "./pages/GutMap";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
@@ -40,8 +40,8 @@ const App = () => {
           <Routes>
             <Route path="/" element={<Navigate to="/home" replace />} />
             <Route path="/home" element={<Home />} />
-            <Route path="/tap-flow" element={<TapFlow />} />
-            <Route path="/voice-flow" element={<VoiceFlow />} />
+            <Route path="/check-in" element={<CheckIn />} />
+            <Route path="/insights" element={<Insights />} />
             <Route path="/map" element={<GutMap />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="*" element={<NotFound />} />
