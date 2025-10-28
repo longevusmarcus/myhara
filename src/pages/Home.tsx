@@ -39,7 +39,7 @@ const Home = () => {
       </div>
 
       {/* Calendar Week View */}
-      <div className="px-6 mb-6">
+      <div className="px-6 mb-8">
         <div className="flex justify-between">
           {[0, 1, 2, 3, 4, 5, 6].map((offset) => {
             const dayInfo = getDayInfo(offset);
@@ -62,58 +62,41 @@ const Home = () => {
         </div>
       </div>
 
-      {/* Main Check-in Card */}
-      <div className="px-6 space-y-4">
-        <Card
-          onClick={() => navigate("/check-in")}
-          className="bg-card border-border p-8 cursor-pointer hover:bg-card/80 transition-colors rounded-3xl"
-        >
-          <div className="space-y-6">
-            <div className="space-y-2">
-              <p className="text-xs text-muted-foreground font-light tracking-wide uppercase">
-                Morning Preparation
-              </p>
-              <h2 className="text-2xl font-medium text-foreground">
-                New day, fresh start!
-              </h2>
+      {/* The Gut Button - Central Entry Point */}
+      <div className="px-6 flex-1 flex flex-col items-center justify-center space-y-8 py-12">
+        <div className="text-center space-y-2">
+          <h2 className="text-2xl font-medium text-foreground">
+            What's your gut saying right now?
+          </h2>
+        </div>
+
+        {/* Glowing Gut Button */}
+        <div className="relative">
+          <div className="absolute inset-0 bg-foreground/20 rounded-full blur-3xl animate-pulse" />
+          <div className="relative w-48 h-48 rounded-full bg-gradient-to-br from-foreground/90 to-foreground flex items-center justify-center shadow-2xl">
+            <div className="w-32 h-32 rounded-full bg-background/10 flex items-center justify-center">
+              <span className="text-5xl">✨</span>
             </div>
-            <button className="px-8 py-3 bg-foreground text-background rounded-full text-sm font-medium hover:bg-foreground/90 transition-colors">
-              Begin
-            </button>
           </div>
-        </Card>
+        </div>
 
-        {/* Reflection Prompt */}
-        <Card className="bg-card border-border p-6 rounded-3xl">
-          <div className="space-y-3">
-            <p className="text-sm text-muted-foreground font-light">
-              on glowing reviews.
-            </p>
-            <p className="text-base text-foreground/80 leading-relaxed font-light">
-              Are you the type of person who leaves reviews often?
-            </p>
-            <button className="px-6 py-2.5 bg-secondary text-foreground rounded-full text-sm font-medium hover:bg-secondary/80 transition-colors inline-flex items-center gap-2">
-              Reflect
-              <ChevronRight className="w-4 h-4" />
-            </button>
-          </div>
-        </Card>
+        {/* Entry Options */}
+        <div className="w-full max-w-sm space-y-3">
+          <button
+            onClick={() => navigate("/check-in?mode=tap")}
+            className="w-full px-8 py-4 bg-card border border-border rounded-[1.25rem] text-foreground hover:bg-card/80 transition-all flex items-center justify-center gap-3"
+          >
+            <span className="text-2xl">🟣</span>
+            <span className="text-base font-medium">Tap to Log</span>
+          </button>
 
-        {/* Get Inspired Section */}
-        <div className="pt-4">
-          <p className="text-xs text-muted-foreground font-light tracking-wide uppercase mb-4">
-            Get Inspired
-          </p>
-          <div className="flex gap-3 overflow-x-auto pb-2">
-            {["Morning", "Evening", "Quick", "Deep"].map((type) => (
-              <button
-                key={type}
-                className="px-5 py-2.5 bg-secondary text-foreground rounded-full text-sm font-medium hover:bg-secondary/80 transition-colors whitespace-nowrap"
-              >
-                {type}
-              </button>
-            ))}
-          </div>
+          <button
+            onClick={() => navigate("/check-in?mode=voice")}
+            className="w-full px-8 py-4 bg-card border border-border rounded-[1.25rem] text-foreground hover:bg-card/80 transition-all flex items-center justify-center gap-3"
+          >
+            <span className="text-2xl">🎙️</span>
+            <span className="text-base font-medium">Hold to Speak</span>
+          </button>
         </div>
       </div>
 
