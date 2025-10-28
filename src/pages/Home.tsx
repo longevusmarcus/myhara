@@ -1,103 +1,105 @@
 import { useNavigate } from "react-router-dom";
-import { ChevronRight } from "lucide-react";
+import { ArrowRight, Flame } from "lucide-react";
 import BottomNav from "@/components/BottomNav";
 import { Card } from "@/components/ui/card";
 
 const Home = () => {
   const navigate = useNavigate();
-  
-  const getGreeting = () => {
-    const hour = new Date().getHours();
-    if (hour < 12) return "good morning.";
-    if (hour < 18) return "good afternoon.";
-    return "good evening.";
-  };
 
-  const days = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
-  const today = new Date();
-  const currentDay = today.getDay();
-  const currentDate = today.getDate();
-
-  const getDayInfo = (offset: number) => {
-    const date = new Date(today);
-    date.setDate(today.getDate() + offset - 3);
-    return {
-      day: days[date.getDay()],
-      date: date.getDate(),
-      isCurrent: offset === 3,
-    };
-  };
+  const missions = [
+    { id: 1, title: "Get 5min morning sunlight", category: "wellness", color: "text-yellow-500", icon: "⭐" },
+    { id: 2, title: "Send appreciation text", category: "relationships", color: "text-pink-500", icon: "❤️" },
+    { id: 3, title: "Write tomorrow's plan", category: "productivity", color: "text-blue-500", icon: "🎯" },
+  ];
 
   return (
     <div className="min-h-screen bg-background pb-24">
       {/* Header */}
       <div className="p-6 flex justify-between items-center">
-        <h1 className="text-2xl font-light text-foreground">{getGreeting()}</h1>
-        <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center">
-          <span className="text-sm font-medium">U</span>
+        <h1 className="text-3xl font-light text-foreground tracking-tight">still</h1>
+        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-card border border-border">
+          <Flame className="w-4 h-4 text-orange-500" />
+          <span className="text-sm font-medium">0</span>
         </div>
       </div>
 
-      {/* Calendar Week View */}
+      {/* Today's Focus Card */}
       <div className="px-6 mb-8">
-        <div className="flex justify-between">
-          {[0, 1, 2, 3, 4, 5, 6].map((offset) => {
-            const dayInfo = getDayInfo(offset);
-            return (
-              <div
-                key={offset}
-                className={`flex flex-col items-center gap-1 ${
-                  dayInfo.isCurrent ? "text-foreground" : "text-muted-foreground"
-                }`}
-              >
-                <span className="text-xs font-light">{dayInfo.day}</span>
-                <span className={`text-sm font-medium ${
-                  dayInfo.isCurrent ? "w-8 h-8 flex items-center justify-center rounded-full bg-foreground text-background" : ""
-                }`}>
-                  {dayInfo.date}
-                </span>
-              </div>
-            );
-          })}
-        </div>
+        <h2 className="text-xs uppercase tracking-wider text-muted-foreground mb-3 font-light">
+          today's focus
+        </h2>
+        <Card className="bg-card border-border p-5 rounded-[1.25rem] flex items-start justify-between gap-4">
+          <p className="text-base font-light text-foreground leading-relaxed">
+            planning tomorrow tonight reduces sleep onset time by 15 minutes
+          </p>
+          <button className="flex-shrink-0 w-8 h-8 rounded-full bg-foreground/10 flex items-center justify-center hover:bg-foreground/20 transition-colors">
+            <ArrowRight className="w-4 h-4 text-foreground" />
+          </button>
+        </Card>
       </div>
 
-      {/* The Gut Button - Central Entry Point */}
-      <div className="px-6 flex-1 flex flex-col items-center justify-center space-y-8 py-12">
-        <div className="text-center space-y-2">
-          <h2 className="text-2xl font-medium text-foreground">
-            What's your gut saying right now?
-          </h2>
-        </div>
-
-        {/* Glowing Gut Button */}
-        <div className="relative">
-          <div className="absolute inset-0 bg-foreground/20 rounded-full blur-3xl animate-pulse" />
-          <div className="relative w-48 h-48 rounded-full bg-gradient-to-br from-foreground/90 to-foreground flex items-center justify-center shadow-2xl">
-            <div className="w-32 h-32 rounded-full bg-background/10 flex items-center justify-center">
-              <span className="text-5xl">✨</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Entry Options */}
-        <div className="w-full max-w-sm space-y-3">
-          <button
-            onClick={() => navigate("/check-in?mode=tap")}
-            className="w-full px-8 py-4 bg-card border border-border rounded-[1.25rem] text-foreground hover:bg-card/80 transition-all flex items-center justify-center gap-3"
-          >
-            <span className="text-2xl">🟣</span>
-            <span className="text-base font-medium">Tap to Log</span>
-          </button>
-
+      {/* Central Voice AI Orb */}
+      <div className="px-6 flex flex-col items-center justify-center mb-8">
+        {/* Glowing Orb */}
+        <div className="relative mb-6">
+          {/* Outer glow */}
+          <div className="absolute inset-0 bg-gradient-to-br from-cyan-400/30 via-blue-400/30 to-blue-500/30 rounded-full blur-3xl animate-pulse" />
+          
+          {/* Main orb */}
           <button
             onClick={() => navigate("/check-in?mode=voice")}
-            className="w-full px-8 py-4 bg-card border border-border rounded-[1.25rem] text-foreground hover:bg-card/80 transition-all flex items-center justify-center gap-3"
+            className="relative w-56 h-56 rounded-full bg-gradient-to-br from-cyan-300/90 via-blue-400/90 to-blue-500/90 flex items-center justify-center shadow-2xl transition-transform hover:scale-105"
           >
-            <span className="text-2xl">🎙️</span>
-            <span className="text-base font-medium">Hold to Speak</span>
+            {/* Inner reflection/highlight */}
+            <div className="absolute top-8 left-1/2 -translate-x-1/2 w-32 h-16 bg-white/30 rounded-full blur-2xl" />
+            
+            {/* Subtle particles */}
+            <div className="absolute top-1/4 right-1/4 w-2 h-2 bg-white/60 rounded-full animate-pulse" />
+            <div className="absolute bottom-1/3 left-1/4 w-1.5 h-1.5 bg-white/50 rounded-full animate-pulse delay-75" />
+            <div className="absolute top-1/2 right-1/3 w-1 h-1 bg-white/40 rounded-full animate-pulse delay-150" />
           </button>
         </div>
+
+        {/* Tap to speak text */}
+        <p className="text-sm text-muted-foreground font-light mb-4">tap to speak</p>
+
+        {/* Level & Days */}
+        <div className="text-center space-y-1">
+          <p className="text-sm text-foreground font-light">
+            level 1 <span className="text-muted-foreground">•</span> newborn
+          </p>
+          <p className="text-xs text-muted-foreground font-light">0 days together</p>
+        </div>
+      </div>
+
+      {/* Today's Missions */}
+      <div className="px-6 mb-8">
+        <h2 className="text-xs uppercase tracking-wider text-muted-foreground mb-3 font-light">
+          today's missions
+        </h2>
+        <div className="space-y-3">
+          {missions.map((mission) => (
+            <Card
+              key={mission.id}
+              className="bg-card border-border p-4 rounded-[1.25rem] flex items-center gap-4 hover:bg-card/80 transition-colors cursor-pointer"
+            >
+              <div className={`w-10 h-10 rounded-full border-2 ${mission.color.replace('text', 'border')} flex items-center justify-center flex-shrink-0`}>
+                <span className="text-lg">{mission.icon}</span>
+              </div>
+              <div className="flex-1">
+                <p className="text-base font-light text-foreground">{mission.title}</p>
+                <p className={`text-xs font-light ${mission.color}`}>{mission.category}</p>
+              </div>
+            </Card>
+          ))}
+        </div>
+      </div>
+
+      {/* Recent Insights */}
+      <div className="px-6">
+        <h2 className="text-xs uppercase tracking-wider text-muted-foreground mb-3 font-light">
+          recent insights
+        </h2>
       </div>
 
       <BottomNav />
