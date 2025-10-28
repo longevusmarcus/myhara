@@ -7,16 +7,16 @@ const Home = () => {
   const navigate = useNavigate();
 
   const missions = [
-    { id: 1, title: "Get 5min morning sunlight", category: "wellness", color: "text-yellow-500", icon: "⭐" },
-    { id: 2, title: "Send appreciation text", category: "relationships", color: "text-pink-500", icon: "❤️" },
-    { id: 3, title: "Write tomorrow's plan", category: "productivity", color: "text-blue-500", icon: "🎯" },
+    { id: 1, title: "Pause before saying yes to something", category: "gut trust", color: "text-cyan-500", icon: "⏸️" },
+    { id: 2, title: "Notice one body signal today", category: "awareness", color: "text-purple-500", icon: "✨" },
+    { id: 3, title: "Honor a no that feels right", category: "boundaries", color: "text-green-500", icon: "🛡️" },
   ];
 
   return (
     <div className="min-h-screen bg-background pb-24">
       {/* Header */}
       <div className="p-6 flex justify-between items-center">
-        <h1 className="text-3xl font-light text-foreground tracking-tight">still</h1>
+        <h1 className="text-3xl font-light text-foreground tracking-tight">Gutty</h1>
         <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-card border border-border">
           <Flame className="w-4 h-4 text-orange-500" />
           <span className="text-sm font-medium">0</span>
