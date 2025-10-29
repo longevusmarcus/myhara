@@ -65,23 +65,23 @@ const BottomNav = () => {
       </nav>
 
       <Dialog open={showCheckInModal} onOpenChange={setShowCheckInModal}>
-        <DialogContent className="sm:max-w-md bg-card border-border">
-          <DialogHeader>
-            <DialogTitle className="text-center text-xl font-light">
+        <DialogContent className="sm:max-w-[420px] bg-card/95 backdrop-blur-xl border-border/50">
+          <DialogHeader className="space-y-3 pb-2">
+            <DialogTitle className="text-center text-2xl font-light tracking-tight">
               How do you want to check in?
             </DialogTitle>
           </DialogHeader>
-          <div className="space-y-3 py-4">
+          <div className="space-y-4 py-6">
             <button
               onClick={() => handleCheckInChoice('tap')}
-              className="w-full p-6 bg-background border border-border rounded-[1.25rem] hover:bg-accent transition-colors flex items-center gap-4"
+              className="group w-full p-8 bg-background/50 border border-border/50 rounded-3xl hover:bg-accent/50 hover:border-border transition-all duration-300 flex items-center gap-6"
             >
-              <div className="w-12 h-12 rounded-full bg-purple-500/20 flex items-center justify-center">
-                <Edit3 className="w-6 h-6 text-purple-500" />
+              <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                <Edit3 className="w-6 h-6 text-primary" />
               </div>
               <div className="text-left flex-1">
-                <h3 className="font-medium text-foreground mb-1">Type Log</h3>
-                <p className="text-sm text-muted-foreground font-light">
+                <h3 className="text-lg font-medium text-foreground mb-1">Type Log</h3>
+                <p className="text-sm text-muted-foreground/80 font-light">
                   Quick and discreet logging
                 </p>
               </div>
@@ -89,14 +89,14 @@ const BottomNav = () => {
 
             <button
               onClick={() => handleCheckInChoice('voice')}
-              className="w-full p-6 bg-background border border-border rounded-[1.25rem] hover:bg-accent transition-colors flex items-center gap-4"
+              className="group w-full p-8 bg-background/50 border border-border/50 rounded-3xl hover:bg-accent/50 hover:border-border transition-all duration-300 flex items-center gap-6"
             >
-              <div className="w-12 h-12 rounded-full bg-cyan-500/20 flex items-center justify-center">
-                <Mic className="w-6 h-6 text-cyan-500" />
+              <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                <Mic className="w-6 h-6 text-primary" />
               </div>
               <div className="text-left flex-1">
-                <h3 className="font-medium text-foreground mb-1">Voice Chat</h3>
-                <p className="text-sm text-muted-foreground font-light">
+                <h3 className="text-lg font-medium text-foreground mb-1">Voice Chat</h3>
+                <p className="text-sm text-muted-foreground/80 font-light">
                   Express yourself freely
                 </p>
               </div>
