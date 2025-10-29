@@ -1,4 +1,4 @@
-import { Home, Map, Plus, TrendingUp, User, Mic, Edit3 } from "lucide-react";
+import { Home, Map, Plus, TrendingUp, User, DollarSign, Briefcase, X } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import {
@@ -21,9 +21,9 @@ const BottomNav = () => {
     { icon: User, label: "Profile", path: "/profile" },
   ];
 
-  const handleCheckInChoice = (mode: 'tap' | 'voice') => {
+  const handleCheckInChoice = (category: string) => {
     setShowCheckInModal(false);
-    navigate(`/check-in?mode=${mode}`);
+    navigate(`/check-in?mode=tap&category=${category}`);
   };
 
   return (
@@ -65,27 +65,37 @@ const BottomNav = () => {
       </nav>
 
       <Dialog open={showCheckInModal} onOpenChange={setShowCheckInModal}>
-        <DialogContent className="sm:max-w-[280px] bg-card/95 backdrop-blur-xl border-border/50 p-6">
-          <DialogHeader className="space-y-2 pb-3">
-            <DialogTitle className="text-center text-base font-medium tracking-tight">
-              Check in
-            </DialogTitle>
-          </DialogHeader>
-          <div className="flex gap-3">
+        <DialogContent className="sm:max-w-[320px] bg-background/95 backdrop-blur-xl border-border/50 p-8">
+          <div className="space-y-4">
             <button
-              onClick={() => handleCheckInChoice('tap')}
-              className="flex-1 p-4 bg-background/50 border border-border/50 rounded-2xl hover:bg-accent/50 transition-all duration-200 flex flex-col items-center gap-2"
+              onClick={() => handleCheckInChoice('finance')}
+              className="w-full flex items-center justify-between gap-4 group"
             >
-              <Edit3 className="w-5 h-5 text-primary" />
-              <span className="text-xs font-medium">Type</span>
+              <div className="bg-card px-6 py-3 rounded-full shadow-md border border-border group-hover:shadow-lg transition-all">
+                <span className="text-sm font-medium text-foreground">Finance</span>
+              </div>
+              <div className="w-14 h-14 rounded-full bg-primary flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
+                <DollarSign className="w-6 h-6 text-primary-foreground" />
+              </div>
             </button>
 
             <button
-              onClick={() => handleCheckInChoice('voice')}
-              className="flex-1 p-4 bg-background/50 border border-border/50 rounded-2xl hover:bg-accent/50 transition-all duration-200 flex flex-col items-center gap-2"
+              onClick={() => handleCheckInChoice('career')}
+              className="w-full flex items-center justify-between gap-4 group"
             >
-              <Mic className="w-5 h-5 text-primary" />
-              <span className="text-xs font-medium">Voice</span>
+              <div className="bg-card px-6 py-3 rounded-full shadow-md border border-border group-hover:shadow-lg transition-all">
+                <span className="text-sm font-medium text-foreground">Career</span>
+              </div>
+              <div className="w-14 h-14 rounded-full bg-primary flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
+                <Briefcase className="w-6 h-6 text-primary-foreground" />
+              </div>
+            </button>
+
+            <button
+              onClick={() => setShowCheckInModal(false)}
+              className="w-14 h-14 rounded-full bg-card mx-auto flex items-center justify-center shadow-md border border-border hover:bg-accent transition-colors mt-6"
+            >
+              <X className="w-6 h-6 text-foreground" />
             </button>
           </div>
         </DialogContent>

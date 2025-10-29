@@ -298,7 +298,7 @@ const CheckIn = () => {
           </h2>
 
           <div className="space-y-3">
-            {["Work", "Relationship", "Social", "Health", "Other"].map((option) => (
+            {["Work", "Relationship", "Finance", "Career", "Health", "Other"].map((option) => (
               <Card
                 key={option}
                 onClick={() => {
