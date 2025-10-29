@@ -65,41 +65,27 @@ const BottomNav = () => {
       </nav>
 
       <Dialog open={showCheckInModal} onOpenChange={setShowCheckInModal}>
-        <DialogContent className="sm:max-w-[420px] bg-card/95 backdrop-blur-xl border-border/50">
-          <DialogHeader className="space-y-3 pb-2">
-            <DialogTitle className="text-center text-2xl font-light tracking-tight">
-              How do you want to check in?
+        <DialogContent className="sm:max-w-[280px] bg-card/95 backdrop-blur-xl border-border/50 p-6">
+          <DialogHeader className="space-y-2 pb-3">
+            <DialogTitle className="text-center text-base font-medium tracking-tight">
+              Check in
             </DialogTitle>
           </DialogHeader>
-          <div className="space-y-4 py-6">
+          <div className="flex gap-3">
             <button
               onClick={() => handleCheckInChoice('tap')}
-              className="group w-full p-8 bg-background/50 border border-border/50 rounded-3xl hover:bg-accent/50 hover:border-border transition-all duration-300 flex items-center gap-6"
+              className="flex-1 p-4 bg-background/50 border border-border/50 rounded-2xl hover:bg-accent/50 transition-all duration-200 flex flex-col items-center gap-2"
             >
-              <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                <Edit3 className="w-6 h-6 text-primary" />
-              </div>
-              <div className="text-left flex-1">
-                <h3 className="text-lg font-medium text-foreground mb-1">Type Log</h3>
-                <p className="text-sm text-muted-foreground/80 font-light">
-                  Quick and discreet logging
-                </p>
-              </div>
+              <Edit3 className="w-5 h-5 text-primary" />
+              <span className="text-xs font-medium">Type</span>
             </button>
 
             <button
               onClick={() => handleCheckInChoice('voice')}
-              className="group w-full p-8 bg-background/50 border border-border/50 rounded-3xl hover:bg-accent/50 hover:border-border transition-all duration-300 flex items-center gap-6"
+              className="flex-1 p-4 bg-background/50 border border-border/50 rounded-2xl hover:bg-accent/50 transition-all duration-200 flex flex-col items-center gap-2"
             >
-              <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                <Mic className="w-6 h-6 text-primary" />
-              </div>
-              <div className="text-left flex-1">
-                <h3 className="text-lg font-medium text-foreground mb-1">Voice Chat</h3>
-                <p className="text-sm text-muted-foreground/80 font-light">
-                  Express yourself freely
-                </p>
-              </div>
+              <Mic className="w-5 h-5 text-primary" />
+              <span className="text-xs font-medium">Voice</span>
             </button>
           </div>
         </DialogContent>
