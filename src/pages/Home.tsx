@@ -16,7 +16,7 @@ const Home = () => {
     <div className="min-h-screen bg-background pb-24">
       {/* Header */}
       <div className="p-6 flex justify-between items-center">
-        <h1 className="text-3xl font-light text-foreground tracking-tight">HARA</h1>
+        <h1 className="text-3xl font-light text-foreground tracking-tight">Gutty</h1>
         <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-card border border-border">
           <Flame className="w-4 h-4 text-orange-500" />
           <span className="text-sm font-medium">0</span>
@@ -30,7 +30,7 @@ const Home = () => {
         </h2>
         <Card className="bg-card border-border p-5 rounded-[1.25rem] flex items-start justify-between gap-4">
           <p className="text-base font-light text-foreground leading-relaxed">
-            return to your center — where calm decisions are born
+            planning tomorrow tonight reduces sleep onset time by 15 minutes
           </p>
           <button className="flex-shrink-0 w-8 h-8 rounded-full bg-foreground/10 flex items-center justify-center hover:bg-foreground/20 transition-colors">
             <ArrowRight className="w-4 h-4 text-foreground" />
@@ -43,12 +43,12 @@ const Home = () => {
         {/* Glowing Orb */}
         <div className="relative mb-6">
           {/* Outer glow */}
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/30 via-accent/30 to-secondary/30 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute inset-0 bg-gradient-to-br from-cyan-400/30 via-blue-400/30 to-blue-500/30 rounded-full blur-3xl animate-pulse" />
           
           {/* Main orb */}
           <button
             onClick={() => navigate("/check-in?mode=voice")}
-            className="relative w-56 h-56 rounded-full bg-gradient-to-br from-primary/90 via-accent/90 to-secondary/90 flex items-center justify-center shadow-2xl transition-transform hover:scale-105"
+            className="relative w-56 h-56 rounded-full bg-gradient-to-br from-cyan-300/90 via-blue-400/90 to-blue-500/90 flex items-center justify-center shadow-2xl transition-transform hover:scale-105"
           >
             {/* Inner reflection/highlight */}
             <div className="absolute top-8 left-1/2 -translate-x-1/2 w-32 h-16 bg-white/30 rounded-full blur-2xl" />
@@ -66,7 +66,7 @@ const Home = () => {
         {/* Level & Days */}
         <div className="text-center space-y-1">
           <p className="text-sm text-foreground font-light">
-            level 1 <span className="text-muted-foreground">•</span> the listener
+            level 1 <span className="text-muted-foreground">•</span> newborn
           </p>
           <p className="text-xs text-muted-foreground font-light">0 days together</p>
         </div>
