@@ -8,37 +8,40 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Stoic-inspired dark theme - softer, more minimal */
-    --background: 0 0% 7%;
-    --foreground: 0 0% 95%;
+    /* HARA brand - deep indigo (presence), soft sand (calm), gentle gold (trust) */
+    --background: 237 30% 8%;
+    --foreground: 35 25% 90%;
 
-    --card: 0 0% 12%;
-    --card-foreground: 0 0% 95%;
+    --card: 237 25% 12%;
+    --card-foreground: 35 25% 90%;
 
-    --popover: 0 0% 12%;
-    --popover-foreground: 0 0% 95%;
+    --popover: 237 25% 12%;
+    --popover-foreground: 35 25% 90%;
 
-    --primary: 240 5% 85%;
-    --primary-foreground: 0 0% 10%;
+    /* Deep indigo - presence */
+    --primary: 237 45% 65%;
+    --primary-foreground: 237 30% 10%;
 
-    --secondary: 0 0% 18%;
-    --secondary-foreground: 0 0% 95%;
+    /* Soft sand - calm */
+    --secondary: 35 35% 75%;
+    --secondary-foreground: 237 30% 10%;
 
-    --muted: 0 0% 20%;
-    --muted-foreground: 0 0% 55%;
+    --muted: 237 15% 20%;
+    --muted-foreground: 35 15% 55%;
 
-    --accent: 240 5% 25%;
-    --accent-foreground: 0 0% 95%;
+    /* Gentle gold - trust */
+    --accent: 45 80% 65%;
+    --accent-foreground: 237 30% 10%;
 
     --success: 142 70% 45%;
-    --success-foreground: 0 0% 95%;
+    --success-foreground: 35 25% 90%;
 
     --destructive: 0 62% 50%;
-    --destructive-foreground: 0 0% 95%;
+    --destructive-foreground: 35 25% 90%;
 
-    --border: 0 0% 20%;
-    --input: 0 0% 20%;
-    --ring: 0 0% 60%;
+    --border: 237 20% 20%;
+    --input: 237 20% 20%;
+    --ring: 237 45% 65%;
 
     --radius: 1.25rem;
   }
