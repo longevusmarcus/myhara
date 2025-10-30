@@ -36,20 +36,20 @@ const BottomNav = () => {
               return (
                 <div key={item.path} className="relative flex items-center justify-center -mt-6">
                   {showCheckInModal && (
-                    <>
+                    <div className="absolute bottom-16 left-1/2 -translate-x-1/2 flex gap-2 z-10">
                       <button
                         onClick={() => handleCheckInChoice('tap')}
-                        className="absolute -left-16 -top-3 w-10 h-10 rounded-full bg-primary flex items-center justify-center shadow-lg hover:scale-105 transition-transform z-10"
+                        className="w-10 h-10 rounded-full bg-primary flex items-center justify-center shadow-lg hover:scale-105 transition-transform"
                       >
                         <Edit3 className="w-4 h-4 text-primary-foreground" />
                       </button>
                       <button
                         onClick={() => handleCheckInChoice('voice')}
-                        className="absolute -right-16 -top-3 w-10 h-10 rounded-full bg-primary flex items-center justify-center shadow-lg hover:scale-105 transition-transform z-10"
+                        className="w-10 h-10 rounded-full bg-primary flex items-center justify-center shadow-lg hover:scale-105 transition-transform"
                       >
                         <Mic className="w-4 h-4 text-primary-foreground" />
                       </button>
-                    </>
+                    </div>
                   )}
                   <button
                     onClick={toggleCheckInModal}
