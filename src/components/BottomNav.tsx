@@ -1,10 +1,6 @@
-import { Home, Map, Plus, TrendingUp, User, Mic, Edit3, X } from "lucide-react";
+import { Home, Map, Plus, TrendingUp, User, Mic, Edit3 } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import {
-  Dialog,
-  DialogContent,
-} from "@/components/ui/dialog";
 
 const BottomNav = () => {
   const location = useLocation();
@@ -24,6 +20,10 @@ const BottomNav = () => {
     navigate(`/check-in?mode=${mode}`);
   };
 
+  const toggleCheckInModal = () => {
+    setShowCheckInModal(!showCheckInModal);
+  };
+
   return (
     <>
       <nav className="fixed bottom-0 left-0 right-0 bg-background border-t border-border z-50 safe-area-bottom">
@@ -34,15 +34,32 @@ const BottomNav = () => {
             
             if (item.isCenter) {
               return (
-                <button
-                  key={item.path}
-                  onClick={() => setShowCheckInModal(true)}
-                  className="flex flex-col items-center justify-center -mt-6"
-                >
-                  <div className="w-14 h-14 rounded-full bg-foreground flex items-center justify-center shadow-lg">
-                    <Icon className="w-6 h-6 text-background" />
-                  </div>
-                </button>
+                <div key={item.path} className="relative flex items-center justify-center -mt-6">
+                  {showCheckInModal && (
+                    <>
+                      <button
+                        onClick={() => handleCheckInChoice('tap')}
+                        className="absolute -left-16 w-10 h-10 rounded-full bg-primary flex items-center justify-center shadow-lg hover:scale-105 transition-transform"
+                      >
+                        <Edit3 className="w-4 h-4 text-primary-foreground" />
+                      </button>
+                      <button
+                        onClick={() => handleCheckInChoice('voice')}
+                        className="absolute -right-16 w-10 h-10 rounded-full bg-primary flex items-center justify-center shadow-lg hover:scale-105 transition-transform"
+                      >
+                        <Mic className="w-4 h-4 text-primary-foreground" />
+                      </button>
+                    </>
+                  )}
+                  <button
+                    onClick={toggleCheckInModal}
+                    className="flex flex-col items-center justify-center"
+                  >
+                    <div className="w-14 h-14 rounded-full bg-foreground flex items-center justify-center shadow-lg">
+                      <Icon className="w-6 h-6 text-background" />
+                    </div>
+                  </button>
+                </div>
               );
             }
             
@@ -61,43 +78,6 @@ const BottomNav = () => {
           })}
         </div>
       </nav>
-
-      <Dialog open={showCheckInModal} onOpenChange={setShowCheckInModal}>
-        <DialogContent className="sm:max-w-[320px] bg-gradient-to-b from-primary/10 to-primary/5 backdrop-blur-xl border-none p-8 shadow-xl">
-          <div className="flex flex-col gap-4">
-            <button
-              onClick={() => handleCheckInChoice('tap')}
-              className="flex items-center justify-between group"
-            >
-              <div className="bg-background text-foreground px-6 py-3 rounded-full shadow-md font-medium group-hover:shadow-lg transition-shadow">
-                Type
-              </div>
-              <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
-                <Edit3 className="w-6 h-6 text-primary-foreground" />
-              </div>
-            </button>
-
-            <button
-              onClick={() => handleCheckInChoice('voice')}
-              className="flex items-center justify-between group"
-            >
-              <div className="bg-background text-foreground px-6 py-3 rounded-full shadow-md font-medium group-hover:shadow-lg transition-shadow">
-                Voice
-              </div>
-              <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
-                <Mic className="w-6 h-6 text-primary-foreground" />
-              </div>
-            </button>
-
-            <button
-              onClick={() => setShowCheckInModal(false)}
-              className="mx-auto mt-2 w-12 h-12 rounded-full bg-background flex items-center justify-center shadow-md hover:shadow-lg hover:scale-105 transition-all"
-            >
-              <X className="w-5 h-5 text-foreground" />
-            </button>
-          </div>
-        </DialogContent>
-      </Dialog>
     </>
   );
 };
