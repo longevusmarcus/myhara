@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { ArrowRight, Flame } from "lucide-react";
+import { ArrowRight, Flame, Pause, Sparkles, Shield } from "lucide-react";
 import BottomNav from "@/components/BottomNav";
 import { Card } from "@/components/ui/card";
 
@@ -7,16 +7,16 @@ const Home = () => {
   const navigate = useNavigate();
 
   const missions = [
-    { id: 1, title: "Pause before saying yes to something", category: "gut trust", color: "text-cyan-500", icon: "⏸️" },
-    { id: 2, title: "Notice one body signal today", category: "awareness", color: "text-purple-500", icon: "✨" },
-    { id: 3, title: "Honor a no that feels right", category: "boundaries", color: "text-green-500", icon: "🛡️" },
+    { id: 1, title: "Pause before saying yes to something", category: "gut trust", color: "text-cyan-500", Icon: Pause },
+    { id: 2, title: "Notice one body signal today", category: "awareness", color: "text-purple-500", Icon: Sparkles },
+    { id: 3, title: "Honor a no that feels right", category: "boundaries", color: "text-green-500", Icon: Shield },
   ];
 
   return (
     <div className="min-h-screen bg-background pb-24">
       {/* Header */}
       <div className="p-6 flex justify-between items-center">
-        <h1 className="text-3xl font-light text-foreground tracking-tight">HARA</h1>
+        <h1 className="text-4xl font-cursive text-foreground tracking-tight">Hara</h1>
         <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-card border border-border">
           <Flame className="w-4 h-4 text-orange-500" />
           <span className="text-sm font-medium">0</span>
@@ -84,7 +84,7 @@ const Home = () => {
               className="bg-card border-border p-4 rounded-[1.25rem] flex items-center gap-4 hover:bg-card/80 transition-colors cursor-pointer"
             >
               <div className={`w-10 h-10 rounded-full border-2 ${mission.color.replace('text', 'border')} flex items-center justify-center flex-shrink-0`}>
-                <span className="text-lg">{mission.icon}</span>
+                <mission.Icon className={`w-5 h-5 ${mission.color}`} strokeWidth={1.5} />
               </div>
               <div className="flex-1">
                 <p className="text-base font-light text-foreground">{mission.title}</p>

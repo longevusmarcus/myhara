@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { ArrowLeft, Mic } from "lucide-react";
+import { ArrowLeft, Mic, Zap, Waves, Sun, Circle, Droplet, Sparkles, Cloud, CheckCircle, XCircle, Pause, Plus } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -218,9 +218,9 @@ const CheckIn = () => {
 
             <div className="space-y-3">
               {[
-                { emoji: "⚡", label: "Unease", value: "unease" },
-                { emoji: "🌊", label: "Unclear", value: "unclear" },
-                { emoji: "🌞", label: "Aligned", value: "aligned" },
+                { Icon: Zap, label: "Unease", value: "unease" },
+                { Icon: Waves, label: "Unclear", value: "unclear" },
+                { Icon: Sun, label: "Aligned", value: "aligned" },
               ].map((option) => (
                 <Card
                   key={option.value}
@@ -231,7 +231,7 @@ const CheckIn = () => {
                   className="bg-card border-border p-6 cursor-pointer hover:bg-card/80 transition-colors rounded-[1.25rem]"
                 >
                   <div className="flex items-center gap-4">
-                    <span className="text-3xl">{option.emoji}</span>
+                    <option.Icon className="w-6 h-6 text-foreground/70" strokeWidth={1.5} />
                     <span className="text-base text-foreground font-light">{option.label}</span>
                   </div>
                 </Card>
@@ -346,10 +346,10 @@ const CheckIn = () => {
 
           <div className="space-y-3">
             {[
-              { emoji: "🔴", label: "Tight chest" },
-              { emoji: "💧", label: "Dropped stomach" },
-              { emoji: "✨", label: "Expanding warmth" },
-              { emoji: "🌫️", label: "Numb" },
+              { Icon: Circle, label: "Tight chest" },
+              { Icon: Droplet, label: "Dropped stomach" },
+              { Icon: Sparkles, label: "Expanding warmth" },
+              { Icon: Cloud, label: "Numb" },
             ].map((option) => (
               <Card
                 key={option.label}
@@ -360,7 +360,7 @@ const CheckIn = () => {
                 className="bg-card border-border p-6 cursor-pointer hover:bg-card/80 transition-colors rounded-[1.25rem]"
               >
                 <div className="flex items-center gap-4">
-                  <span className="text-3xl">{option.emoji}</span>
+                  <option.Icon className="w-6 h-6 text-foreground/70" strokeWidth={1.5} />
                   <span className="text-base text-foreground font-light">{option.label}</span>
                 </div>
               </Card>
@@ -369,7 +369,10 @@ const CheckIn = () => {
 
           <div className="space-y-2">
             <Card className="bg-card border-border p-6 rounded-[1.25rem]">
-              <p className="text-sm text-muted-foreground font-light mb-2">➕ Add your own signal:</p>
+              <div className="flex items-center gap-2 mb-2">
+                <Plus className="w-4 h-4 text-muted-foreground" strokeWidth={1.5} />
+                <p className="text-sm text-muted-foreground font-light">Add your own signal:</p>
+              </div>
               <Input
                 value={customSensation}
                 onChange={(e) => setCustomSensation(e.target.value)}
@@ -403,9 +406,9 @@ const CheckIn = () => {
 
           <div className="space-y-3">
             {[
-              { emoji: "✅", label: "Yes (feels right)", value: "yes" },
-              { emoji: "🚫", label: "No (something's off)", value: "no" },
-              { emoji: "⏸", label: "Pause (not sure yet)", value: "pause" },
+              { Icon: CheckCircle, label: "Yes (feels right)", value: "yes" },
+              { Icon: XCircle, label: "No (something's off)", value: "no" },
+              { Icon: Pause, label: "Pause (not sure yet)", value: "pause" },
             ].map((option) => (
               <Card
                 key={option.value}
@@ -416,7 +419,7 @@ const CheckIn = () => {
                 className="bg-card border-border p-6 cursor-pointer hover:bg-card/80 transition-colors rounded-[1.25rem]"
               >
                 <div className="flex items-center gap-4">
-                  <span className="text-3xl">{option.emoji}</span>
+                  <option.Icon className="w-6 h-6 text-foreground/70" strokeWidth={1.5} />
                   <span className="text-base text-foreground font-light">{option.label}</span>
                 </div>
               </Card>
