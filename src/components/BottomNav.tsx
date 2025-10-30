@@ -39,13 +39,13 @@ const BottomNav = () => {
                     <>
                       <button
                         onClick={() => handleCheckInChoice('tap')}
-                        className="absolute -left-16 w-10 h-10 rounded-full bg-primary flex items-center justify-center shadow-lg hover:scale-105 transition-transform"
+                        className="absolute -left-16 -top-3 w-10 h-10 rounded-full bg-primary flex items-center justify-center shadow-lg hover:scale-105 transition-transform z-10"
                       >
                         <Edit3 className="w-4 h-4 text-primary-foreground" />
                       </button>
                       <button
                         onClick={() => handleCheckInChoice('voice')}
-                        className="absolute -right-16 w-10 h-10 rounded-full bg-primary flex items-center justify-center shadow-lg hover:scale-105 transition-transform"
+                        className="absolute -right-16 -top-3 w-10 h-10 rounded-full bg-primary flex items-center justify-center shadow-lg hover:scale-105 transition-transform z-10"
                       >
                         <Mic className="w-4 h-4 text-primary-foreground" />
                       </button>
