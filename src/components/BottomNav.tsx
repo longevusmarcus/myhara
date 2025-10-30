@@ -1,11 +1,9 @@
-import { Home, Map, Plus, TrendingUp, User, Mic, Edit3 } from "lucide-react";
+import { Home, Map, Plus, TrendingUp, User, Mic, Edit3, X } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
-  DialogTitle,
 } from "@/components/ui/dialog";
 
 const BottomNav = () => {
@@ -65,27 +63,37 @@ const BottomNav = () => {
       </nav>
 
       <Dialog open={showCheckInModal} onOpenChange={setShowCheckInModal}>
-        <DialogContent className="sm:max-w-[280px] bg-card/95 backdrop-blur-xl border-border/50 p-6">
-          <DialogHeader className="space-y-2 pb-3">
-            <DialogTitle className="text-center text-base font-medium tracking-tight">
-              Check in
-            </DialogTitle>
-          </DialogHeader>
-          <div className="flex gap-3">
+        <DialogContent className="sm:max-w-[320px] bg-gradient-to-b from-primary/10 to-primary/5 backdrop-blur-xl border-none p-8 shadow-xl">
+          <div className="flex flex-col gap-4">
             <button
               onClick={() => handleCheckInChoice('tap')}
-              className="flex-1 p-4 bg-background/50 border border-border/50 rounded-2xl hover:bg-accent/50 transition-all duration-200 flex flex-col items-center gap-2"
+              className="flex items-center justify-between group"
             >
-              <Edit3 className="w-5 h-5 text-primary" />
-              <span className="text-xs font-medium">Type</span>
+              <div className="bg-background text-foreground px-6 py-3 rounded-full shadow-md font-medium group-hover:shadow-lg transition-shadow">
+                Type
+              </div>
+              <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
+                <Edit3 className="w-6 h-6 text-primary-foreground" />
+              </div>
             </button>
 
             <button
               onClick={() => handleCheckInChoice('voice')}
-              className="flex-1 p-4 bg-background/50 border border-border/50 rounded-2xl hover:bg-accent/50 transition-all duration-200 flex flex-col items-center gap-2"
+              className="flex items-center justify-between group"
             >
-              <Mic className="w-5 h-5 text-primary" />
-              <span className="text-xs font-medium">Voice</span>
+              <div className="bg-background text-foreground px-6 py-3 rounded-full shadow-md font-medium group-hover:shadow-lg transition-shadow">
+                Voice
+              </div>
+              <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
+                <Mic className="w-6 h-6 text-primary-foreground" />
+              </div>
+            </button>
+
+            <button
+              onClick={() => setShowCheckInModal(false)}
+              className="mx-auto mt-2 w-12 h-12 rounded-full bg-background flex items-center justify-center shadow-md hover:shadow-lg hover:scale-105 transition-all"
+            >
+              <X className="w-5 h-5 text-foreground" />
             </button>
           </div>
         </DialogContent>
