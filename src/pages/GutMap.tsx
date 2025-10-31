@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import BottomNav from "@/components/BottomNav";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Calendar } from "lucide-react";
+import { Calendar, Circle, Droplet, Sparkles } from "lucide-react";
 
 const GutMap = () => {
   const [entries, setEntries] = useState<any[]>([]);
@@ -115,21 +115,21 @@ const GutMap = () => {
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <span className="text-2xl">🔴</span>
+                    <Circle className="w-5 h-5 text-destructive" strokeWidth={1.5} />
                     <span className="text-base text-foreground font-light">Tight chest</span>
                   </div>
                   <span className="text-sm text-muted-foreground">65% accuracy</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <span className="text-2xl">💧</span>
+                    <Droplet className="w-5 h-5 text-primary" strokeWidth={1.5} />
                     <span className="text-base text-foreground font-light">Dropped stomach</span>
                   </div>
                   <span className="text-sm text-muted-foreground">80% accuracy</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <span className="text-2xl">✨</span>
+                    <Sparkles className="w-5 h-5 text-accent" strokeWidth={1.5} />
                     <span className="text-base text-foreground font-light">Expanding warmth</span>
                   </div>
                   <span className="text-sm text-muted-foreground">92% accuracy</span>
