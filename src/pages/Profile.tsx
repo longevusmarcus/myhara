@@ -1,8 +1,22 @@
-import { Award, Settings, HelpCircle, LogOut } from "lucide-react";
+import { Award, Settings, HelpCircle, LogOut, Edit } from "lucide-react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import BottomNav from "@/components/BottomNav";
 import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 const Profile = () => {
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const [profile, setProfile] = useState<{ first_name: string | null; last_name: string | null } | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [loading, setLoading] = useState(true);
+
   const stats = {
     level: 3,
     totalXP: 445,
@@ -13,10 +27,74 @@ const Profile = () => {
 
   const progress = (stats.totalXP / stats.nextLevelXP) * 100;
 
+  useEffect(() => {
+    fetchProfile();
+  }, []);
+
+  const fetchProfile = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", user.id)
+        .maybeSingle();
+
+      if (error) throw error;
+
+      setProfile(data);
+      if (data) {
+        setFirstName(data.first_name || "");
+        setLastName(data.last_name || "");
+      }
+    } catch (error) {
+      console.error("Error fetching profile:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleUpdateProfile = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { error } = await supabase
+        .from("profiles")
+        .update({
+          first_name: firstName,
+          last_name: lastName,
+        })
+        .eq("id", user.id);
+
+      if (error) throw error;
+
+      setProfile({ first_name: firstName, last_name: lastName });
+      setIsEditing(false);
+      toast({
+        title: "Profile updated",
+        description: "Your profile has been updated successfully.",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    navigate("/");
+  };
+
   const menuItems = [
     { icon: Settings, label: "Settings", action: () => {} },
     { icon: HelpCircle, label: "Help & Support", action: () => {} },
-    { icon: LogOut, label: "Sign Out", action: () => {} },
+    { icon: LogOut, label: "Sign Out", action: handleSignOut },
   ];
 
   return (
@@ -25,11 +103,59 @@ const Profile = () => {
         {/* Profile Header */}
         <div className="text-center space-y-4">
           <div className="w-24 h-24 mx-auto rounded-full bg-secondary flex items-center justify-center">
-            <span className="text-3xl font-medium">U</span>
+            <span className="text-3xl font-medium">
+              {profile?.first_name?.[0] || "U"}
+            </span>
           </div>
           <div>
-            <h1 className="text-3xl font-cursive text-foreground tracking-tight">Your Profile</h1>
-            <p className="text-base text-muted-foreground font-light">Level {stats.level} Intuitive</p>
+            {isEditing ? (
+              <div className="space-y-3 max-w-sm mx-auto">
+                <Input
+                  type="text"
+                  placeholder="First Name"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  className="bg-background border-border rounded-[1.25rem]"
+                />
+                <Input
+                  type="text"
+                  placeholder="Last Name"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  className="bg-background border-border rounded-[1.25rem]"
+                />
+                <div className="flex gap-2">
+                  <Button
+                    onClick={handleUpdateProfile}
+                    className="flex-1 rounded-[1.25rem]"
+                  >
+                    Save
+                  </Button>
+                  <Button
+                    onClick={() => setIsEditing(false)}
+                    variant="outline"
+                    className="flex-1 rounded-[1.25rem]"
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <>
+                <div className="flex items-center justify-center gap-2">
+                  <h1 className="text-3xl font-cursive text-foreground tracking-tight">
+                    {loading ? "Loading..." : profile ? `${profile.first_name || ""} ${profile.last_name || ""}`.trim() || "Your Profile" : "Your Profile"}
+                  </h1>
+                  <button
+                    onClick={() => setIsEditing(true)}
+                    className="p-1 hover:bg-card rounded-full transition-colors"
+                  >
+                    <Edit className="w-4 h-4 text-muted-foreground" />
+                  </button>
+                </div>
+                <p className="text-base text-muted-foreground font-light">Level {stats.level} Intuitive</p>
+              </>
+            )}
           </div>
         </div>
 

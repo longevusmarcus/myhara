@@ -4,22 +4,40 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import type { Session } from "@supabase/supabase-js";
 import Onboarding from "./components/Onboarding";
 import Home from "./pages/Home";
 import CheckIn from "./pages/CheckIn";
 import Insights from "./pages/Insights";
 import GutMap from "./pages/GutMap";
 import Profile from "./pages/Profile";
+import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
 const App = () => {
   const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState(false);
+  const [session, setSession] = useState<Session | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const completed = localStorage.getItem("onboarding_completed");
     setHasCompletedOnboarding(completed === "true");
+
+    // Check for existing session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setLoading(false);
+    });
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
   const handleOnboardingComplete = () => {
@@ -29,6 +47,18 @@ const App = () => {
 
   if (!hasCompletedOnboarding) {
     return <Onboarding onComplete={handleOnboardingComplete} />;
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <p className="text-muted-foreground font-light">Loading...</p>
+      </div>
+    );
+  }
+
+  if (!session) {
+    return <Auth />;
   }
 
   return (
