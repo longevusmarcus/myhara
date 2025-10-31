@@ -42,13 +42,15 @@ const Home = () => {
       <div className="px-6 flex flex-col items-center justify-center mb-8">
         {/* Glowing Orb */}
         <div className="relative mb-6">
-          {/* Outer glow */}
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/30 via-accent/30 to-secondary/30 rounded-full blur-3xl animate-pulse" />
+          {/* Outer glow rings - pulsing */}
+          <div className="absolute inset-0 w-64 h-64 -left-4 -top-4 bg-gradient-to-br from-primary/40 via-accent/40 to-secondary/40 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute inset-0 w-60 h-60 -left-2 -top-2 bg-gradient-to-br from-primary/30 via-accent/30 to-secondary/30 rounded-full blur-2xl animate-pulse" style={{ animationDelay: '0.5s' }} />
           
           {/* Main orb */}
           <button
             onClick={() => navigate("/check-in?mode=voice")}
-            className="relative w-56 h-56 rounded-full bg-gradient-to-br from-primary/90 via-accent/90 to-secondary/90 flex items-center justify-center shadow-2xl transition-transform hover:scale-105"
+            className="relative w-56 h-56 rounded-full bg-gradient-to-br from-primary/90 via-accent/90 to-secondary/90 flex items-center justify-center shadow-2xl shadow-primary/20 transition-transform hover:scale-105 animate-pulse"
+            style={{ animationDuration: '3s' }}
           >
             {/* Inner reflection/highlight */}
             <div className="absolute top-8 left-1/2 -translate-x-1/2 w-32 h-16 bg-white/30 rounded-full blur-2xl" />
