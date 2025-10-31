@@ -30,7 +30,7 @@ const Home = () => {
         </h2>
         <Card className="bg-card border-border p-5 rounded-[1.25rem] flex items-start justify-between gap-4">
           <p className="text-base font-light text-foreground leading-relaxed">
-            return to your center — where calm decisions are born
+            return to your center — where gut-driven decisions are born
           </p>
           <button className="flex-shrink-0 w-8 h-8 rounded-full bg-foreground/10 flex items-center justify-center hover:bg-foreground/20 transition-colors">
             <ArrowRight className="w-4 h-4 text-foreground" />
