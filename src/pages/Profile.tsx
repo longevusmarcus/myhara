@@ -28,7 +28,7 @@ const Profile = () => {
             <span className="text-3xl font-medium">U</span>
           </div>
           <div>
-            <h1 className="text-2xl font-medium text-foreground">Your Profile</h1>
+            <h1 className="text-3xl font-cursive text-foreground tracking-tight">Your Profile</h1>
             <p className="text-base text-muted-foreground font-light">Level {stats.level} Intuitive</p>
           </div>
         </div>
