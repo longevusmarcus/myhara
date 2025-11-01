@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Smartphone } from "lucide-react";
-import haraMascot from "@/assets/hara-mascot.png";
+import VoiceBubbleLogo from "./VoiceBubbleLogo";
 
 const MobileOnly = ({ children }: { children: React.ReactNode }) => {
   const [isMobile, setIsMobile] = useState(true);
@@ -26,11 +26,7 @@ const MobileOnly = ({ children }: { children: React.ReactNode }) => {
       <div className="min-h-screen bg-background flex items-center justify-center p-6">
         <div className="max-w-md text-center">
           <div className="mb-8 flex justify-center">
-            <img 
-              src={haraMascot} 
-              alt="Hara mascot" 
-              className="w-32 h-32 object-contain animate-pulse"
-            />
+            <VoiceBubbleLogo size="md" animated={true} />
           </div>
           
           <div className="backdrop-blur-xl bg-card/40 border border-border/30 rounded-[1.5rem] p-8 shadow-2xl">

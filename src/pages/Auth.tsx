@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import haraMascot from "@/assets/hara-mascot.png";
+import VoiceBubbleLogo from "@/components/VoiceBubbleLogo";
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -92,14 +92,10 @@ const Auth = () => {
       </div>
 
       <div className="w-full max-w-md relative">
-        {/* Mascot and branding */}
+        {/* Voice bubble logo and branding */}
         <div className="text-center mb-8">
-          <div className="mb-6 flex justify-center">
-            <img 
-              src={haraMascot} 
-              alt="Hara mascot" 
-              className="w-32 h-32 object-contain animate-in fade-in zoom-in duration-700"
-            />
+          <div className="mb-6 flex justify-center animate-in fade-in zoom-in duration-700">
+            <VoiceBubbleLogo size="md" animated={true} />
           </div>
           <h1 className="text-4xl font-cursive text-foreground tracking-tight mb-2 animate-in fade-in slide-in-from-bottom-4 duration-700" style={{ animationDelay: '200ms' }}>
             Hara
