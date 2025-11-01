@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { ArrowRight, Flame, Pause, Sparkles, Shield, Loader2 } from "lucide-react";
 import BottomNav from "@/components/BottomNav";
 import { Card } from "@/components/ui/card";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { useState, useEffect } from "react";
 import { getGamificationData, calculateLevel, getLevelName } from "@/utils/gamification";
 import { supabase } from "@/integrations/supabase/client";
@@ -277,9 +278,12 @@ const Home = () => {
       {/* Header */}
       <div className="p-6 flex justify-between items-center">
         <h1 className="text-4xl font-cursive text-foreground tracking-tight">Hey, {userName}</h1>
-        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-card border border-border">
-          <Flame className="w-4 h-4 text-secondary" />
-          <span className="text-sm font-medium">{gamData.currentStreak}</span>
+        <div className="flex items-center gap-3">
+          <ThemeToggle />
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-card border border-border">
+            <Flame className="w-4 h-4 text-secondary" />
+            <span className="text-sm font-medium">{gamData.currentStreak}</span>
+          </div>
         </div>
       </div>
 

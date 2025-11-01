@@ -45,6 +45,43 @@ All colors MUST be HSL.
 
     --radius: 1.25rem;
   }
+
+  .light {
+    /* Light mode - clean, breathable, sophisticated */
+    --background: 35 40% 98%;
+    --foreground: 237 30% 15%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 237 30% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 237 30% 15%;
+
+    /* Deep indigo - softer in light */
+    --primary: 237 50% 55%;
+    --primary-foreground: 0 0% 100%;
+
+    /* Warm sand */
+    --secondary: 35 40% 85%;
+    --secondary-foreground: 237 30% 15%;
+
+    --muted: 35 20% 92%;
+    --muted-foreground: 237 15% 40%;
+
+    /* Warm gold accent */
+    --accent: 45 85% 55%;
+    --accent-foreground: 237 30% 15%;
+
+    --success: 142 70% 45%;
+    --success-foreground: 0 0% 100%;
+
+    --destructive: 0 62% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 237 20% 88%;
+    --input: 237 20% 88%;
+    --ring: 237 50% 55%;
+  }
 }
 
 @layer base {
