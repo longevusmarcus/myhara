@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Heart, Sparkles, Brain, TrendingUp, DollarSign, Users, Target, Frown, MessageSquareOff, AlertCircle } from "lucide-react";
+import { Heart, Sparkles, Brain, TrendingUp, DollarSign, Users, Target, Frown, MessageSquareOff, AlertCircle, RefreshCcw, ShieldAlert, Zap, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import VoiceBubbleLogo from "./VoiceBubbleLogo";
@@ -80,8 +80,102 @@ const Onboarding = ({ onComplete }: OnboardingProps) => {
     );
   }
 
-  // Step 2: Goal Selection
+  // Step 2: OCD vs Intuition
   if (step === 2) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center p-6">
+        <div className="max-w-3xl w-full animate-in fade-in zoom-in duration-700">
+          <div className="grid md:grid-cols-2 gap-6 mb-8">
+            {/* Left Side - Intrusive Thoughts */}
+            <div className="bg-card/30 border border-destructive/20 rounded-[1.5rem] p-6">
+              <div className="flex items-center gap-2 mb-6">
+                <ShieldAlert className="w-5 h-5 text-destructive" />
+                <h3 className="text-lg font-light text-foreground">
+                  INTRUSIVE THOUGHTS
+                </h3>
+              </div>
+              <p className="text-xs text-muted-foreground/60 font-light mb-4">(OCD)</p>
+              
+              <div className="space-y-4">
+                <div className="flex items-start gap-3">
+                  <div className="w-1.5 h-1.5 rounded-full bg-destructive/60 mt-2 flex-shrink-0" />
+                  <p className="text-sm text-foreground/80 font-light">
+                    Feel repetitive, obsessive, unwanted
+                  </p>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="w-1.5 h-1.5 rounded-full bg-destructive/60 mt-2 flex-shrink-0" />
+                  <p className="text-sm text-foreground/80 font-light">
+                    Create anxiety and demand reassurance
+                  </p>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="w-1.5 h-1.5 rounded-full bg-destructive/60 mt-2 flex-shrink-0" />
+                  <p className="text-sm text-foreground/80 font-light">
+                    Hard to ignore, stay in your head
+                  </p>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="w-1.5 h-1.5 rounded-full bg-destructive/60 mt-2 flex-shrink-0" />
+                  <p className="text-sm text-foreground/80 font-light">
+                    Are based on fear, not wisdom
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Side - Gut Feelings */}
+            <div className="bg-card/30 border border-primary/20 rounded-[1.5rem] p-6">
+              <div className="flex items-center gap-2 mb-6">
+                <Zap className="w-5 h-5 text-primary" />
+                <h3 className="text-lg font-light text-foreground">
+                  GUT FEELINGS
+                </h3>
+              </div>
+              <p className="text-xs text-muted-foreground/60 font-light mb-4">(INTUITION)</p>
+              
+              <div className="space-y-4">
+                <div className="flex items-start gap-3">
+                  <CheckCircle2 className="w-4 h-4 text-primary/60 mt-0.5 flex-shrink-0" />
+                  <p className="text-sm text-foreground/80 font-light">
+                    Feel calm, clear, and grounded
+                  </p>
+                </div>
+                <div className="flex items-start gap-3">
+                  <CheckCircle2 className="w-4 h-4 text-primary/60 mt-0.5 flex-shrink-0" />
+                  <p className="text-sm text-foreground/80 font-light">
+                    Don't demand constant analysis
+                  </p>
+                </div>
+                <div className="flex items-start gap-3">
+                  <CheckCircle2 className="w-4 h-4 text-primary/60 mt-0.5 flex-shrink-0" />
+                  <p className="text-sm text-foreground/80 font-light">
+                    Come quickly with aligned action, not panic
+                  </p>
+                </div>
+                <div className="flex items-start gap-3">
+                  <CheckCircle2 className="w-4 h-4 text-primary/60 mt-0.5 flex-shrink-0" />
+                  <p className="text-sm text-foreground/80 font-light">
+                    Are based on wisdom, not panic
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <Button
+            onClick={() => setStep(3)}
+            className="w-full rounded-[1rem] h-12 bg-primary hover:bg-primary/90 text-primary-foreground"
+          >
+            trust your gut
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  // Step 3: Goal Selection
+  if (step === 3) {
     const goals = [
       { id: "financial", icon: DollarSign, label: "Better financial decisions", color: "text-secondary" },
       { id: "relationships", icon: Users, label: "Healthier relationships", color: "text-secondary" },
@@ -124,8 +218,8 @@ const Onboarding = ({ onComplete }: OnboardingProps) => {
     );
   }
 
-  // Step 3: Common Challenge
-  if (step === 3) {
+  // Step 4: Common Challenge
+  if (step === 4) {
     const challengesByGoal: Record<string, Array<{ id: string; icon: any; label: string; color: string }>> = {
       financial: [
         { id: "ignore-warnings", icon: AlertCircle, label: "Ignoring gut warnings about risky decisions", color: "text-secondary" },
@@ -166,7 +260,7 @@ const Onboarding = ({ onComplete }: OnboardingProps) => {
                   key={challenge.id}
                   onClick={() => {
                     setSelectedGoal(challenge.id);
-                    setTimeout(() => setStep(4), 300);
+                    setTimeout(() => setStep(5), 300);
                   }}
                   className="w-full p-5 bg-card/40 border border-border/30 rounded-[1.25rem] flex items-center gap-4 hover:bg-card/60 transition-all hover:scale-[1.02] text-left"
                 >
@@ -183,8 +277,8 @@ const Onboarding = ({ onComplete }: OnboardingProps) => {
     );
   }
 
-  // Step 4: How It Works
-  if (step === 4) {
+  // Step 5: How It Works
+  if (step === 5) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center p-6">
         <div className="max-w-md w-full animate-in fade-in zoom-in duration-700">
@@ -224,7 +318,7 @@ const Onboarding = ({ onComplete }: OnboardingProps) => {
           </div>
 
           <Button
-            onClick={() => setStep(5)}
+            onClick={() => setStep(6)}
             className="w-full rounded-[1rem] h-12 bg-primary hover:bg-primary/90 text-primary-foreground"
           >
             Continue
@@ -234,7 +328,7 @@ const Onboarding = ({ onComplete }: OnboardingProps) => {
     );
   }
 
-  // Step 5: Paywall
+  // Step 6: Paywall
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-6">
       <div className="max-w-md w-full animate-in fade-in zoom-in duration-700">
