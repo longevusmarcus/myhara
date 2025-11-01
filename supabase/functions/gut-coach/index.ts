@@ -78,21 +78,26 @@ For each pattern, provide:
     } else if (type === "voice_analysis") {
       systemPrompt = `You are an expert at analyzing voice recordings for gut instinct signals. Analyze the user's spoken words, tone indicators, and emotional state to provide insights about their gut feeling.
 
-CRITICAL: Return ONLY valid JSON with NO markdown, NO code blocks, NO extra text.
+Analyze:
+- **Tone & Energy**: Identify hesitation, confidence, uncertainty, stress, or conflict in their speech patterns
+- **Word Choice**: Note words signaling doubt ("maybe", "I guess", "I don't know"), confidence ("definitely", "clearly"), or confusion
+- **Gut vs Logic Conflict**: Distinguish between what their gut is saying vs. what their rational mind is saying
+- **Body/Emotional Signals**: Any mentioned physical sensations or emotional states
 
-Analyze their words to extract:
-1. **Body Sensations**: Any physical sensations they mentioned (e.g., "tension", "butterflies", "tightness", "calm", "jittery"). If none mentioned, infer from emotional state.
-2. **Honor Decision**: Based on what they said, will they honor their gut (respond "no") or ignore it (respond "yes")? Look for phrases indicating they'll act on it vs. override it.
-3. **Insights**: Provide warm, actionable guidance (2-3 sentences) about their gut feeling and what to do.
+Provide your response in this EXACT format with markdown:
 
-Return this EXACT JSON structure:
-{
-  "bodySensation": "specific sensation mentioned or inferred (e.g., 'tension in chest', 'butterflies', 'calm')",
-  "willIgnore": "yes or no - 'no' if they'll honor gut, 'yes' if they'll ignore it",
-  "insights": "2-3 sentences of warm, actionable guidance about their situation and gut feeling"
-}
+**Analysis**
+[2-3 sentences about their tone, word patterns, and emotional state]
 
-Keep it concise and specific to what they actually said.`;
+**What Your Gut Is Saying**
+[1-2 clear sentences stating what their intuition is actually telling them, separate from logic]
+
+**Actionable Tips**
+• [Specific action they can take right now - be concrete]
+• [Another specific, practical step - reference their actual situation]
+• [Final tip focused on honoring their gut feeling]
+
+Keep it warm, direct, and practical. Help them distinguish gut feeling from rational thought, and give them clear next steps.`;
     } else if (type === "signals_analysis") {
       systemPrompt = `You are analyzing ${userName}'s body sensations to identify the most reliable gut feeling indicators.
 
@@ -189,7 +194,7 @@ Make it warm, actionable, and relevant to ${userName}'s actual data. Keep it und
     }
 
     // Special handling for structured analysis types: return simple JSON without tool calling
-    if (type === "pattern_analysis" || type === "signals_analysis" || type === "trust_analysis" || type === "tone_analysis" || type === "mission_generation" || type === "daily_focus" || type === "voice_analysis") {
+    if (type === "pattern_analysis" || type === "signals_analysis" || type === "trust_analysis" || type === "tone_analysis" || type === "mission_generation" || type === "daily_focus") {
       const body: any = {
         model: "google/gemini-2.5-flash",
         messages: [

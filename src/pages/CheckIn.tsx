@@ -256,13 +256,34 @@ const CheckIn = () => {
 
       if (!response.ok) throw new Error("Failed to analyze");
 
-      const data = await response.json();
-      console.log("Voice analysis response:", data);
-      
-      // Extract structured data from AI response
-      setBodySensation(data.bodySensation || "");
-      setWillIgnore(data.willIgnore || "");
-      setAiInsights(data.insights || "");
+      const reader = response.body?.getReader();
+      const decoder = new TextDecoder();
+      let analysis = "";
+
+      if (reader) {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          const chunk = decoder.decode(value);
+          const lines = chunk.split("\n");
+
+          for (const line of lines) {
+            if (line.startsWith("data: ") && line !== "data: [DONE]") {
+              try {
+                const data = JSON.parse(line.slice(6));
+                const content = data.choices?.[0]?.delta?.content;
+                if (content) {
+                  analysis += content;
+                  setAiInsights(analysis);
+                }
+              } catch (e) {
+                console.error("Parse error:", e);
+              }
+            }
+          }
+        }
+      }
 
       setVoiceStep("insights");
     } catch (error) {
@@ -281,13 +302,10 @@ const CheckIn = () => {
       mode: "voice",
       transcript,
       label: selectedLabel,
-      gutFeeling: selectedLabel,
       wantsResponse,
       aiInsights,
-      bodySensation,
-      willIgnore,
       timestamp: new Date().toISOString(),
-      xp: willIgnore === "no" ? 10 : 5
+      xp: 10
     };
     
     // Save to localStorage
@@ -300,8 +318,8 @@ const CheckIn = () => {
     const gamData = addCheckIn(entry.xp);
     
     toast({
-      title: `+${entry.xp} XP`,
-      description: willIgnore === "no" ? "Great choice honoring your gut!" : "You checked in.",
+      title: "+10 XP",
+      description: "Honest Voice Check.",
     });
     navigate("/map");
   };
