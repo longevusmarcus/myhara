@@ -140,9 +140,16 @@ const Home = () => {
     const cachedMissionsDate = localStorage.getItem("cachedMissionsDate");
     const today = new Date().toDateString();
 
+    const iconMap = [Pause, Sparkles, Shield];
+
     if (cachedMissions && cachedMissionsDate === today) {
-      // Use cached missions if they're from today
-      setMissions(JSON.parse(cachedMissions));
+      // Use cached missions if they're from today, but re-attach icons
+      const parsedMissions = JSON.parse(cachedMissions);
+      const missionsWithIcons = parsedMissions.map((m: any, idx: number) => ({
+        ...m,
+        Icon: iconMap[idx % iconMap.length]
+      }));
+      setMissions(missionsWithIcons);
       return;
     }
 
@@ -198,7 +205,6 @@ const Home = () => {
       const data = await response.json();
       
       if (data.missions && Array.isArray(data.missions)) {
-        const iconMap = [Pause, Sparkles, Shield];
         const missionsWithIcons = data.missions.map((m: any, idx: number) => ({
           id: idx + 1,
           title: m.title,
@@ -208,8 +214,13 @@ const Home = () => {
         
         setMissions(missionsWithIcons);
         
-        // Cache missions for today
-        localStorage.setItem("cachedMissions", JSON.stringify(missionsWithIcons));
+        // Cache missions for today (without Icon components)
+        const missionsForCache = data.missions.map((m: any, idx: number) => ({
+          id: idx + 1,
+          title: m.title,
+          category: m.category
+        }));
+        localStorage.setItem("cachedMissions", JSON.stringify(missionsForCache));
         localStorage.setItem("cachedMissionsDate", today);
       }
     } catch (error) {
