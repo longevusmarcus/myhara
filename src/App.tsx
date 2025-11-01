@@ -8,6 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import type { Session } from "@supabase/supabase-js";
 import { ScrollToTop } from "./components/ScrollToTop";
 import Onboarding from "./components/Onboarding";
+import MobileOnly from "./components/MobileOnly";
 import Home from "./pages/Home";
 import CheckIn from "./pages/CheckIn";
 import Insights from "./pages/Insights";
@@ -54,7 +55,8 @@ const App = () => {
       <TooltipProvider>
         <Toaster />
         <Sonner />
-        <BrowserRouter>
+        <MobileOnly>
+          <BrowserRouter>
           <ScrollToTop />
           {!hasCompletedOnboarding ? (
             <Onboarding onComplete={handleOnboardingComplete} />
@@ -79,6 +81,7 @@ const App = () => {
             </Routes>
           )}
         </BrowserRouter>
+        </MobileOnly>
       </TooltipProvider>
     </QueryClientProvider>
   );
