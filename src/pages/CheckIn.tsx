@@ -1096,7 +1096,7 @@ const CheckIn = () => {
           {/* Continue Button */}
           <div className="pt-8 animate-in fade-in slide-in-from-bottom-8 duration-700" style={{ animationDelay: '400ms' }}>
             <button
-              onClick={handleTapComplete}
+              onClick={() => setTapStep("decision")}
               className="w-full py-4 px-6 bg-primary/10 hover:bg-primary/20 text-primary rounded-xl font-light transition-all border border-primary/20"
             >
               Continue
@@ -1129,7 +1129,7 @@ const CheckIn = () => {
           {/* Continue Button */}
           <div className="pt-8 animate-in fade-in slide-in-from-bottom-8 duration-700" style={{ animationDelay: '400ms' }}>
             <button
-              onClick={() => setTapStep("decision")}
+              onClick={handleTapComplete}
               className="w-full py-4 px-6 bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl font-light transition-all shadow-lg"
             >
               Continue
