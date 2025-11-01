@@ -11,12 +11,23 @@ const Auth = () => {
   const { toast } = useToast();
   const [isLogin, setIsLogin] = useState(true);
   const [isForgotPassword, setIsForgotPassword] = useState(false);
+  const [isResettingPassword, setIsResettingPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [nickname, setNickname] = useState("");
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    // Check for password reset token in URL
+    const hashParams = new URLSearchParams(window.location.hash.substring(1));
+    const accessToken = hashParams.get('access_token');
+    const type = hashParams.get('type');
+
+    if (accessToken && type === 'recovery') {
+      setIsResettingPassword(true);
+      return;
+    }
+
     // Check if user is already logged in
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
@@ -25,7 +36,9 @@ const Auth = () => {
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (session) {
+      if (event === 'PASSWORD_RECOVERY') {
+        setIsResettingPassword(true);
+      } else if (session) {
         navigate("/home");
       }
     });
@@ -38,7 +51,23 @@ const Auth = () => {
     setLoading(true);
 
     try {
-      if (isForgotPassword) {
+      if (isResettingPassword) {
+        const { error } = await supabase.auth.updateUser({
+          password: password,
+        });
+
+        if (error) throw error;
+
+        toast({
+          title: "Password updated!",
+          description: "Your password has been reset successfully.",
+        });
+        
+        // Clear the hash from URL
+        window.history.replaceState(null, '', window.location.pathname);
+        setIsResettingPassword(false);
+        navigate("/home");
+      } else if (isForgotPassword) {
         const { error } = await supabase.auth.resetPasswordForEmail(email, {
           redirectTo: `${window.location.origin}/`,
         });
@@ -119,7 +148,13 @@ const Auth = () => {
         {/* Auth form card */}
         <div className="backdrop-blur-xl bg-card/40 border border-border/30 rounded-[1.5rem] p-8 shadow-2xl animate-in fade-in slide-in-from-bottom-8 duration-700" style={{ animationDelay: '400ms' }}>
           <form onSubmit={handleAuth} className="space-y-5">
-            {!isLogin && !isForgotPassword && (
+            {isResettingPassword && (
+              <div className="mb-4">
+                <h2 className="text-xl font-semibold text-foreground mb-2">Set new password</h2>
+                <p className="text-sm text-muted-foreground">Enter your new password below</p>
+              </div>
+            )}
+            {!isLogin && !isForgotPassword && !isResettingPassword && (
               <div>
                 <Input
                   type="text"
@@ -131,28 +166,30 @@ const Auth = () => {
                 />
               </div>
             )}
-            <div>
-              <Input
-                type="email"
-                placeholder="Email address"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className="bg-background/60 border-border/40 rounded-[1rem] h-12 text-base placeholder:text-muted-foreground/60 focus:border-primary/50 transition-all"
-              />
-            </div>
-            {!isForgotPassword && (
+            {!isResettingPassword && (
+              <div>
+                <Input
+                  type="email"
+                  placeholder="Email address"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  className="bg-background/60 border-border/40 rounded-[1rem] h-12 text-base placeholder:text-muted-foreground/60 focus:border-primary/50 transition-all"
+                />
+              </div>
+            )}
+            {(!isForgotPassword || isResettingPassword) && (
               <div>
                 <Input
                   type="password"
-                  placeholder="Password"
+                  placeholder={isResettingPassword ? "New password" : "Password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   minLength={6}
                   className="bg-background/60 border-border/40 rounded-[1rem] h-12 text-base placeholder:text-muted-foreground/60 focus:border-primary/50 transition-all"
                 />
-                {!isLogin && (
+                {(!isLogin || isResettingPassword) && (
                   <p className="text-xs text-muted-foreground/70 mt-2 ml-1">
                     8+ characters, 1 uppercase, 1 number recommended
                   </p>
@@ -165,36 +202,38 @@ const Auth = () => {
               disabled={loading}
               className="w-full rounded-[1rem] h-12 text-base font-medium bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/25 transition-all hover:shadow-xl hover:shadow-primary/30 hover:scale-[1.02]"
             >
-              {loading ? "Loading..." : isForgotPassword ? "Send reset link" : isLogin ? "Sign in" : "Get started"}
+              {loading ? "Loading..." : isResettingPassword ? "Update password" : isForgotPassword ? "Send reset link" : isLogin ? "Sign in" : "Get started"}
             </Button>
           </form>
 
-          <div className="mt-6 text-center space-y-3">
-            {isLogin && !isForgotPassword && (
+          {!isResettingPassword && (
+            <div className="mt-6 text-center space-y-3">
+              {isLogin && !isForgotPassword && (
+                <button
+                  onClick={() => setIsForgotPassword(true)}
+                  className="text-sm text-muted-foreground/80 font-light hover:text-foreground transition-colors block w-full"
+                >
+                  Forgot password?
+                </button>
+              )}
               <button
-                onClick={() => setIsForgotPassword(true)}
-                className="text-sm text-muted-foreground/80 font-light hover:text-foreground transition-colors block w-full"
+                onClick={() => {
+                  setIsLogin(!isLogin);
+                  setIsForgotPassword(false);
+                }}
+                className="text-sm text-muted-foreground/80 font-light hover:text-foreground transition-colors"
               >
-                Forgot password?
+                {isForgotPassword
+                  ? "Back to sign in"
+                  : isLogin
+                  ? "Don't have an account? "
+                  : "Already have an account? "}
+                <span className="text-primary font-medium">
+                  {isForgotPassword ? "" : isLogin ? "Sign up" : "Sign in"}
+                </span>
               </button>
-            )}
-            <button
-              onClick={() => {
-                setIsLogin(!isLogin);
-                setIsForgotPassword(false);
-              }}
-              className="text-sm text-muted-foreground/80 font-light hover:text-foreground transition-colors"
-            >
-              {isForgotPassword
-                ? "Back to sign in"
-                : isLogin
-                ? "Don't have an account? "
-                : "Already have an account? "}
-              <span className="text-primary font-medium">
-                {isForgotPassword ? "" : isLogin ? "Sign up" : "Sign in"}
-              </span>
-            </button>
-          </div>
+            </div>
+          )}
         </div>
 
         {/* Footer text */}
