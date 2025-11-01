@@ -126,56 +126,81 @@ const CheckIn = () => {
             </p>
 
             <div className="relative flex items-center justify-center">
-              {/* Outer glow ring */}
+              {/* Outer ambient glow */}
               <div 
-                className={`absolute w-64 h-64 rounded-full bg-primary/5 blur-3xl ${
-                  isRecording ? 'animate-pulse' : ''
+                className={`absolute w-80 h-80 rounded-full blur-[80px] transition-all duration-1000 ${
+                  isRecording 
+                    ? 'bg-gradient-to-br from-primary/30 via-accent/20 to-primary/30 opacity-100' 
+                    : 'bg-gradient-to-br from-primary/10 via-accent/5 to-primary/10 opacity-60'
                 }`}
                 style={{
-                  animation: isRecording ? 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite' : 'none'
+                  animation: isRecording ? 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite' : 'none'
                 }}
               />
               
-              {/* Middle glow ring */}
+              {/* Middle gradient ring */}
               <div 
-                className={`absolute w-56 h-56 rounded-full bg-primary/10 blur-2xl ${
-                  isRecording ? 'animate-pulse' : ''
+                className={`absolute w-64 h-64 rounded-full blur-3xl transition-all duration-700 ${
+                  isRecording 
+                    ? 'bg-gradient-to-tr from-primary/40 via-accent/30 to-primary/40 opacity-100' 
+                    : 'bg-gradient-to-tr from-primary/15 via-accent/10 to-primary/15 opacity-70'
                 }`}
                 style={{
-                  animation: isRecording ? 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite 0.1s' : 'none'
+                  animation: isRecording ? 'pulse 2.5s cubic-bezier(0.4, 0, 0.6, 1) infinite 0.3s' : 'none'
                 }}
               />
 
-              {/* Main orb with heart pump animation */}
+              {/* Main orb with gradient and breathing animation */}
               <div 
-                className="relative w-48 h-48 rounded-full bg-gradient-to-br from-primary/20 via-primary/30 to-primary/40 backdrop-blur-sm border border-primary/20 shadow-[0_0_50px_rgba(255,255,255,0.1)] flex items-center justify-center"
+                className={`relative w-56 h-56 rounded-full backdrop-blur-xl border shadow-2xl flex items-center justify-center transition-all duration-500 ${
+                  isRecording
+                    ? 'bg-gradient-to-br from-primary/30 via-accent/25 to-primary/35 border-primary/30 shadow-[0_0_60px_rgba(var(--primary-rgb),0.4)]'
+                    : 'bg-gradient-to-br from-primary/15 via-accent/10 to-primary/20 border-primary/15 shadow-[0_0_30px_rgba(var(--primary-rgb),0.2)]'
+                }`}
                 style={{
                   animation: isRecording 
-                    ? 'heartPump 1.2s ease-in-out infinite' 
+                    ? 'breathe 2s ease-in-out infinite' 
                     : 'none',
                   transformOrigin: 'center'
                 }}
               >
-                {/* Inner glow */}
-                <div className="absolute inset-8 rounded-full bg-primary/10 blur-xl" />
+                {/* Inner gradient glow */}
+                <div className={`absolute inset-12 rounded-full blur-2xl transition-all duration-500 ${
+                  isRecording 
+                    ? 'bg-gradient-to-br from-primary/40 to-accent/30 opacity-100' 
+                    : 'bg-gradient-to-br from-primary/20 to-accent/15 opacity-60'
+                }`} />
                 
-                {/* Mic icon */}
-                <Mic className="w-16 h-16 text-primary relative z-10" />
+                {/* Subtle rotating gradient overlay */}
+                {isRecording && (
+                  <div 
+                    className="absolute inset-0 rounded-full bg-gradient-to-r from-transparent via-white/5 to-transparent"
+                    style={{
+                      animation: 'rotate 4s linear infinite'
+                    }}
+                  />
+                )}
               </div>
 
-              {/* Pulsing rings */}
+              {/* Expanding rings on recording */}
               {isRecording && (
                 <>
                   <div 
-                    className="absolute w-48 h-48 rounded-full border border-primary/30"
+                    className="absolute w-56 h-56 rounded-full border-2 border-primary/20"
                     style={{
-                      animation: 'ping 2s cubic-bezier(0, 0, 0.2, 1) infinite'
+                      animation: 'expandFade 2.5s cubic-bezier(0, 0, 0.2, 1) infinite'
                     }}
                   />
                   <div 
-                    className="absolute w-48 h-48 rounded-full border border-primary/20"
+                    className="absolute w-56 h-56 rounded-full border-2 border-accent/15"
                     style={{
-                      animation: 'ping 2s cubic-bezier(0, 0, 0.2, 1) infinite 0.5s'
+                      animation: 'expandFade 2.5s cubic-bezier(0, 0, 0.2, 1) infinite 0.8s'
+                    }}
+                  />
+                  <div 
+                    className="absolute w-56 h-56 rounded-full border border-primary/10"
+                    style={{
+                      animation: 'expandFade 2.5s cubic-bezier(0, 0, 0.2, 1) infinite 1.6s'
                     }}
                   />
                 </>
@@ -186,26 +211,42 @@ const CheckIn = () => {
               <p className="text-sm text-muted-foreground font-light">tap to speak</p>
             )}
             {isRecording && (
-              <p className="text-base text-foreground font-medium">Listening...</p>
+              <p className="text-base text-foreground font-medium animate-pulse">Listening...</p>
             )}
             {voiceStep === "processing" && (
-              <p className="text-base text-foreground font-medium">Processing...</p>
+              <p className="text-base text-foreground font-medium animate-pulse">Processing...</p>
             )}
           </div>
 
           <style>{`
-            @keyframes heartPump {
+            @keyframes breathe {
               0%, 100% {
                 transform: scale(1);
-              }
-              25% {
-                transform: scale(1.05);
+                opacity: 1;
               }
               50% {
-                transform: scale(1);
+                transform: scale(1.05);
+                opacity: 0.95;
               }
-              75% {
-                transform: scale(1.08);
+            }
+            
+            @keyframes expandFade {
+              0% {
+                transform: scale(1);
+                opacity: 0.6;
+              }
+              100% {
+                transform: scale(1.8);
+                opacity: 0;
+              }
+            }
+            
+            @keyframes rotate {
+              from {
+                transform: rotate(0deg);
+              }
+              to {
+                transform: rotate(360deg);
               }
             }
           `}</style>
