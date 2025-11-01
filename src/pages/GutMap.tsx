@@ -118,33 +118,67 @@ const GutMap = () => {
                             Gut: {entry.gutFeeling} • {entry.willIgnore === "no" ? "Honored it" : "Ignored it"}
                           </p>
                           {entry.decision && (
-                            <div className="mt-3 space-y-2">
-                              <div className="flex items-start gap-2">
-                                <FileText className="w-4 h-4 text-muted-foreground mt-0.5 flex-shrink-0" />
-                                <p className="text-sm text-foreground font-light italic">
-                                  {entry.decision}
-                                </p>
-                              </div>
-                              {entry.consequence && (
-                                <div className="pl-6 pt-2 border-l-2 border-primary/20 ml-0.5">
-                                  <p className="text-xs text-primary font-medium mb-1">
-                                    What happened
+                            <div className="mt-4 space-y-3">
+                              <div className="p-4 bg-secondary/30 rounded-2xl border border-border/50">
+                                <div className="flex items-start gap-3">
+                                  <FileText className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                                  <p className="text-sm text-foreground font-light flex-1">
+                                    {entry.decision}
                                   </p>
-                                  <p className="text-sm text-muted-foreground font-light">
+                                </div>
+                              </div>
+                              
+                              {selectedEntry === index ? (
+                                <div className="space-y-3 animate-in slide-in-from-top-2 duration-300">
+                                  <Textarea
+                                    value={consequence}
+                                    onChange={(e) => setConsequence(e.target.value)}
+                                    placeholder="What happened? How did it turn out?"
+                                    className="bg-background/80 border-border/50 rounded-2xl min-h-[100px] resize-none text-sm focus:border-primary/50 transition-all"
+                                    autoFocus
+                                  />
+                                  <div className="flex gap-2">
+                                    <button
+                                      onClick={() => {
+                                        setSelectedEntry(null);
+                                        setConsequence("");
+                                      }}
+                                      className="flex-1 py-2 px-4 rounded-xl text-sm font-light text-muted-foreground hover:text-foreground hover:bg-secondary/50 transition-all"
+                                    >
+                                      Cancel
+                                    </button>
+                                    <button
+                                      onClick={() => updateConsequence(index)}
+                                      disabled={!consequence.trim()}
+                                      className="flex-1 py-2 px-4 rounded-xl text-sm font-light bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                                    >
+                                      Save
+                                    </button>
+                                  </div>
+                                </div>
+                              ) : entry.consequence ? (
+                                <div className="p-4 bg-primary/5 rounded-2xl border border-primary/10 animate-in fade-in duration-300">
+                                  <p className="text-xs text-primary/70 font-medium mb-2 uppercase tracking-wide">
+                                    Outcome
+                                  </p>
+                                  <p className="text-sm text-foreground/90 font-light leading-relaxed">
                                     {entry.consequence}
                                   </p>
                                 </div>
-                              )}
-                              {!entry.consequence && (
+                              ) : (
                                 <button
                                   onClick={() => {
                                     setSelectedEntry(index);
                                     setConsequence("");
                                   }}
-                                  className="pl-6 flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors group"
+                                  className="w-full py-3 px-4 rounded-xl border border-dashed border-border/50 hover:border-primary/50 hover:bg-primary/5 transition-all group"
                                 >
-                                  <Plus className="w-3.5 h-3.5 group-hover:text-primary transition-colors" />
-                                  <span className="font-light">Log outcome</span>
+                                  <div className="flex items-center justify-center gap-2">
+                                    <Plus className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                                    <span className="text-sm text-muted-foreground group-hover:text-primary font-light transition-colors">
+                                      Log outcome
+                                    </span>
+                                  </div>
                                 </button>
                               )}
                             </div>
@@ -168,49 +202,6 @@ const GutMap = () => {
             )}
           </TabsContent>
 
-          {/* Modal for tracking consequence */}
-          {selectedEntry !== null && (
-            <div className="fixed inset-0 bg-background/95 backdrop-blur-md z-50 flex items-end sm:items-center justify-center p-0 sm:p-6 animate-in fade-in duration-200">
-              <Card className="bg-card border-border border-t sm:border rounded-t-[2rem] sm:rounded-[1.5rem] w-full max-w-md shadow-2xl animate-in slide-in-from-bottom-4 sm:slide-in-from-bottom-0 duration-300">
-                <div className="p-6 space-y-5">
-                  <div className="space-y-1">
-                    <h3 className="text-xl font-medium text-foreground">
-                      Log outcome
-                    </h3>
-                    <p className="text-sm text-muted-foreground font-light">
-                      What happened after your decision?
-                    </p>
-                  </div>
-                  <Textarea
-                    value={consequence}
-                    onChange={(e) => setConsequence(e.target.value)}
-                    placeholder="It worked out because... / I learned that... / The result was..."
-                    className="bg-background/50 border-border rounded-2xl min-h-[140px] resize-none focus:bg-background transition-colors"
-                    autoFocus
-                  />
-                  <div className="flex gap-3 pt-2">
-                    <Button
-                      onClick={() => {
-                        setSelectedEntry(null);
-                        setConsequence("");
-                      }}
-                      variant="outline"
-                      className="flex-1 rounded-xl"
-                    >
-                      Cancel
-                    </Button>
-                    <Button
-                      onClick={() => updateConsequence(selectedEntry)}
-                      disabled={!consequence.trim()}
-                      className="flex-1 rounded-xl"
-                    >
-                      Save outcome
-                    </Button>
-                  </div>
-                </div>
-              </Card>
-            </div>
-          )}
 
           {/* Signals Tab */}
           <TabsContent value="signals" className="space-y-4 mt-6">
