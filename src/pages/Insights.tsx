@@ -86,9 +86,9 @@ const Insights = () => {
       const reader = response.body?.getReader();
       const decoder = new TextDecoder();
       let patternText = "";
-      let hasValidJSON = false;
 
       if (reader) {
+        // Accumulate the complete response
         while (true) {
           const { done, value } = await reader.read();
           if (done) break;
@@ -103,30 +103,37 @@ const Insights = () => {
                 const content = data.choices?.[0]?.delta?.content;
                 if (content) {
                   patternText += content;
-                  
-                  // Try to validate as we go
-                  const cleaned = patternText.trim()
-                    .replace(/```json\s*/gi, '')
-                    .replace(/```\s*/g, '');
-                  
-                  if (cleaned.includes('[{') && cleaned.includes('}]')) {
-                    hasValidJSON = true;
-                  }
-                  
-                  setPatterns(patternText);
                 }
               } catch (e) {
-                console.error("Parse error:", e);
+                // Skip invalid chunks during streaming
               }
             }
           }
         }
-      }
 
-      // If we didn't get valid JSON after streaming, set an error state
-      if (!hasValidJSON) {
-        console.log("No valid JSON found in patterns");
-        setPatterns("ERROR: Could not parse patterns");
+        // Now validate the complete response
+        if (patternText.trim()) {
+          const cleaned = patternText.trim()
+            .replace(/```json\s*/gi, '')
+            .replace(/```\s*/g, '');
+          
+          // Test if we have valid JSON
+          try {
+            const jsonMatch = cleaned.match(/\[\s*\{[\s\S]*\}\s*\]/);
+            if (jsonMatch) {
+              JSON.parse(jsonMatch[0]); // Validate it's parseable
+              setPatterns(patternText);
+            } else {
+              console.error("No valid JSON array found");
+              setPatterns("ERROR: Could not parse patterns");
+            }
+          } catch (e) {
+            console.error("JSON validation failed:", e);
+            setPatterns("ERROR: Could not parse patterns");
+          }
+        } else {
+          setPatterns("ERROR: No response received");
+        }
       }
     } catch (error) {
       console.error("Pattern analysis error:", error);
