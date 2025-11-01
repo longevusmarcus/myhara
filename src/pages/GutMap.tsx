@@ -24,8 +24,8 @@ const GutMap = () => {
     const storedEntries = JSON.parse(localStorage.getItem("gutEntries") || "[]");
     setEntries(storedEntries);
     
-    // Load cached analyses or trigger new ones if enough data
-    if (storedEntries.length >= 3) {
+    // Load cached analyses or trigger new ones if any data exists
+    if (storedEntries.length >= 1) {
       loadSignalsAnalysis(storedEntries);
       loadTrustAnalysis(storedEntries);
       loadToneAnalysis(storedEntries);
@@ -46,7 +46,7 @@ const GutMap = () => {
     setLoadingSignals(true);
     try {
       const tapEntries = allEntries.filter(e => e.mode === "tap" && e.bodySensation);
-      if (tapEntries.length < 3) {
+      if (tapEntries.length < 1) {
         setSignalsData({ insufficient: true });
         return;
       }
@@ -103,7 +103,7 @@ const GutMap = () => {
     setLoadingTrust(true);
     try {
       const decisionsWithOutcome = allEntries.filter(e => e.willIgnore !== undefined);
-      if (decisionsWithOutcome.length < 3) {
+      if (decisionsWithOutcome.length < 1) {
         setTrustData({ insufficient: true });
         return;
       }
@@ -159,7 +159,7 @@ const GutMap = () => {
     setLoadingTone(true);
     try {
       const voiceEntries = allEntries.filter(e => e.mode === "voice");
-      if (voiceEntries.length < 2) {
+      if (voiceEntries.length < 1) {
         setToneData({ insufficient: true });
         return;
       }
@@ -608,7 +608,7 @@ const GutMap = () => {
                 </div>
               ) : signalsData?.insufficient ? (
                 <p className="text-sm text-muted-foreground font-light text-center py-4">
-                  Log more check-ins with body sensations to see your signal patterns
+                  Start logging check-ins with body sensations to see your signal patterns
                 </p>
               ) : signalsData?.signals ? (
                 <div className="space-y-3">
@@ -643,7 +643,7 @@ const GutMap = () => {
                 </div>
               ) : trustData?.insufficient ? (
                 <p className="text-sm text-muted-foreground font-light text-center py-4">
-                  Log more decisions and outcomes to see your trust patterns
+                  Start logging decisions and outcomes to see your trust patterns
                 </p>
               ) : trustData ? (
                 <div className="space-y-4">
@@ -691,7 +691,7 @@ const GutMap = () => {
                 </div>
               ) : toneData?.insufficient || toneData?.insufficientData ? (
                 <p className="text-sm text-muted-foreground font-light text-center py-4">
-                  Log more voice check-ins to see your tone patterns
+                  Start logging voice check-ins to see your tone patterns
                 </p>
               ) : toneData ? (
                 <div className="space-y-4">
