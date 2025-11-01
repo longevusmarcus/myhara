@@ -158,7 +158,13 @@ const GutMap = () => {
     
     setLoadingTone(true);
     try {
-      const voiceEntries = allEntries.filter(e => e.mode === "voice");
+      // Filter for voice entries - check both mode field and presence of transcript/aiInsights
+      const voiceEntries = allEntries.filter(e => 
+        e.mode === "voice" || e.transcript || e.aiInsights
+      );
+      
+      console.log('Voice entries found for tone analysis:', voiceEntries.length);
+      
       if (voiceEntries.length < 1) {
         setToneData({ insufficient: true });
         return;
