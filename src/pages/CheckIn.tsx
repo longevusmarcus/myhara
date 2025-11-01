@@ -530,9 +530,9 @@ const CheckIn = () => {
                 }}
                 className="bg-card border-border p-6 cursor-pointer hover:bg-card/80 transition-colors rounded-[1.25rem]"
               >
-                <p className="text-base text-foreground font-light">Note my response</p>
+                <p className="text-base text-foreground font-light">Get personalized guidance</p>
                 <p className="text-sm text-muted-foreground font-light mt-2">
-                  "You could say, 'Let me think and get back to you' — that usually helps you honor your pause."
+                  AI will analyze your voice and provide specific actions for your situation
                 </p>
               </Card>
 
@@ -575,33 +575,59 @@ const CheckIn = () => {
 
     if (voiceStep === "insights") {
       return (
-        <div className="min-h-screen bg-background flex flex-col p-6">
-          <button onClick={() => navigate("/home")} className="self-start mb-8">
+        <div className="min-h-screen bg-background flex flex-col p-6 pb-24">
+          <button onClick={() => navigate("/home")} className="self-start mb-4">
             <ArrowLeft className="w-6 h-6 text-foreground" />
           </button>
 
-          <div className="flex-1 flex flex-col justify-start max-w-md mx-auto w-full space-y-6 pt-8">
-            <div className="space-y-2">
-              <h2 className="text-2xl text-foreground font-light">Your Gut Analysis</h2>
-              <p className="text-sm text-muted-foreground italic">"{transcript}"</p>
+          <div className="flex-1 flex flex-col max-w-2xl mx-auto w-full space-y-6">
+            <div className="space-y-3">
+              <h1 className="text-3xl text-foreground font-light">Your Gut Analysis</h1>
+              <Card className="bg-card/50 border-border/50 p-4 rounded-xl">
+                <p className="text-sm text-muted-foreground italic leading-relaxed">
+                  "{transcript}"
+                </p>
+              </Card>
             </div>
 
-            <Card className="bg-card border-border p-6 rounded-[1.25rem]">
-              <div className="space-y-4">
-                <div className="prose prose-sm max-w-none">
-                  <div className="text-foreground/90 font-light whitespace-pre-wrap leading-relaxed">
-                    {aiInsights}
-                  </div>
-                </div>
-              </div>
-            </Card>
+            <div className="space-y-6">
+              {aiInsights.split('\n').map((section, idx) => {
+                // Parse markdown sections
+                if (section.startsWith('**') && section.endsWith('**')) {
+                  const title = section.replace(/\*\*/g, '').trim();
+                  return (
+                    <div key={idx} className="space-y-2">
+                      <h2 className="text-xl text-foreground font-medium">{title}</h2>
+                    </div>
+                  );
+                } else if (section.startsWith('•') || section.startsWith('-')) {
+                  return (
+                    <div key={idx} className="flex gap-3 pl-2">
+                      <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
+                      <p className="text-base text-foreground/90 font-light leading-relaxed flex-1">
+                        {section.replace(/^[•\-]\s*/, '')}
+                      </p>
+                    </div>
+                  );
+                } else if (section.trim()) {
+                  return (
+                    <p key={idx} className="text-base text-foreground/80 font-light leading-relaxed">
+                      {section}
+                    </p>
+                  );
+                }
+                return null;
+              })}
+            </div>
 
-            <button
-              onClick={handleVoiceComplete}
-              className="w-full py-4 px-6 bg-primary hover:bg-primary/90 text-primary-foreground rounded-[1.25rem] font-light transition-colors"
-            >
-              Continue
-            </button>
+            <div className="pt-4">
+              <button
+                onClick={handleVoiceComplete}
+                className="w-full py-4 px-6 bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl font-light transition-all shadow-lg hover:shadow-xl"
+              >
+                Save & Continue
+              </button>
+            </div>
           </div>
         </div>
       );
