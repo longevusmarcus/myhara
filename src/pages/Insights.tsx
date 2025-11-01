@@ -73,24 +73,7 @@ const Insights = () => {
             messages: [
               {
                 role: "user",
-                content: `Analyze these check-in entries and provide 2-3 distinct patterns. For each pattern, provide:
-1. Pattern Title (clear and specific)
-2. Observation (what you noticed)
-3. Intuition Guide (actionable insight)
-4. Questions (2-3 reflection questions)
-
-Format your response as JSON array:
-[
-  {
-    "title": "Pattern name",
-    "observation": "What you observed",
-    "intuitionGuide": "Actionable guidance",
-    "relatedEntries": ["brief entry summaries"],
-    "questions": ["question 1", "question 2"]
-  }
-]
-
-Entries:\n${JSON.stringify(entriesSummary, null, 2)}`
+                content: `Analyze these entries and return 2-3 patterns. Return ONLY the JSON array, nothing else:\n\n${JSON.stringify(entriesSummary, null, 2)}`
               }
             ],
             type: "pattern_analysis"
@@ -103,6 +86,7 @@ Entries:\n${JSON.stringify(entriesSummary, null, 2)}`
       const reader = response.body?.getReader();
       const decoder = new TextDecoder();
       let patternText = "";
+      let hasValidJSON = false;
 
       if (reader) {
         while (true) {
@@ -119,6 +103,16 @@ Entries:\n${JSON.stringify(entriesSummary, null, 2)}`
                 const content = data.choices?.[0]?.delta?.content;
                 if (content) {
                   patternText += content;
+                  
+                  // Try to validate as we go
+                  const cleaned = patternText.trim()
+                    .replace(/```json\s*/gi, '')
+                    .replace(/```\s*/g, '');
+                  
+                  if (cleaned.includes('[{') && cleaned.includes('}]')) {
+                    hasValidJSON = true;
+                  }
+                  
                   setPatterns(patternText);
                 }
               } catch (e) {
@@ -128,8 +122,15 @@ Entries:\n${JSON.stringify(entriesSummary, null, 2)}`
           }
         }
       }
+
+      // If we didn't get valid JSON after streaming, set an error state
+      if (!hasValidJSON) {
+        console.log("No valid JSON found in patterns");
+        setPatterns("ERROR: Could not parse patterns");
+      }
     } catch (error) {
       console.error("Pattern analysis error:", error);
+      setPatterns("ERROR: Failed to load patterns");
     } finally {
       setLoadingPatterns(false);
     }
@@ -332,7 +333,7 @@ Entries:\n${JSON.stringify(entriesSummary, null, 2)}`
               </Card>
             )}
             
-            {patterns && (() => {
+            {patterns && patterns !== "ERROR: Could not parse patterns" && patterns !== "ERROR: Failed to load patterns" && (() => {
               try {
                 let cleanedPatterns = patterns.trim();
                 
@@ -340,20 +341,20 @@ Entries:\n${JSON.stringify(entriesSummary, null, 2)}`
                 cleanedPatterns = cleanedPatterns
                   .replace(/```json\s*/gi, '')
                   .replace(/```\s*/g, '')
-                  .replace(/^[^[{]*/,'') // Remove any text before JSON starts
-                  .replace(/[^}\]]*$/,''); // Remove any text after JSON ends
+                  .replace(/^[^[{]*/,'')
+                  .replace(/[^}\]]*$/,'');
                 
-                // Find and extract JSON array
-                const jsonMatch = cleanedPatterns.match(/\[[\s\S]*\]/);
+                // Find JSON array
+                const jsonMatch = cleanedPatterns.match(/\[\s*\{[\s\S]*\}\s*\]/);
                 
                 if (jsonMatch) {
                   let jsonStr = jsonMatch[0];
                   
-                  // Fix common JSON issues
+                  // Fix common issues
                   jsonStr = jsonStr
-                    .replace(/,(\s*[}\]])/g, '$1') // Remove trailing commas
-                    .replace(/\n/g, ' ') // Remove line breaks within strings
-                    .replace(/\s+/g, ' '); // Normalize whitespace
+                    .replace(/,(\s*[}\]])/g, '$1')
+                    .replace(/\n/g, ' ')
+                    .replace(/\s+/g, ' ');
                   
                   const patternData = JSON.parse(jsonStr);
                   
@@ -389,20 +390,37 @@ Entries:\n${JSON.stringify(entriesSummary, null, 2)}`
                 console.log("Raw patterns:", patterns.substring(0, 500));
               }
               
-              // Fallback: still loading or couldn't parse
-              return (
-                <Card className="bg-card border-border p-6 rounded-2xl">
-                  <div className="flex items-center justify-center py-8">
-                    <div className="text-center space-y-3">
-                      <Loader2 className="w-6 h-6 animate-spin text-primary mx-auto" />
-                      <p className="text-sm text-muted-foreground font-light">
-                        Analyzing your patterns...
-                      </p>
-                    </div>
-                  </div>
-                </Card>
-              );
+              // Still processing
+              return null;
             })()}
+            
+            {(loadingPatterns || (patterns && !patterns.startsWith("ERROR") && patterns.indexOf('[{') === -1)) && (
+              <Card className="bg-card border-border p-8 rounded-2xl">
+                <div className="flex flex-col items-center gap-4 text-muted-foreground">
+                  <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                  <p className="text-sm">Analyzing your patterns...</p>
+                </div>
+              </Card>
+            )}
+            
+            {patterns && patterns.startsWith("ERROR") && (
+              <Card className="bg-card border-border p-6 rounded-2xl">
+                <div className="text-center space-y-3">
+                  <p className="text-sm text-muted-foreground">
+                    Unable to analyze patterns right now. Please try again later.
+                  </p>
+                  <button
+                    onClick={() => {
+                      setPatterns("");
+                      loadPatternAnalysis(entries);
+                    }}
+                    className="px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm hover:bg-primary/90 transition-colors"
+                  >
+                    Retry Analysis
+                  </button>
+                </div>
+              </Card>
+            )}
             
             {!loadingPatterns && !patterns && (
               <Card className="bg-card border-border p-8 rounded-2xl">

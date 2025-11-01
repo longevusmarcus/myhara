@@ -66,32 +66,33 @@ Provide your response in this format:
 
 Be warm, specific, and reference their actual data. Help them trust their intuition more.`;
     } else if (type === "pattern_analysis") {
-      systemPrompt = `You are an insightful analyst helping users understand their gut instinct patterns. Analyze their check-in history to identify 2-3 meaningful patterns.
+      systemPrompt = `You are an insightful analyst. Return ONLY valid JSON with this EXACT structure. No extra text.
 
-CRITICAL INSTRUCTIONS:
-1. Respond with ONLY valid JSON - no markdown, no backticks, no explanation
-2. Ensure all strings are properly escaped
-3. Do not use line breaks within string values
-4. Close all quotes and brackets properly
+CRITICAL: Each object must be wrapped in curly braces {}
 
-Return a JSON array with this exact structure:
 [
   {
-    "title": "Pattern name here",
-    "observation": "What you observed in 1-2 clear sentences.",
-    "intuitionGuide": "Actionable guidance in 1-2 sentences.",
-    "relatedEntries": ["Brief entry summary 1", "Brief entry summary 2"],
+    "title": "Pattern Name",
+    "observation": "Your observation here.",
+    "intuitionGuide": "Actionable guidance here.",
+    "relatedEntries": ["Entry 1", "Entry 2"],
     "questions": ["Question 1?", "Question 2?"]
+  },
+  {
+    "title": "Second Pattern",
+    "observation": "Another observation.",
+    "intuitionGuide": "More guidance.",
+    "relatedEntries": ["Entry 3"],
+    "questions": ["Question 3?"]
   }
 ]
 
-Focus on patterns like:
-- When their intuition is clearest vs unclear
-- Body sensations that correlate with outcomes
-- Times they honor vs ignore their gut
-- Specific triggers or contexts
-
-Keep all text concise and valuable. Make insights specific to their actual data.`;
+Rules:
+- Always wrap objects in {}
+- Use double quotes for all strings
+- No trailing commas
+- No line breaks in strings
+- Return 2-3 patterns maximum`;
     } else if (type === "voice_analysis") {
       systemPrompt = `You are an expert at analyzing voice recordings for gut instinct signals. Analyze the user's spoken words, tone indicators, and emotional state to provide insights about their gut feeling.
 
