@@ -303,7 +303,10 @@ const Home = () => {
               <p className="text-base font-light text-foreground leading-relaxed">
                 {dailyFocus}
               </p>
-              <button className="flex-shrink-0 w-8 h-8 rounded-full bg-foreground/10 flex items-center justify-center hover:bg-foreground/20 transition-colors">
+              <button 
+                onClick={() => navigate("/map")}
+                className="flex-shrink-0 w-8 h-8 rounded-full bg-foreground/10 flex items-center justify-center hover:bg-foreground/20 transition-colors"
+              >
                 <ArrowRight className="w-4 h-4 text-foreground" />
               </button>
             </>
