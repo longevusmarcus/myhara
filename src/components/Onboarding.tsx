@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Heart, Sparkles, Brain, TrendingUp } from "lucide-react";
+import { Heart, Sparkles, Brain, TrendingUp, DollarSign, Users, Target, Frown, MessageSquareOff, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import VoiceBubbleLogo from "./VoiceBubbleLogo";
@@ -34,9 +34,9 @@ const Onboarding = ({ onComplete }: OnboardingProps) => {
       <div className="min-h-screen bg-background flex items-center justify-center p-6">
         <div className="max-w-md w-full animate-in fade-in zoom-in duration-700">
           <div className="text-center mb-8">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-success/10 border border-success/20 rounded-full mb-6">
-              <Sparkles className="w-4 h-4 text-success" />
-              <span className="text-sm text-success font-light">Science-Based</span>
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-accent/10 border border-accent/20 rounded-full mb-6">
+              <Sparkles className="w-4 h-4 text-accent" />
+              <span className="text-sm text-accent font-light">Science-Based</span>
             </div>
             
             <h1 className="text-3xl font-cursive text-foreground mb-4">
@@ -83,9 +83,9 @@ const Onboarding = ({ onComplete }: OnboardingProps) => {
   // Step 2: Goal Selection
   if (step === 2) {
     const goals = [
-      { id: "financial", emoji: "💰", label: "Better financial decisions" },
-      { id: "relationships", emoji: "💝", label: "Healthier relationships" },
-      { id: "career", emoji: "🎯", label: "Career & purpose clarity" }
+      { id: "financial", icon: DollarSign, label: "Better financial decisions", color: "text-accent" },
+      { id: "relationships", icon: Users, label: "Healthier relationships", color: "text-primary" },
+      { id: "career", icon: Target, label: "Career & purpose clarity", color: "text-secondary" }
     ];
 
     return (
@@ -101,18 +101,23 @@ const Onboarding = ({ onComplete }: OnboardingProps) => {
           </div>
 
           <div className="space-y-3">
-            {goals.map((goal) => (
-              <button
-                key={goal.id}
-                onClick={() => handleGoalSelect(goal.id)}
-                className={`w-full p-5 bg-card/40 border border-border/30 rounded-[1.25rem] flex items-center gap-4 hover:bg-card/60 transition-all hover:scale-[1.02] ${
-                  selectedGoal === goal.id ? "border-primary bg-primary/10" : ""
-                }`}
-              >
-                <span className="text-3xl">{goal.emoji}</span>
-                <span className="text-base text-foreground font-light">{goal.label}</span>
-              </button>
-            ))}
+            {goals.map((goal) => {
+              const IconComponent = goal.icon;
+              return (
+                <button
+                  key={goal.id}
+                  onClick={() => handleGoalSelect(goal.id)}
+                  className={`w-full p-5 bg-card/40 border border-border/30 rounded-[1.25rem] flex items-center gap-4 hover:bg-card/60 transition-all hover:scale-[1.02] ${
+                    selectedGoal === goal.id ? "border-primary bg-primary/10" : ""
+                  }`}
+                >
+                  <div className={`p-2 rounded-lg bg-card/60 ${goal.color}`}>
+                    <IconComponent className="w-5 h-5" />
+                  </div>
+                  <span className="text-base text-foreground font-light">{goal.label}</span>
+                </button>
+              );
+            })}
           </div>
         </div>
       </div>
@@ -122,9 +127,9 @@ const Onboarding = ({ onComplete }: OnboardingProps) => {
   // Step 3: Common Challenge
   if (step === 3) {
     const challenges = [
-      { id: "please-others", emoji: "😔", label: "Putting my needs last to please others" },
-      { id: "avoid-conflict", emoji: "🤐", label: "Keeping quiet to avoid conflict" },
-      { id: "insecure", emoji: "🤔", label: "Slipping back into insecure patterns" }
+      { id: "please-others", icon: Frown, label: "Putting my needs last to please others", color: "text-primary" },
+      { id: "avoid-conflict", icon: MessageSquareOff, label: "Keeping quiet to avoid conflict", color: "text-secondary" },
+      { id: "insecure", icon: AlertCircle, label: "Slipping back into insecure patterns", color: "text-accent" }
     ];
 
     return (
@@ -140,19 +145,24 @@ const Onboarding = ({ onComplete }: OnboardingProps) => {
           </div>
 
           <div className="space-y-3">
-            {challenges.map((challenge) => (
-              <button
-                key={challenge.id}
-                onClick={() => {
-                  setSelectedGoal(challenge.id);
-                  setTimeout(() => setStep(4), 300);
-                }}
-                className="w-full p-5 bg-card/40 border border-border/30 rounded-[1.25rem] flex items-center gap-4 hover:bg-card/60 transition-all hover:scale-[1.02] text-left"
-              >
-                <span className="text-3xl flex-shrink-0">{challenge.emoji}</span>
-                <span className="text-base text-foreground font-light">{challenge.label}</span>
-              </button>
-            ))}
+            {challenges.map((challenge) => {
+              const IconComponent = challenge.icon;
+              return (
+                <button
+                  key={challenge.id}
+                  onClick={() => {
+                    setSelectedGoal(challenge.id);
+                    setTimeout(() => setStep(4), 300);
+                  }}
+                  className="w-full p-5 bg-card/40 border border-border/30 rounded-[1.25rem] flex items-center gap-4 hover:bg-card/60 transition-all hover:scale-[1.02] text-left"
+                >
+                  <div className={`p-2 rounded-lg bg-card/60 flex-shrink-0 ${challenge.color}`}>
+                    <IconComponent className="w-5 h-5" />
+                  </div>
+                  <span className="text-base text-foreground font-light">{challenge.label}</span>
+                </button>
+              );
+            })}
           </div>
         </div>
       </div>
