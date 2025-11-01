@@ -99,120 +99,68 @@ Provide your response in this EXACT format with markdown:
 
 Keep it warm, direct, and practical. Help them distinguish gut feeling from rational thought, and give them clear next steps.`;
     } else if (type === "signals_analysis") {
-      systemPrompt = `Analyze the user's body sensations/signals from their check-ins and identify their most reliable gut feeling indicators.
+      systemPrompt = `You are analyzing body sensations to identify the most reliable gut feeling indicators.
 
-For each top signal (return 3-5), provide:
-- signal: The body sensation name
-- accuracy: Estimated accuracy percentage based on outcomes
-- insight: Brief insight about this signal (1 sentence)
+Analyze the data and return ONLY valid JSON (no markdown, no extra text):
 
-Return structured data that shows which physical sensations are most reliable for them.`;
+{
+  "signals": [
+    {"signal": "Body sensation name", "accuracy": 75, "insight": "Brief insight about reliability"},
+    {"signal": "Another sensation", "accuracy": 82, "insight": "Another insight"}
+  ]
+}
+
+Return 3-5 signals. Base accuracy on outcomes and consistency.`;
     } else if (type === "trust_analysis") {
-      systemPrompt = `Analyze the user's trust patterns - when they honor vs ignore their gut feelings and the consequences.
+      systemPrompt = `Analyze trust patterns - when they honor vs ignore gut feelings.
 
-Provide:
-- honoredPercentage: Percentage of times they honored their gut
-- ignoredPercentage: Percentage of times they ignored their gut
-- honoredOutcome: What typically happens when they honor their gut (1-2 sentences)
-- ignoredOutcome: What typically happens when they ignore their gut (1-2 sentences)
-- recommendation: Personalized recommendation based on their pattern (1-2 sentences)
+Return ONLY valid JSON (no markdown, no extra text):
 
-Focus on actual outcomes and consequences from their data.`;
+{
+  "honoredPercentage": 45,
+  "ignoredPercentage": 55,
+  "honoredOutcome": "Description of what typically happens when honoring gut",
+  "ignoredOutcome": "Description of what typically happens when ignoring gut",
+  "recommendation": "Personalized recommendation based on their pattern"
+}
+
+Keep descriptions to 1-2 sentences.`;
     } else if (type === "tone_analysis") {
-      systemPrompt = `Analyze voice check-ins to identify tone patterns when honoring vs ignoring gut feelings.
+      systemPrompt = `Analyze voice tone patterns from check-ins.
 
-Provide:
-- honoredTone: Description of their tone/voice when honoring gut (1-2 sentences)
-- ignoredTone: Description of their tone/voice when ignoring gut (1-2 sentences)
-- keyIndicators: Array of 2-3 key vocal/word indicators that signal each state
-- guidance: Practical guidance on what to listen for in their own voice (1-2 sentences)
+Return ONLY valid JSON (no markdown, no extra text):
 
-If insufficient voice data, indicate that more voice check-ins are needed for analysis.`;
+{
+  "honoredTone": "Description of voice when honoring gut",
+  "ignoredTone": "Description of voice when ignoring gut",
+  "keyIndicators": ["Indicator 1", "Indicator 2", "Indicator 3"],
+  "guidance": "Practical guidance on what to listen for",
+  "insufficientData": false
+}
+
+Set insufficientData to true if less than 3 voice entries. Keep all text to 1-2 sentences.`;
     } else {
       systemPrompt = `You are a supportive gut instinct guide. Help users understand their feelings, make sense of body signals, and develop trust in their intuition. Be warm, curious, and empowering.`;
     }
 
-    // Special handling for structured analysis types: use function calling (tools) and return structured JSON
+    // Special handling for structured analysis types: return simple JSON without tool calling
     if (type === "pattern_analysis" || type === "signals_analysis" || type === "trust_analysis" || type === "tone_analysis") {
-      let toolSchema: any;
-      
-      if (type === "signals_analysis") {
-        toolSchema = {
-          type: "function",
-          function: {
-            name: "return_signals",
-            description: "Return 3-5 top body signals with their accuracy and insights",
-            parameters: {
-              type: "object",
-              properties: {
-                signals: {
-                  type: "array",
-                  minItems: 3,
-                  maxItems: 5,
-                  items: {
-                    type: "object",
-                    properties: {
-                      signal: { type: "string" },
-                      accuracy: { type: "number" },
-                      insight: { type: "string" }
-                    },
-                    required: ["signal", "accuracy", "insight"],
-                    additionalProperties: false
-                  }
-                }
-              },
-              required: ["signals"],
-              additionalProperties: false
-            }
-          }
-        };
-      } else if (type === "trust_analysis") {
-        toolSchema = {
-          type: "function",
-          function: {
-            name: "return_trust_analysis",
-            description: "Return trust pattern analysis",
-            parameters: {
-              type: "object",
-              properties: {
-                honoredPercentage: { type: "number" },
-                ignoredPercentage: { type: "number" },
-                honoredOutcome: { type: "string" },
-                ignoredOutcome: { type: "string" },
-                recommendation: { type: "string" }
-              },
-              required: ["honoredPercentage", "ignoredPercentage", "honoredOutcome", "ignoredOutcome", "recommendation"],
-              additionalProperties: false
-            }
-          }
-        };
-      } else if (type === "tone_analysis") {
-        toolSchema = {
-          type: "function",
-          function: {
-            name: "return_tone_analysis",
-            description: "Return tone pattern analysis from voice check-ins",
-            parameters: {
-              type: "object",
-              properties: {
-                honoredTone: { type: "string" },
-                ignoredTone: { type: "string" },
-                keyIndicators: { type: "array", items: { type: "string" } },
-                guidance: { type: "string" },
-                insufficientData: { type: "boolean" }
-              },
-              required: ["honoredTone", "ignoredTone", "keyIndicators", "guidance"],
-              additionalProperties: false
-            }
-          }
-        };
-      } else {
-        // pattern_analysis schema (existing)
-        toolSchema = {
+      const body: any = {
+        model: "google/gemini-2.5-flash",
+        messages: [
+          { role: "system", content: systemPrompt },
+          ...messages,
+        ],
+        stream: false
+      };
+
+      // Only use tool calling for pattern_analysis which is working
+      if (type === "pattern_analysis") {
+        body.tools = [{
           type: "function",
           function: {
             name: "return_patterns",
-            description: "Return 2-3 pattern cards with observation, actionable guidance, related entry excerpts, and reflection questions.",
+            description: "Return 2-3 pattern cards",
             parameters: {
               type: "object",
               properties: {
@@ -229,28 +177,16 @@ If insufficient voice data, indicate that more voice check-ins are needed for an
                       relatedEntries: { type: "array", items: { type: "string" } },
                       questions: { type: "array", items: { type: "string" } }
                     },
-                    required: ["title", "observation", "intuitionGuide", "relatedEntries", "questions"],
-                    additionalProperties: false
+                    required: ["title", "observation", "intuitionGuide", "relatedEntries", "questions"]
                   }
                 }
               },
-              required: ["patterns"],
-              additionalProperties: false
+              required: ["patterns"]
             }
           }
-        };
+        }];
+        body.tool_choice = { type: "function", function: { name: "return_patterns" } };
       }
-
-      const body: any = {
-        model: "google/gemini-2.5-flash",
-        messages: [
-          { role: "system", content: systemPrompt },
-          ...messages,
-        ],
-        stream: false,
-        tools: [toolSchema],
-        tool_choice: { type: "function", function: { name: toolSchema.function.name } }
-      };
 
       const aiResp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
         method: "POST",
@@ -263,19 +199,19 @@ If insufficient voice data, indicate that more voice check-ins are needed for an
 
       if (!aiResp.ok) {
         if (aiResp.status === 429) {
-          return new Response(JSON.stringify({ error: "Rate limit exceeded. Please try again later." }), {
+          return new Response(JSON.stringify({ error: "Rate limit exceeded" }), {
             status: 429,
             headers: { ...corsHeaders, "Content-Type": "application/json" },
           });
         }
         if (aiResp.status === 402) {
-          return new Response(JSON.stringify({ error: "AI credits exhausted. Please add funds in Settings > Usage." }), {
+          return new Response(JSON.stringify({ error: "AI credits exhausted" }), {
             status: 402,
             headers: { ...corsHeaders, "Content-Type": "application/json" },
           });
         }
         const t = await aiResp.text();
-        console.error(`AI gateway error (${type}):`, aiResp.status, t);
+        console.error(`AI error (${type}):`, aiResp.status, t);
         return new Response(JSON.stringify({ error: "AI service error" }), {
           status: 500,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -283,22 +219,32 @@ If insufficient voice data, indicate that more voice check-ins are needed for an
       }
 
       const aiData = await aiResp.json();
+      console.log(`${type} response:`, JSON.stringify(aiData).substring(0, 500));
 
       let result: unknown = null;
       try {
-        const toolCalls = aiData?.choices?.[0]?.message?.tool_calls;
-        if (toolCalls && toolCalls.length > 0) {
-          const argsStr = toolCalls[0]?.function?.arguments;
-          const args = JSON.parse(argsStr);
-          result = type === "pattern_analysis" ? args.patterns : args;
-        } else {
-          const content = aiData?.choices?.[0]?.message?.content;
-          if (typeof content === "string") {
-            result = JSON.parse(content);
+        if (type === "pattern_analysis") {
+          // Parse tool call response
+          const toolCalls = aiData?.choices?.[0]?.message?.tool_calls;
+          if (toolCalls && toolCalls.length > 0) {
+            const argsStr = toolCalls[0]?.function?.arguments;
+            const args = JSON.parse(argsStr);
+            result = args.patterns;
           }
+        } else {
+          // Parse direct JSON response
+          const content = aiData?.choices?.[0]?.message?.content || "";
+          // Remove markdown code blocks if present
+          const cleaned = content.replace(/```json\s*/gi, '').replace(/```\s*/g, '').trim();
+          result = JSON.parse(cleaned);
         }
       } catch (e) {
         console.error(`${type} parse error:`, e);
+        const errorMsg = e instanceof Error ? e.message : "Unknown error";
+        return new Response(JSON.stringify({ error: `Parse error: ${errorMsg}` }), {
+          status: 500,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
       }
 
       if (!result) {
