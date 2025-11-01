@@ -69,8 +69,8 @@ const Help = () => {
           </Card>
 
           <Card className="bg-card border-border p-4 rounded-[1.25rem] flex items-center gap-4 cursor-pointer hover:bg-card/80 transition-colors">
-            <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center">
-              <MessageCircle className="w-5 h-5 text-foreground" />
+            <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+              <MessageCircle className="w-5 h-5 text-primary" />
             </div>
             <div className="flex-1">
               <p className="text-base font-light text-foreground">Community</p>
@@ -80,8 +80,8 @@ const Help = () => {
           </Card>
 
           <Card className="bg-card border-border p-4 rounded-[1.25rem] flex items-center gap-4 cursor-pointer hover:bg-card/80 transition-colors">
-            <div className="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center">
-              <Mail className="w-5 h-5 text-accent" />
+            <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+              <Mail className="w-5 h-5 text-primary" />
             </div>
             <div className="flex-1">
               <p className="text-base font-light text-foreground">Contact support</p>
