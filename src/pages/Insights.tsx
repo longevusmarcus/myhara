@@ -334,57 +334,59 @@ Entries:\n${JSON.stringify(entriesSummary, null, 2)}`
             
             {patterns && (() => {
               try {
-                // Try to parse as JSON array first
-                const jsonMatch = patterns.match(/\[[\s\S]*\]/);
+                // Clean the patterns string and extract JSON
+                let cleanedPatterns = patterns.trim();
+                
+                // Remove markdown code blocks if present
+                cleanedPatterns = cleanedPatterns.replace(/```json\s*/g, '').replace(/```\s*/g, '');
+                
+                // Find JSON array
+                const jsonMatch = cleanedPatterns.match(/\[[\s\S]*\]/);
                 if (jsonMatch) {
                   const patternData = JSON.parse(jsonMatch[0]);
-                  const icons = [Brain, Compass, TrendingDown];
-                  const colors = ["primary", "accent", "primary"];
                   
-                  return (
-                    <div className="space-y-3">
-                      {patternData.map((pattern: any, idx: number) => (
-                        <PatternCard
-                          key={idx}
-                          title={pattern.title}
-                          observation={pattern.observation}
-                          intuitionGuide={pattern.intuitionGuide}
-                          relatedEntries={pattern.relatedEntries || []}
-                          questions={pattern.questions || []}
-                          icon={icons[idx % icons.length] && (() => {
-                            const Icon = icons[idx % icons.length];
-                            return <Icon className={`w-6 h-6 text-${colors[idx % colors.length]}`} />;
-                          })()}
-                          accentColor={colors[idx % colors.length]}
-                        />
-                      ))}
-                    </div>
-                  );
+                  if (Array.isArray(patternData) && patternData.length > 0) {
+                    const icons = [Brain, Compass, Zap];
+                    const colors = ["primary", "accent", "primary"];
+                    
+                    return (
+                      <div className="space-y-3">
+                        {patternData.map((pattern: any, idx: number) => {
+                          const Icon = icons[idx % icons.length];
+                          const color = colors[idx % colors.length];
+                          
+                          return (
+                            <PatternCard
+                              key={idx}
+                              title={pattern.title || "Pattern"}
+                              observation={pattern.observation || ""}
+                              intuitionGuide={pattern.intuitionGuide || ""}
+                              relatedEntries={pattern.relatedEntries || []}
+                              questions={pattern.questions || []}
+                              icon={<Icon className={`w-5 h-5 ${color === "accent" ? "text-accent" : "text-primary"}`} />}
+                              accentColor={color}
+                            />
+                          );
+                        })}
+                      </div>
+                    );
+                  }
                 }
               } catch (e) {
-                console.error("Failed to parse patterns as JSON", e);
+                console.error("Failed to parse patterns as JSON:", e);
+                console.log("Raw patterns:", patterns);
               }
               
-              // Fallback to text rendering
+              // Fallback: show loading or error state
               return (
-                <Card className="bg-card border-border p-6 rounded-3xl">
-                  <div className="space-y-4 prose prose-sm max-w-none">
-                    {patterns.split('\n').map((line, idx) => {
-                      if (line.startsWith('**') && line.endsWith('**')) {
-                        return (
-                          <h3 key={idx} className="text-base font-medium text-foreground mt-4 first:mt-0">
-                            {line.replace(/\*\*/g, '')}
-                          </h3>
-                        );
-                      } else if (line.trim()) {
-                        return (
-                          <p key={idx} className="text-sm text-foreground/80 font-light leading-relaxed">
-                            {line}
-                          </p>
-                        );
-                      }
-                      return null;
-                    })}
+                <Card className="bg-card border-border p-6 rounded-2xl">
+                  <div className="text-center py-4">
+                    <p className="text-sm text-muted-foreground font-light">
+                      Processing your patterns...
+                    </p>
+                    <pre className="text-xs text-muted-foreground/50 mt-4 overflow-auto max-h-40 text-left">
+                      {patterns}
+                    </pre>
                   </div>
                 </Card>
               );
