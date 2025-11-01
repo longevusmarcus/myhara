@@ -12,8 +12,7 @@ const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
+  const [nickname, setNickname] = useState("");
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -57,8 +56,7 @@ const Auth = () => {
           options: {
             emailRedirectTo: `${window.location.origin}/`,
             data: {
-              first_name: firstName,
-              last_name: lastName,
+              nickname: nickname,
             },
           },
         });
@@ -109,27 +107,15 @@ const Auth = () => {
         <div className="backdrop-blur-xl bg-card/40 border border-border/30 rounded-[1.5rem] p-8 shadow-2xl animate-in fade-in slide-in-from-bottom-8 duration-700" style={{ animationDelay: '400ms' }}>
           <form onSubmit={handleAuth} className="space-y-5">
             {!isLogin && (
-              <div className="space-y-4">
-                <div>
-                  <Input
-                    type="text"
-                    placeholder="First name"
-                    value={firstName}
-                    onChange={(e) => setFirstName(e.target.value)}
-                    required
-                    className="bg-background/60 border-border/40 rounded-[1rem] h-12 text-base placeholder:text-muted-foreground/60 focus:border-primary/50 transition-all"
-                  />
-                </div>
-                <div>
-                  <Input
-                    type="text"
-                    placeholder="Last name"
-                    value={lastName}
-                    onChange={(e) => setLastName(e.target.value)}
-                    required
-                    className="bg-background/60 border-border/40 rounded-[1rem] h-12 text-base placeholder:text-muted-foreground/60 focus:border-primary/50 transition-all"
-                  />
-                </div>
+              <div>
+                <Input
+                  type="text"
+                  placeholder="Nickname"
+                  value={nickname}
+                  onChange={(e) => setNickname(e.target.value)}
+                  required
+                  className="bg-background/60 border-border/40 rounded-[1rem] h-12 text-base placeholder:text-muted-foreground/60 focus:border-primary/50 transition-all"
+                />
               </div>
             )}
             <div>
