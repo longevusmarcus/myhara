@@ -24,6 +24,9 @@ const GutMap = () => {
     const storedEntries = JSON.parse(localStorage.getItem("gutEntries") || "[]");
     setEntries(storedEntries);
     
+    console.log('All entries loaded:', storedEntries);
+    console.log('Voice entries:', storedEntries.filter(e => e.mode === "voice" || e.transcript || e.aiInsights));
+    
     // Load cached analyses or trigger new ones if any data exists
     if (storedEntries.length >= 1) {
       loadSignalsAnalysis(storedEntries);
@@ -151,21 +154,25 @@ const GutMap = () => {
     const cachedTime = localStorage.getItem("cachedToneTime");
     const lastEntry = allEntries[allEntries.length - 1]?.timestamp;
     
-    if (cached && cachedTime && lastEntry && new Date(cachedTime).getTime() >= new Date(lastEntry).getTime()) {
-      setToneData(JSON.parse(cached));
+    // Filter for voice entries - check both mode field and presence of transcript/aiInsights
+    const voiceEntries = allEntries.filter(e => 
+      e.mode === "voice" || e.transcript || e.aiInsights
+    );
+    
+    console.log('Tone analysis - Voice entries found:', voiceEntries.length, voiceEntries);
+    
+    // Only use cache if we have the same or fewer entries
+    if (cached && cachedTime && lastEntry && new Date(cachedTime).getTime() >= new Date(lastEntry).getTime() && voiceEntries.length > 0) {
+      const cachedData = JSON.parse(cached);
+      console.log('Using cached tone data:', cachedData);
+      setToneData(cachedData);
       return;
     }
     
     setLoadingTone(true);
     try {
-      // Filter for voice entries - check both mode field and presence of transcript/aiInsights
-      const voiceEntries = allEntries.filter(e => 
-        e.mode === "voice" || e.transcript || e.aiInsights
-      );
-      
-      console.log('Voice entries found for tone analysis:', voiceEntries.length);
-      
       if (voiceEntries.length < 1) {
+        console.log('Insufficient voice entries for tone analysis');
         setToneData({ insufficient: true });
         return;
       }
