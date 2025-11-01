@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import BottomNav from "@/components/BottomNav";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Calendar, Circle, Droplet, Sparkles, CheckCircle2, AlertTriangle, Plus, FileText, X } from "lucide-react";
+import { Calendar, Circle, Droplet, Sparkles, CheckCircle2, AlertTriangle, Plus, FileText, X, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
@@ -12,12 +12,194 @@ const GutMap = () => {
   const [selectedEntry, setSelectedEntry] = useState<any>(null);
   const [consequence, setConsequence] = useState("");
   const [expandedVoice, setExpandedVoice] = useState<number | null>(null);
+  const [signalsData, setSignalsData] = useState<any>(null);
+  const [trustData, setTrustData] = useState<any>(null);
+  const [toneData, setToneData] = useState<any>(null);
+  const [loadingSignals, setLoadingSignals] = useState(false);
+  const [loadingTrust, setLoadingTrust] = useState(false);
+  const [loadingTone, setLoadingTone] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
     const storedEntries = JSON.parse(localStorage.getItem("gutEntries") || "[]");
     setEntries(storedEntries);
+    
+    // Load cached analyses or trigger new ones if enough data
+    if (storedEntries.length >= 3) {
+      loadSignalsAnalysis(storedEntries);
+      loadTrustAnalysis(storedEntries);
+      loadToneAnalysis(storedEntries);
+    }
   }, []);
+
+  const loadSignalsAnalysis = async (allEntries: any[]) => {
+    // Check cache
+    const cached = localStorage.getItem("cachedSignals");
+    const cachedTime = localStorage.getItem("cachedSignalsTime");
+    const lastEntry = allEntries[allEntries.length - 1]?.timestamp;
+    
+    if (cached && cachedTime && lastEntry && new Date(cachedTime).getTime() >= new Date(lastEntry).getTime()) {
+      setSignalsData(JSON.parse(cached));
+      return;
+    }
+    
+    setLoadingSignals(true);
+    try {
+      const tapEntries = allEntries.filter(e => e.mode === "tap" && e.bodySensation);
+      if (tapEntries.length < 3) {
+        setSignalsData({ insufficient: true });
+        return;
+      }
+
+      const summary = tapEntries.map(e => ({
+        sensation: e.bodySensation,
+        gutFeeling: e.gutFeeling,
+        honored: e.willIgnore === "no",
+        consequence: e.consequence || null
+      }));
+
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/gut-coach`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          },
+          body: JSON.stringify({
+            messages: [{
+              role: "user",
+              content: `Analyze these body sensations and their reliability:\n\n${JSON.stringify(summary, null, 2)}`
+            }],
+            type: "signals_analysis"
+          }),
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        setSignalsData(data);
+        localStorage.setItem("cachedSignals", JSON.stringify(data));
+        localStorage.setItem("cachedSignalsTime", new Date().toISOString());
+      }
+    } catch (error) {
+      console.error("Signals analysis error:", error);
+    } finally {
+      setLoadingSignals(false);
+    }
+  };
+
+  const loadTrustAnalysis = async (allEntries: any[]) => {
+    // Check cache
+    const cached = localStorage.getItem("cachedTrust");
+    const cachedTime = localStorage.getItem("cachedTrustTime");
+    const lastEntry = allEntries[allEntries.length - 1]?.timestamp;
+    
+    if (cached && cachedTime && lastEntry && new Date(cachedTime).getTime() >= new Date(lastEntry).getTime()) {
+      setTrustData(JSON.parse(cached));
+      return;
+    }
+    
+    setLoadingTrust(true);
+    try {
+      const decisionsWithOutcome = allEntries.filter(e => e.willIgnore !== undefined);
+      if (decisionsWithOutcome.length < 3) {
+        setTrustData({ insufficient: true });
+        return;
+      }
+
+      const summary = decisionsWithOutcome.map(e => ({
+        honored: e.willIgnore === "no",
+        consequence: e.consequence || null,
+        decision: e.decision || null
+      }));
+
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/gut-coach`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          },
+          body: JSON.stringify({
+            messages: [{
+              role: "user",
+              content: `Analyze trust patterns - when user honors vs ignores gut:\n\n${JSON.stringify(summary, null, 2)}`
+            }],
+            type: "trust_analysis"
+          }),
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        setTrustData(data);
+        localStorage.setItem("cachedTrust", JSON.stringify(data));
+        localStorage.setItem("cachedTrustTime", new Date().toISOString());
+      }
+    } catch (error) {
+      console.error("Trust analysis error:", error);
+    } finally {
+      setLoadingTrust(false);
+    }
+  };
+
+  const loadToneAnalysis = async (allEntries: any[]) => {
+    // Check cache
+    const cached = localStorage.getItem("cachedTone");
+    const cachedTime = localStorage.getItem("cachedToneTime");
+    const lastEntry = allEntries[allEntries.length - 1]?.timestamp;
+    
+    if (cached && cachedTime && lastEntry && new Date(cachedTime).getTime() >= new Date(lastEntry).getTime()) {
+      setToneData(JSON.parse(cached));
+      return;
+    }
+    
+    setLoadingTone(true);
+    try {
+      const voiceEntries = allEntries.filter(e => e.mode === "voice");
+      if (voiceEntries.length < 2) {
+        setToneData({ insufficient: true });
+        return;
+      }
+
+      const summary = voiceEntries.map(e => ({
+        transcript: e.transcript,
+        label: e.label,
+        aiInsights: e.aiInsights
+      }));
+
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/gut-coach`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          },
+          body: JSON.stringify({
+            messages: [{
+              role: "user",
+              content: `Analyze voice tone patterns:\n\n${JSON.stringify(summary, null, 2)}`
+            }],
+            type: "tone_analysis"
+          }),
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        setToneData(data);
+        localStorage.setItem("cachedTone", JSON.stringify(data));
+        localStorage.setItem("cachedToneTime", new Date().toISOString());
+      }
+    } catch (error) {
+      console.error("Tone analysis error:", error);
+    } finally {
+      setLoadingTone(false);
+    }
+  };
 
   const updateConsequence = async (index: number) => {
     const updatedEntries = [...entries];
@@ -327,29 +509,34 @@ const GutMap = () => {
           <TabsContent value="signals" className="space-y-4 mt-6">
             <Card className="bg-card border-border p-6 rounded-[1.25rem]">
               <h3 className="text-lg font-medium text-foreground mb-4">Your Top Signals</h3>
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <Circle className="w-5 h-5 text-destructive" strokeWidth={1.5} />
-                    <span className="text-base text-foreground font-light">Tight chest</span>
-                  </div>
-                  <span className="text-sm text-muted-foreground">65% accuracy</span>
+              {loadingSignals ? (
+                <div className="flex items-center justify-center py-8">
+                  <Loader2 className="w-6 h-6 animate-spin text-primary" />
                 </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <Droplet className="w-5 h-5 text-primary" strokeWidth={1.5} />
-                    <span className="text-base text-foreground font-light">Dropped stomach</span>
-                  </div>
-                  <span className="text-sm text-muted-foreground">80% accuracy</span>
+              ) : signalsData?.insufficient ? (
+                <p className="text-sm text-muted-foreground font-light text-center py-4">
+                  Log more check-ins with body sensations to see your signal patterns
+                </p>
+              ) : signalsData?.signals ? (
+                <div className="space-y-3">
+                  {signalsData.signals.map((signal: any, idx: number) => (
+                    <div key={idx} className="flex items-center justify-between">
+                      <div className="flex items-center gap-3 flex-1">
+                        <Circle className="w-5 h-5 text-primary" strokeWidth={1.5} />
+                        <div className="flex-1">
+                          <span className="text-base text-foreground font-light">{signal.signal}</span>
+                          <p className="text-xs text-muted-foreground font-light mt-0.5">{signal.insight}</p>
+                        </div>
+                      </div>
+                      <span className="text-sm text-muted-foreground">{Math.round(signal.accuracy)}% accuracy</span>
+                    </div>
+                  ))}
                 </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <Sparkles className="w-5 h-5 text-accent" strokeWidth={1.5} />
-                    <span className="text-base text-foreground font-light">Expanding warmth</span>
-                  </div>
-                  <span className="text-sm text-muted-foreground">92% accuracy</span>
-                </div>
-              </div>
+              ) : (
+                <p className="text-sm text-muted-foreground font-light text-center py-4">
+                  Unable to analyze signals. Try again later.
+                </p>
+              )}
             </Card>
           </TabsContent>
 
@@ -357,29 +544,47 @@ const GutMap = () => {
           <TabsContent value="trust" className="space-y-4 mt-6">
             <Card className="bg-card border-border p-6 rounded-[1.25rem]">
               <h3 className="text-lg font-medium text-foreground mb-4">Trust Curve</h3>
-              <div className="space-y-4">
-                <div>
-                  <div className="flex justify-between mb-2">
-                    <span className="text-sm text-foreground font-light">Honored gut feelings</span>
-                    <span className="text-sm text-foreground font-medium">45%</span>
-                  </div>
-                  <div className="w-full h-2 bg-secondary rounded-full overflow-hidden">
-                    <div className="h-full bg-foreground rounded-full" style={{ width: "45%" }} />
-                  </div>
+              {loadingTrust ? (
+                <div className="flex items-center justify-center py-8">
+                  <Loader2 className="w-6 h-6 animate-spin text-primary" />
                 </div>
-                <div>
-                  <div className="flex justify-between mb-2">
-                    <span className="text-sm text-foreground font-light">Ignored gut feelings</span>
-                    <span className="text-sm text-foreground font-medium">55%</span>
-                  </div>
-                  <div className="w-full h-2 bg-secondary rounded-full overflow-hidden">
-                    <div className="h-full bg-muted-foreground rounded-full" style={{ width: "55%" }} />
-                  </div>
-                </div>
-                <p className="text-sm text-muted-foreground font-light mt-4">
-                  Keep checking in to see your pattern evolve over time.
+              ) : trustData?.insufficient ? (
+                <p className="text-sm text-muted-foreground font-light text-center py-4">
+                  Log more decisions and outcomes to see your trust patterns
                 </p>
-              </div>
+              ) : trustData ? (
+                <div className="space-y-4">
+                  <div>
+                    <div className="flex justify-between mb-2">
+                      <span className="text-sm text-foreground font-light">Honored gut feelings</span>
+                      <span className="text-sm text-foreground font-medium">{Math.round(trustData.honoredPercentage)}%</span>
+                    </div>
+                    <div className="w-full h-2 bg-secondary rounded-full overflow-hidden">
+                      <div className="h-full bg-foreground rounded-full" style={{ width: `${trustData.honoredPercentage}%` }} />
+                    </div>
+                    <p className="text-xs text-muted-foreground font-light mt-2">{trustData.honoredOutcome}</p>
+                  </div>
+                  <div>
+                    <div className="flex justify-between mb-2">
+                      <span className="text-sm text-foreground font-light">Ignored gut feelings</span>
+                      <span className="text-sm text-foreground font-medium">{Math.round(trustData.ignoredPercentage)}%</span>
+                    </div>
+                    <div className="w-full h-2 bg-secondary rounded-full overflow-hidden">
+                      <div className="h-full bg-muted-foreground rounded-full" style={{ width: `${trustData.ignoredPercentage}%` }} />
+                    </div>
+                    <p className="text-xs text-muted-foreground font-light mt-2">{trustData.ignoredOutcome}</p>
+                  </div>
+                  <div className="mt-4 p-4 bg-primary/5 rounded-2xl border border-primary/10">
+                    <p className="text-sm text-foreground/90 font-light leading-relaxed">
+                      {trustData.recommendation}
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <p className="text-sm text-muted-foreground font-light text-center py-4">
+                  Unable to analyze trust patterns. Try again later.
+                </p>
+              )}
             </Card>
           </TabsContent>
 
@@ -387,23 +592,54 @@ const GutMap = () => {
           <TabsContent value="tone" className="space-y-4 mt-6">
             <Card className="bg-card border-border p-6 rounded-[1.25rem]">
               <h3 className="text-lg font-medium text-foreground mb-4">Tone Patterns</h3>
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <p className="text-sm text-foreground font-medium">When honoring your gut:</p>
-                  <p className="text-sm text-muted-foreground font-light">
-                    Your voice tends to be calm, grounded, and confident.
-                  </p>
+              {loadingTone ? (
+                <div className="flex items-center justify-center py-8">
+                  <Loader2 className="w-6 h-6 animate-spin text-primary" />
                 </div>
-                <div className="space-y-2">
-                  <p className="text-sm text-foreground font-medium">When ignoring your gut:</p>
-                  <p className="text-sm text-muted-foreground font-light">
-                    Your voice often sounds rushed, uncertain, or tense.
-                  </p>
-                </div>
-                <p className="text-xs text-muted-foreground font-light mt-4 italic">
-                  Voice analysis coming soon with more check-ins
+              ) : toneData?.insufficient || toneData?.insufficientData ? (
+                <p className="text-sm text-muted-foreground font-light text-center py-4">
+                  Log more voice check-ins to see your tone patterns
                 </p>
-              </div>
+              ) : toneData ? (
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <p className="text-sm text-foreground font-medium">When honoring your gut:</p>
+                    <p className="text-sm text-muted-foreground font-light">
+                      {toneData.honoredTone}
+                    </p>
+                  </div>
+                  <div className="space-y-2">
+                    <p className="text-sm text-foreground font-medium">When ignoring your gut:</p>
+                    <p className="text-sm text-muted-foreground font-light">
+                      {toneData.ignoredTone}
+                    </p>
+                  </div>
+                  {toneData.keyIndicators && toneData.keyIndicators.length > 0 && (
+                    <div className="space-y-2">
+                      <p className="text-sm text-foreground font-medium">Key indicators:</p>
+                      <ul className="space-y-1">
+                        {toneData.keyIndicators.map((indicator: string, idx: number) => (
+                          <li key={idx} className="text-sm text-muted-foreground font-light flex items-start gap-2">
+                            <span className="text-primary mt-1">•</span>
+                            <span>{indicator}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                  {toneData.guidance && (
+                    <div className="mt-4 p-4 bg-primary/5 rounded-2xl border border-primary/10">
+                      <p className="text-sm text-foreground/90 font-light leading-relaxed">
+                        {toneData.guidance}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <p className="text-sm text-muted-foreground font-light text-center py-4">
+                  Unable to analyze tone patterns. Try again later.
+                </p>
+              )}
             </Card>
           </TabsContent>
         </Tabs>

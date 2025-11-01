@@ -98,12 +98,149 @@ Provide your response in this EXACT format with markdown:
 • [Final tip focused on honoring their gut feeling]
 
 Keep it warm, direct, and practical. Help them distinguish gut feeling from rational thought, and give them clear next steps.`;
+    } else if (type === "signals_analysis") {
+      systemPrompt = `Analyze the user's body sensations/signals from their check-ins and identify their most reliable gut feeling indicators.
+
+For each top signal (return 3-5), provide:
+- signal: The body sensation name
+- accuracy: Estimated accuracy percentage based on outcomes
+- insight: Brief insight about this signal (1 sentence)
+
+Return structured data that shows which physical sensations are most reliable for them.`;
+    } else if (type === "trust_analysis") {
+      systemPrompt = `Analyze the user's trust patterns - when they honor vs ignore their gut feelings and the consequences.
+
+Provide:
+- honoredPercentage: Percentage of times they honored their gut
+- ignoredPercentage: Percentage of times they ignored their gut
+- honoredOutcome: What typically happens when they honor their gut (1-2 sentences)
+- ignoredOutcome: What typically happens when they ignore their gut (1-2 sentences)
+- recommendation: Personalized recommendation based on their pattern (1-2 sentences)
+
+Focus on actual outcomes and consequences from their data.`;
+    } else if (type === "tone_analysis") {
+      systemPrompt = `Analyze voice check-ins to identify tone patterns when honoring vs ignoring gut feelings.
+
+Provide:
+- honoredTone: Description of their tone/voice when honoring gut (1-2 sentences)
+- ignoredTone: Description of their tone/voice when ignoring gut (1-2 sentences)
+- keyIndicators: Array of 2-3 key vocal/word indicators that signal each state
+- guidance: Practical guidance on what to listen for in their own voice (1-2 sentences)
+
+If insufficient voice data, indicate that more voice check-ins are needed for analysis.`;
     } else {
       systemPrompt = `You are a supportive gut instinct guide. Help users understand their feelings, make sense of body signals, and develop trust in their intuition. Be warm, curious, and empowering.`;
     }
 
-    // Special handling for pattern_analysis: use function calling (tools) and return structured JSON
-    if (type === "pattern_analysis") {
+    // Special handling for structured analysis types: use function calling (tools) and return structured JSON
+    if (type === "pattern_analysis" || type === "signals_analysis" || type === "trust_analysis" || type === "tone_analysis") {
+      let toolSchema: any;
+      
+      if (type === "signals_analysis") {
+        toolSchema = {
+          type: "function",
+          function: {
+            name: "return_signals",
+            description: "Return 3-5 top body signals with their accuracy and insights",
+            parameters: {
+              type: "object",
+              properties: {
+                signals: {
+                  type: "array",
+                  minItems: 3,
+                  maxItems: 5,
+                  items: {
+                    type: "object",
+                    properties: {
+                      signal: { type: "string" },
+                      accuracy: { type: "number" },
+                      insight: { type: "string" }
+                    },
+                    required: ["signal", "accuracy", "insight"],
+                    additionalProperties: false
+                  }
+                }
+              },
+              required: ["signals"],
+              additionalProperties: false
+            }
+          }
+        };
+      } else if (type === "trust_analysis") {
+        toolSchema = {
+          type: "function",
+          function: {
+            name: "return_trust_analysis",
+            description: "Return trust pattern analysis",
+            parameters: {
+              type: "object",
+              properties: {
+                honoredPercentage: { type: "number" },
+                ignoredPercentage: { type: "number" },
+                honoredOutcome: { type: "string" },
+                ignoredOutcome: { type: "string" },
+                recommendation: { type: "string" }
+              },
+              required: ["honoredPercentage", "ignoredPercentage", "honoredOutcome", "ignoredOutcome", "recommendation"],
+              additionalProperties: false
+            }
+          }
+        };
+      } else if (type === "tone_analysis") {
+        toolSchema = {
+          type: "function",
+          function: {
+            name: "return_tone_analysis",
+            description: "Return tone pattern analysis from voice check-ins",
+            parameters: {
+              type: "object",
+              properties: {
+                honoredTone: { type: "string" },
+                ignoredTone: { type: "string" },
+                keyIndicators: { type: "array", items: { type: "string" } },
+                guidance: { type: "string" },
+                insufficientData: { type: "boolean" }
+              },
+              required: ["honoredTone", "ignoredTone", "keyIndicators", "guidance"],
+              additionalProperties: false
+            }
+          }
+        };
+      } else {
+        // pattern_analysis schema (existing)
+        toolSchema = {
+          type: "function",
+          function: {
+            name: "return_patterns",
+            description: "Return 2-3 pattern cards with observation, actionable guidance, related entry excerpts, and reflection questions.",
+            parameters: {
+              type: "object",
+              properties: {
+                patterns: {
+                  type: "array",
+                  minItems: 2,
+                  maxItems: 3,
+                  items: {
+                    type: "object",
+                    properties: {
+                      title: { type: "string" },
+                      observation: { type: "string" },
+                      intuitionGuide: { type: "string" },
+                      relatedEntries: { type: "array", items: { type: "string" } },
+                      questions: { type: "array", items: { type: "string" } }
+                    },
+                    required: ["title", "observation", "intuitionGuide", "relatedEntries", "questions"],
+                    additionalProperties: false
+                  }
+                }
+              },
+              required: ["patterns"],
+              additionalProperties: false
+            }
+          }
+        };
+      }
+
       const body: any = {
         model: "google/gemini-2.5-flash",
         messages: [
@@ -111,40 +248,8 @@ Keep it warm, direct, and practical. Help them distinguish gut feeling from rati
           ...messages,
         ],
         stream: false,
-        tools: [
-          {
-            type: "function",
-            function: {
-              name: "return_patterns",
-              description: "Return 2-3 pattern cards with observation, actionable guidance, related entry excerpts, and reflection questions.",
-              parameters: {
-                type: "object",
-                properties: {
-                  patterns: {
-                    type: "array",
-                    minItems: 2,
-                    maxItems: 3,
-                    items: {
-                      type: "object",
-                      properties: {
-                        title: { type: "string" },
-                        observation: { type: "string" },
-                        intuitionGuide: { type: "string" },
-                        relatedEntries: { type: "array", items: { type: "string" } },
-                        questions: { type: "array", items: { type: "string" } }
-                      },
-                      required: ["title", "observation", "intuitionGuide", "relatedEntries", "questions"],
-                      additionalProperties: false
-                    }
-                  }
-                },
-                required: ["patterns"],
-                additionalProperties: false
-              }
-            }
-          }
-        ],
-        tool_choice: { type: "function", function: { name: "return_patterns" } }
+        tools: [toolSchema],
+        tool_choice: { type: "function", function: { name: toolSchema.function.name } }
       };
 
       const aiResp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
@@ -170,7 +275,7 @@ Keep it warm, direct, and practical. Help them distinguish gut feeling from rati
           });
         }
         const t = await aiResp.text();
-        console.error("AI gateway error (pattern_analysis):", aiResp.status, t);
+        console.error(`AI gateway error (${type}):`, aiResp.status, t);
         return new Response(JSON.stringify({ error: "AI service error" }), {
           status: 500,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -179,31 +284,31 @@ Keep it warm, direct, and practical. Help them distinguish gut feeling from rati
 
       const aiData = await aiResp.json();
 
-      let patterns: unknown = null;
+      let result: unknown = null;
       try {
         const toolCalls = aiData?.choices?.[0]?.message?.tool_calls;
         if (toolCalls && toolCalls.length > 0) {
           const argsStr = toolCalls[0]?.function?.arguments;
           const args = JSON.parse(argsStr);
-          patterns = args.patterns;
+          result = type === "pattern_analysis" ? args.patterns : args;
         } else {
           const content = aiData?.choices?.[0]?.message?.content;
           if (typeof content === "string") {
-            patterns = JSON.parse(content);
+            result = JSON.parse(content);
           }
         }
       } catch (e) {
-        console.error("Pattern parse error:", e);
+        console.error(`${type} parse error:`, e);
       }
 
-      if (!Array.isArray(patterns)) {
-        return new Response(JSON.stringify({ error: "Could not extract patterns" }), {
+      if (!result) {
+        return new Response(JSON.stringify({ error: `Could not extract ${type} data` }), {
           status: 500,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
 
-      return new Response(JSON.stringify(patterns), {
+      return new Response(JSON.stringify(result), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
