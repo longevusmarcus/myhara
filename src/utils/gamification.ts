@@ -125,6 +125,14 @@ const checkAchievements = (data: GamificationData) => {
       icon: "Ear"
     },
     {
+      id: "streak_3",
+      name: "Consistent Listener",
+      description: "Maintained a 3-day check-in streak",
+      xp: 30,
+      condition: () => data.currentStreak === 3,
+      icon: "Flame"
+    },
+    {
       id: "gut_honor",
       name: "Gut Honor",
       description: "Honored your gut feeling for the first time",
@@ -141,19 +149,11 @@ const checkAchievements = (data: GamificationData) => {
       icon: "Shield"
     },
     {
-      id: "intuition_keeper",
-      name: "Intuition Keeper",
-      description: "Honored your gut 10 times",
-      xp: 100,
-      condition: () => honoredCount === 10,
-      icon: "Award"
-    },
-    {
-      id: "gut_master",
-      name: "Gut Master",
-      description: "Honored your gut 25 times",
-      xp: 200,
-      condition: () => honoredCount === 25,
+      id: "intuition_master",
+      name: "Intuition Master",
+      description: "Honored your gut 15 times",
+      xp: 150,
+      condition: () => honoredCount === 15,
       icon: "Crown"
     },
     {
@@ -165,52 +165,12 @@ const checkAchievements = (data: GamificationData) => {
       icon: "Target"
     },
     {
-      id: "follow_through",
-      name: "Follow Through",
-      description: "Tracked 5 decisions",
-      xp: 75,
-      condition: () => decisionsTracked === 5,
-      icon: "TrendingUp"
-    },
-    {
-      id: "consequence_seeker",
-      name: "Consequence Seeker",
-      description: "Logged outcomes for 3 decisions",
-      xp: 100,
-      condition: () => consequencesLogged === 3,
-      icon: "Eye"
-    },
-    {
       id: "pattern_master",
       name: "Pattern Master",
-      description: "Logged outcomes for 10 decisions",
-      xp: 200,
-      condition: () => consequencesLogged === 10,
+      description: "Logged outcomes for 5 decisions",
+      xp: 100,
+      condition: () => consequencesLogged === 5,
       icon: "Star"
-    },
-    {
-      id: "streak_3",
-      name: "Consistent Listener",
-      description: "Maintained a 3-day check-in streak",
-      xp: 30,
-      condition: () => data.currentStreak === 3,
-      icon: "Flame"
-    },
-    {
-      id: "streak_7",
-      name: "Week Warrior",
-      description: "Maintained a 7-day streak",
-      xp: 75,
-      condition: () => data.currentStreak === 7,
-      icon: "Zap"
-    },
-    {
-      id: "streak_30",
-      name: "Month Champion",
-      description: "Maintained a 30-day streak",
-      xp: 300,
-      condition: () => data.currentStreak === 30,
-      icon: "Trophy"
     }
   ];
   
