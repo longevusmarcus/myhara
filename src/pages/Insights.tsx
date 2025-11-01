@@ -334,10 +334,7 @@ const Insights = () => {
         {/* Patterns */}
         {entries.length >= 3 && (
           <div className="space-y-4">
-            <div className="flex items-center gap-3">
-              <Target className="w-5 h-5 text-primary" strokeWidth={1.5} />
-              <h2 className="text-lg font-medium text-foreground">Your Patterns</h2>
-            </div>
+            <h2 className="text-lg font-medium text-foreground">Your Patterns</h2>
             
             {loadingPatterns && !patterns && (
               <Card className="bg-card border-border p-8 rounded-2xl">
