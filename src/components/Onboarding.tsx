@@ -1,87 +1,271 @@
 import { useState } from "react";
+import { Heart, Sparkles, Brain, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Heart, Calendar, TrendingUp } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import VoiceBubbleLogo from "./VoiceBubbleLogo";
 
 interface OnboardingProps {
   onComplete: () => void;
 }
 
 const Onboarding = ({ onComplete }: OnboardingProps) => {
-  const [step, setStep] = useState(0);
+  const [step, setStep] = useState(1);
+  const [selectedGoal, setSelectedGoal] = useState("");
+  const [accessCode, setAccessCode] = useState("");
+  const [codeError, setCodeError] = useState(false);
 
-  const screens = [
-    {
-      icon: Heart,
-      title: "meet gut.",
-      subtitle: "your intuition companion",
-      description: "Learn to recognize and trust your body's signals through daily reflection.",
-    },
-    {
-      icon: Calendar,
-      title: "daily check-ins.",
-      subtitle: "build the habit",
-      description: "Quick voice or touch logging makes it easy to track your gut feelings anytime.",
-    },
-    {
-      icon: TrendingUp,
-      title: "discover patterns.",
-      subtitle: "trust your instincts",
-      description: "See how your body's wisdom connects to real outcomes over time.",
-    },
-  ];
+  const handleGoalSelect = (goal: string) => {
+    setSelectedGoal(goal);
+    setTimeout(() => setStep(step + 1), 300);
+  };
 
-  const currentScreen = screens[step];
-  const Icon = currentScreen.icon;
+  const handleCodeSubmit = () => {
+    if (accessCode.toLowerCase() === "gut") {
+      onComplete();
+    } else {
+      setCodeError(true);
+      setTimeout(() => setCodeError(false), 2000);
+    }
+  };
 
-  return (
-    <div className="min-h-screen bg-background flex flex-col justify-between p-6 pb-10">
-      <div className="flex-1 flex flex-col justify-center items-center text-center space-y-8 animate-fade-in max-w-sm mx-auto">
-        <div className="w-40 h-40 rounded-full bg-secondary/50 flex items-center justify-center">
-          <Icon className="w-20 h-20 text-foreground stroke-[1.5]" />
-        </div>
-        
-        <div className="space-y-3">
-          <h1 className="text-4xl font-bold text-foreground tracking-tight">
-            {currentScreen.title}
-          </h1>
-          <p className="text-lg text-muted-foreground font-light">
-            {currentScreen.subtitle}
-          </p>
-          <p className="text-base text-muted-foreground leading-relaxed pt-2 font-light">
-            {currentScreen.description}
-          </p>
-        </div>
-      </div>
+  // Step 1: Science Introduction
+  if (step === 1) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center p-6">
+        <div className="max-w-md w-full animate-in fade-in zoom-in duration-700">
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-success/10 border border-success/20 rounded-full mb-6">
+              <Sparkles className="w-4 h-4 text-success" />
+              <span className="text-sm text-success font-light">Science-Based</span>
+            </div>
+            
+            <h1 className="text-3xl font-cursive text-foreground mb-4">
+              Built on what science says works
+            </h1>
+            
+            <p className="text-base text-muted-foreground/70 font-light mb-8">
+              Your gut instinct processes information faster than conscious thought — backed by neuroscience research
+            </p>
 
-      <div className="space-y-6">
-        <div className="flex justify-center gap-2">
-          {screens.map((_, idx) => (
-            <div
-              key={idx}
-              className={`h-1.5 rounded-full transition-all duration-300 ${
-                idx === step ? "w-8 bg-foreground" : "w-1.5 bg-muted"
-              }`}
-            />
-          ))}
-        </div>
+            <div className="space-y-4 mb-8">
+              <div className="flex items-center gap-3 p-4 bg-card/40 border border-border/30 rounded-[1rem]">
+                <Brain className="w-5 h-5 text-primary flex-shrink-0" />
+                <p className="text-sm text-foreground/80 font-light text-left">
+                  Your enteric nervous system has 100 million neurons
+                </p>
+              </div>
+              <div className="flex items-center gap-3 p-4 bg-card/40 border border-border/30 rounded-[1rem]">
+                <Heart className="w-5 h-5 text-accent flex-shrink-0" />
+                <p className="text-sm text-foreground/80 font-light text-left">
+                  90% of serotonin (your mood regulator) is made in your gut
+                </p>
+              </div>
+              <div className="flex items-center gap-3 p-4 bg-card/40 border border-border/30 rounded-[1rem]">
+                <TrendingUp className="w-5 h-5 text-secondary flex-shrink-0" />
+                <p className="text-sm text-foreground/80 font-light text-left">
+                  Studies show gut feelings improve decision accuracy by 40%
+                </p>
+              </div>
+            </div>
+          </div>
 
-        {step < screens.length - 1 ? (
           <Button
-            onClick={() => setStep(step + 1)}
-            size="lg"
-            className="w-full h-14 rounded-full bg-foreground text-background hover:bg-foreground/90 font-medium"
+            onClick={() => setStep(2)}
+            className="w-full rounded-[1rem] h-12 bg-primary hover:bg-primary/90 text-primary-foreground"
           >
             Continue
           </Button>
-        ) : (
+        </div>
+      </div>
+    );
+  }
+
+  // Step 2: Goal Selection
+  if (step === 2) {
+    const goals = [
+      { id: "financial", emoji: "💰", label: "Better financial decisions" },
+      { id: "relationships", emoji: "💝", label: "Healthier relationships" },
+      { id: "career", emoji: "🎯", label: "Career & purpose clarity" }
+    ];
+
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center p-6">
+        <div className="max-w-md w-full animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <div className="text-center mb-8">
+            <h2 className="text-2xl font-light text-foreground mb-3">
+              What would you like to improve?
+            </h2>
+            <p className="text-sm text-muted-foreground/70 font-light">
+              Choose your primary focus
+            </p>
+          </div>
+
+          <div className="space-y-3">
+            {goals.map((goal) => (
+              <button
+                key={goal.id}
+                onClick={() => handleGoalSelect(goal.id)}
+                className={`w-full p-5 bg-card/40 border border-border/30 rounded-[1.25rem] flex items-center gap-4 hover:bg-card/60 transition-all hover:scale-[1.02] ${
+                  selectedGoal === goal.id ? "border-primary bg-primary/10" : ""
+                }`}
+              >
+                <span className="text-3xl">{goal.emoji}</span>
+                <span className="text-base text-foreground font-light">{goal.label}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Step 3: Common Challenge
+  if (step === 3) {
+    const challenges = [
+      { id: "please-others", emoji: "😔", label: "Putting my needs last to please others" },
+      { id: "avoid-conflict", emoji: "🤐", label: "Keeping quiet to avoid conflict" },
+      { id: "insecure", emoji: "🤔", label: "Slipping back into insecure patterns" }
+    ];
+
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center p-6">
+        <div className="max-w-md w-full animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <div className="text-center mb-8">
+            <h2 className="text-2xl font-light text-foreground mb-3">
+              Which challenge resonates most?
+            </h2>
+            <p className="text-sm text-muted-foreground/70 font-light">
+              We'll help you tackle this first
+            </p>
+          </div>
+
+          <div className="space-y-3">
+            {challenges.map((challenge) => (
+              <button
+                key={challenge.id}
+                onClick={() => {
+                  setSelectedGoal(challenge.id);
+                  setTimeout(() => setStep(4), 300);
+                }}
+                className="w-full p-5 bg-card/40 border border-border/30 rounded-[1.25rem] flex items-center gap-4 hover:bg-card/60 transition-all hover:scale-[1.02] text-left"
+              >
+                <span className="text-3xl flex-shrink-0">{challenge.emoji}</span>
+                <span className="text-base text-foreground font-light">{challenge.label}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Step 4: How It Works
+  if (step === 4) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center p-6">
+        <div className="max-w-md w-full animate-in fade-in zoom-in duration-700">
+          <div className="text-center mb-8">
+            <div className="mb-6 flex justify-center">
+              <VoiceBubbleLogo size="md" animated={true} />
+            </div>
+            
+            <h2 className="text-2xl font-cursive text-foreground mb-4">
+              How Hara works
+            </h2>
+            
+            <p className="text-base text-muted-foreground/70 font-light mb-8">
+              Train your intuition through science-backed practice
+            </p>
+
+            <div className="space-y-4 text-left mb-8">
+              <div className="p-4 bg-card/40 border border-border/30 rounded-[1rem]">
+                <p className="text-sm font-light text-foreground/60 mb-1">Step 1</p>
+                <p className="text-base text-foreground font-light">
+                  Check in when you feel a gut signal
+                </p>
+              </div>
+              <div className="p-4 bg-card/40 border border-border/30 rounded-[1rem]">
+                <p className="text-sm font-light text-foreground/60 mb-1">Step 2</p>
+                <p className="text-base text-foreground font-light">
+                  Track what happens when you honor vs ignore it
+                </p>
+              </div>
+              <div className="p-4 bg-card/40 border border-border/30 rounded-[1rem]">
+                <p className="text-sm font-light text-foreground/60 mb-1">Step 3</p>
+                <p className="text-base text-foreground font-light">
+                  Build trust through pattern recognition
+                </p>
+              </div>
+            </div>
+          </div>
+
           <Button
-            onClick={onComplete}
-            size="lg"
-            className="w-full h-14 rounded-full bg-foreground text-background hover:bg-foreground/90 font-medium"
+            onClick={() => setStep(5)}
+            className="w-full rounded-[1rem] h-12 bg-primary hover:bg-primary/90 text-primary-foreground"
           >
-            Start Journey
+            Continue
           </Button>
-        )}
+        </div>
+      </div>
+    );
+  }
+
+  // Step 5: Paywall
+  return (
+    <div className="min-h-screen bg-background flex items-center justify-center p-6">
+      <div className="max-w-md w-full animate-in fade-in zoom-in duration-700">
+        <div className="backdrop-blur-xl bg-card/40 border border-border/30 rounded-[1.5rem] p-8">
+          <div className="text-center mb-8">
+            <div className="mb-6 flex justify-center">
+              <VoiceBubbleLogo size="sm" animated={true} />
+            </div>
+            
+            <h2 className="text-2xl font-cursive text-foreground mb-3">
+              Enter your access code
+            </h2>
+            
+            <p className="text-base text-muted-foreground/70 font-light">
+              This early access is invite-only
+            </p>
+          </div>
+
+          <div className="space-y-4">
+            <Input
+              type="text"
+              placeholder="Enter code"
+              value={accessCode}
+              onChange={(e) => {
+                setAccessCode(e.target.value);
+                setCodeError(false);
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleCodeSubmit();
+                }
+              }}
+              className={`bg-background/60 border-border/40 rounded-[1rem] h-12 text-base text-center placeholder:text-muted-foreground/60 focus:border-primary/50 transition-all ${
+                codeError ? "border-destructive animate-pulse" : ""
+              }`}
+            />
+
+            {codeError && (
+              <p className="text-sm text-destructive font-light text-center animate-in fade-in duration-200">
+                Invalid code. Try again.
+              </p>
+            )}
+
+            <Button
+              onClick={handleCodeSubmit}
+              className="w-full rounded-[1rem] h-12 bg-primary hover:bg-primary/90 text-primary-foreground"
+            >
+              Continue
+            </Button>
+
+            <p className="text-xs text-muted-foreground/60 text-center font-light">
+              Hint: Think about your intuition
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );
