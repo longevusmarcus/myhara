@@ -10,9 +10,9 @@ const MobileOnly = ({ children }: { children: React.ReactNode }) => {
       const userAgent = navigator.userAgent.toLowerCase();
       const mobileKeywords = ['android', 'webos', 'iphone', 'ipad', 'ipod', 'blackberry', 'windows phone'];
       const isMobileDevice = mobileKeywords.some(keyword => userAgent.includes(keyword));
-      const isSmallScreen = window.innerWidth <= 768;
+      const isTabletOrMobile = window.innerWidth <= 1024;
       
-      setIsMobile(isMobileDevice || isSmallScreen);
+      setIsMobile(isMobileDevice || isTabletOrMobile);
     };
 
     checkMobile();
