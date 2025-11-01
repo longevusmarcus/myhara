@@ -1,8 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { Card } from "@/components/ui/card";
-import { Send, Sparkles } from "lucide-react";
+import { Send } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface Message {
@@ -11,11 +8,10 @@ interface Message {
 }
 
 interface AICoachProps {
-  type: "daily" | "insight";
   initialPrompt?: string;
 }
 
-export const AICoach = ({ type, initialPrompt }: AICoachProps) => {
+export const AICoach = ({ initialPrompt }: AICoachProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -55,7 +51,7 @@ export const AICoach = ({ type, initialPrompt }: AICoachProps) => {
           },
           body: JSON.stringify({
             messages: newMessages,
-            type,
+            type: "daily",
           }),
         }
       );
@@ -116,73 +112,62 @@ export const AICoach = ({ type, initialPrompt }: AICoachProps) => {
   };
 
   return (
-    <div className="space-y-4">
-      <div className="space-y-3 max-h-[400px] overflow-y-auto">
-        {messages.length === 0 && !isLoading && (
-          <Card className="bg-card/50 border-border p-6 rounded-[1.25rem]">
-            <div className="flex items-start gap-3">
-              <Sparkles className="w-5 h-5 text-primary mt-1" />
-              <div className="space-y-2">
-                <p className="text-base text-foreground font-light">
-                  {type === "daily" 
-                    ? "Hi! I'm here to help you check in with your gut. How are you feeling right now?"
-                    : "I can help you understand your intuition patterns and make sense of your journey."
-                  }
-                </p>
-              </div>
-            </div>
-          </Card>
-        )}
-
+    <div className="space-y-3">
+      <div className="space-y-2 max-h-[500px] overflow-y-auto">
         {messages.map((msg, idx) => (
-          <Card
+          <div
             key={idx}
-            className={`p-4 rounded-[1.25rem] ${
-              msg.role === "user"
-                ? "bg-primary text-primary-foreground ml-8"
-                : "bg-card border-border mr-8"
+            className={`${
+              msg.role === "user" ? "text-right" : "text-left"
             }`}
           >
-            <p className="text-sm font-light whitespace-pre-wrap">{msg.content}</p>
-          </Card>
+            <div
+              className={`inline-block px-4 py-2 rounded-2xl max-w-[85%] ${
+                msg.role === "user"
+                  ? "bg-foreground text-background"
+                  : "bg-card text-foreground"
+              }`}
+            >
+              <p className="text-sm font-light whitespace-pre-wrap leading-relaxed">{msg.content}</p>
+            </div>
+          </div>
         ))}
 
         {isLoading && messages.length > 0 && messages[messages.length - 1].role === "user" && (
-          <Card className="bg-card border-border p-4 rounded-[1.25rem] mr-8">
-            <div className="flex items-center gap-2">
-              <div className="animate-pulse flex space-x-1">
-                <div className="w-2 h-2 bg-muted-foreground rounded-full"></div>
-                <div className="w-2 h-2 bg-muted-foreground rounded-full"></div>
-                <div className="w-2 h-2 bg-muted-foreground rounded-full"></div>
+          <div className="text-left">
+            <div className="inline-block px-4 py-2 rounded-2xl bg-card">
+              <div className="flex space-x-1">
+                <div className="w-1.5 h-1.5 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                <div className="w-1.5 h-1.5 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                <div className="w-1.5 h-1.5 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
               </div>
             </div>
-          </Card>
+          </div>
         )}
         <div ref={messagesEndRef} />
       </div>
 
-      <div className="flex gap-2">
-        <Textarea
+      <div className="flex gap-2 items-end">
+        <input
+          type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyPress={(e) => {
-            if (e.key === "Enter" && !e.shiftKey) {
+            if (e.key === "Enter") {
               e.preventDefault();
               sendMessage(input);
             }
           }}
-          placeholder="Share what's on your mind..."
-          className="resize-none bg-card border-border rounded-[1.25rem]"
-          rows={2}
+          placeholder="Type here..."
+          className="flex-1 px-4 py-2 bg-card border-0 rounded-full text-sm font-light placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-foreground/20"
         />
-        <Button
+        <button
           onClick={() => sendMessage(input)}
           disabled={isLoading || !input.trim()}
-          size="icon"
-          className="rounded-[1rem] h-auto px-4"
+          className="w-9 h-9 rounded-full bg-foreground text-background flex items-center justify-center disabled:opacity-50 transition-opacity hover:opacity-90"
         >
           <Send className="w-4 h-4" />
-        </Button>
+        </button>
       </div>
     </div>
   );

@@ -1,29 +1,27 @@
 import BottomNav from "@/components/BottomNav";
 import { Card } from "@/components/ui/card";
-import { TrendingUp, Clock, Target, Sparkles } from "lucide-react";
+import { TrendingUp, Clock, Target } from "lucide-react";
 import { AICoach } from "@/components/AICoach";
 import { useState, useEffect } from "react";
 
 const Insights = () => {
   const [entries, setEntries] = useState<any[]>([]);
-  const [showAI, setShowAI] = useState(false);
+  const [showDailyGuidance, setShowDailyGuidance] = useState(false);
+  const [hasSeenToday, setHasSeenToday] = useState(false);
 
   useEffect(() => {
     const storedEntries = JSON.parse(localStorage.getItem("gutEntries") || "[]");
     setEntries(storedEntries);
+    
+    const lastSeen = localStorage.getItem("lastDailyGuidance");
+    const today = new Date().toDateString();
+    setHasSeenToday(lastSeen === today);
   }, []);
 
-  const getAIPrompt = () => {
-    if (entries.length === 0) {
-      return "I'm just starting my gut intuition journey. Can you help me understand what to pay attention to?";
-    }
-    
-    const recentEntries = entries.slice(-5);
-    const summary = recentEntries.map(e => 
-      `- ${e.context || e.label}: felt ${e.bodySensation || e.transcript?.substring(0, 50)}, gut said ${e.gutFeeling}, ${e.willIgnore === 'yes' ? 'ignored it' : 'honored it'}`
-    ).join('\n');
-    
-    return `Here are my recent gut check-ins:\n${summary}\n\nWhat patterns do you notice? What should I pay attention to?`;
+  const handleStartGuidance = () => {
+    setShowDailyGuidance(true);
+    localStorage.setItem("lastDailyGuidance", new Date().toDateString());
+    setHasSeenToday(true);
   };
 
   return (
@@ -36,32 +34,28 @@ const Insights = () => {
           </p>
         </div>
 
-        {/* AI Coach Section */}
-        <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20 p-6 rounded-3xl">
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
-                  <Sparkles className="w-5 h-5 text-primary" />
-                </div>
-                <div>
-                  <p className="text-base font-medium text-foreground">Your AI Gut Coach</p>
-                  <p className="text-sm text-muted-foreground font-light">Get personalized insights</p>
-                </div>
-              </div>
+        {/* Daily Guidance */}
+        <Card className={`${hasSeenToday && !showDailyGuidance ? 'bg-card/50' : 'bg-card'} border-border p-6 rounded-3xl`}>
+          {!showDailyGuidance ? (
+            <div className="space-y-4">
+              <p className="text-base font-light text-foreground">
+                {hasSeenToday 
+                  ? "Come back tomorrow for new guidance"
+                  : "Ready for your daily check-in?"
+                }
+              </p>
+              {!hasSeenToday && (
+                <button
+                  onClick={handleStartGuidance}
+                  className="px-6 py-2 bg-foreground text-background rounded-full text-sm font-light hover:opacity-90 transition-opacity"
+                >
+                  Start
+                </button>
+              )}
             </div>
-            
-            {!showAI ? (
-              <button
-                onClick={() => setShowAI(true)}
-                className="w-full bg-primary text-primary-foreground py-3 rounded-[1.25rem] font-light hover:bg-primary/90 transition-colors"
-              >
-                Start Conversation
-              </button>
-            ) : (
-              <AICoach type="insight" initialPrompt={getAIPrompt()} />
-            )}
-          </div>
+          ) : (
+            <AICoach initialPrompt="I'm ready for today's check-in. What should I reflect on?" />
+          )}
         </Card>
 
         {/* Trust Score */}
