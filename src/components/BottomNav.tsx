@@ -31,7 +31,7 @@ const BottomNav = () => {
                     isCheckIn
                       ? "bg-foreground text-background"
                       : isActive 
-                        ? "text-background" 
+                        ? "text-foreground" 
                         : "text-muted-foreground hover:text-foreground hover:scale-105"
                   }`}
                 >
