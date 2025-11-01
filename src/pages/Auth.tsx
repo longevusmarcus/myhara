@@ -161,7 +161,7 @@ const Auth = () => {
             Welcome to Hara
           </h1>
           <p className="text-sm text-muted-foreground/70 font-light animate-in fade-in slide-in-from-bottom-4 duration-700" style={{ animationDelay: '300ms' }}>
-            Trust your gut. Make better decisions with it.
+            Learn to trust your gut and make decisions that feel right.
           </p>
         </div>
 
