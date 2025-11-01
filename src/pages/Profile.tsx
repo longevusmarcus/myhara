@@ -262,7 +262,15 @@ const Profile = () => {
 
         {/* Recent Achievements */}
         <div className="space-y-3">
-          <h2 className="text-lg font-medium text-foreground">Recent Achievements</h2>
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-medium text-foreground">Recent Achievements</h2>
+            <button
+              onClick={() => navigate("/achievements")}
+              className="text-sm text-primary font-light hover:underline"
+            >
+              View all
+            </button>
+          </div>
           
           {recentAchievements.length === 0 ? (
             <Card className="bg-card border-border p-6 rounded-2xl">
