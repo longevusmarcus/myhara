@@ -7,8 +7,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
-type TapStep = "context" | "describe" | "body" | "gut" | "ignore" | "decision";
-type VoiceStep = "recording" | "processing" | "label" | "response" | "analyzing" | "insights" | "gut" | "ignore";
+type TapStep = "context" | "describe" | "body" | "gut" | "ignore" | "gentle-reminder" | "decision";
+type VoiceStep = "recording" | "processing" | "label" | "response" | "analyzing" | "insights" | "gut" | "ignore" | "gentle-reminder";
 
 interface SpeechRecognition extends EventTarget {
   continuous: boolean;
@@ -710,7 +710,7 @@ const CheckIn = () => {
               <Card
                 onClick={() => {
                   setWillIgnore("yes");
-                  handleVoiceComplete();
+                  setVoiceStep("gentle-reminder");
                 }}
                 className="bg-card border-border p-6 cursor-pointer hover:bg-card/80 transition-colors rounded-[1.25rem]"
               >
@@ -726,6 +726,58 @@ const CheckIn = () => {
               >
                 <p className="text-base text-foreground font-light">No, I'll honor my gut</p>
               </Card>
+            </div>
+          </div>
+        </div>
+      );
+    }
+    
+    if (voiceStep === "gentle-reminder") {
+      return (
+        <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6">
+          <div className="max-w-md w-full space-y-12 text-center">
+            {/* Bubble Logo */}
+            <div className="flex justify-center animate-in fade-in slide-in-from-bottom-4 duration-700">
+              <div className="w-24 h-24 rounded-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20">
+                <Sparkles className="w-12 h-12 text-primary" strokeWidth={1.5} />
+              </div>
+            </div>
+
+            {/* Gentle Reminder Text */}
+            <div className="space-y-6 animate-in fade-in slide-in-from-bottom-6 duration-700" style={{ animationDelay: '200ms' }}>
+              <p className="text-xl text-foreground/90 font-light leading-relaxed">
+                Why yes?
+              </p>
+              <p className="text-lg text-foreground/70 font-light leading-relaxed">
+                Take a moment to ask yourself
+              </p>
+              <div className="space-y-3 pt-4">
+                <p className="text-base text-foreground/60 font-light italic">
+                  What do I long for?
+                </p>
+                <p className="text-base text-foreground/60 font-light italic">
+                  Do I long to feel safe?
+                </p>
+                <p className="text-base text-foreground/60 font-light italic">
+                  Do I long to feel connected?
+                </p>
+                <p className="text-base text-foreground/60 font-light italic">
+                  Do I long to feel worthy?
+                </p>
+                <p className="text-base text-foreground/60 font-light italic">
+                  Do I long to rest?
+                </p>
+              </div>
+            </div>
+
+            {/* Continue Button */}
+            <div className="pt-8 animate-in fade-in slide-in-from-bottom-8 duration-700" style={{ animationDelay: '400ms' }}>
+              <button
+                onClick={handleVoiceComplete}
+                className="w-full py-4 px-6 bg-primary/10 hover:bg-primary/20 text-primary rounded-xl font-light transition-all border border-primary/20"
+              >
+                Continue
+              </button>
             </div>
           </div>
         </div>
@@ -933,7 +985,7 @@ const CheckIn = () => {
             <Card
               onClick={() => {
                 setWillIgnore("yes");
-                handleTapComplete();
+                setTapStep("gentle-reminder");
               }}
               className="bg-card border-border p-6 cursor-pointer hover:bg-card/80 transition-colors rounded-[1.25rem]"
             >
@@ -949,6 +1001,58 @@ const CheckIn = () => {
             >
               <span className="text-base text-foreground font-light">No, I'll honor it</span>
             </Card>
+          </div>
+        </div>
+      </div>
+    );
+  }
+  
+  if (tapStep === "gentle-reminder") {
+    return (
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6">
+        <div className="max-w-md w-full space-y-12 text-center">
+          {/* Bubble Logo */}
+          <div className="flex justify-center animate-in fade-in slide-in-from-bottom-4 duration-700">
+            <div className="w-24 h-24 rounded-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20">
+              <Sparkles className="w-12 h-12 text-primary" strokeWidth={1.5} />
+            </div>
+          </div>
+
+          {/* Gentle Reminder Text */}
+          <div className="space-y-6 animate-in fade-in slide-in-from-bottom-6 duration-700" style={{ animationDelay: '200ms' }}>
+            <p className="text-xl text-foreground/90 font-light leading-relaxed">
+              Why yes?
+            </p>
+            <p className="text-lg text-foreground/70 font-light leading-relaxed">
+              Take a moment to ask yourself
+            </p>
+            <div className="space-y-3 pt-4">
+              <p className="text-base text-foreground/60 font-light italic">
+                What do I long for?
+              </p>
+              <p className="text-base text-foreground/60 font-light italic">
+                Do I long to feel safe?
+              </p>
+              <p className="text-base text-foreground/60 font-light italic">
+                Do I long to feel connected?
+              </p>
+              <p className="text-base text-foreground/60 font-light italic">
+                Do I long to feel worthy?
+              </p>
+              <p className="text-base text-foreground/60 font-light italic">
+                Do I long to rest?
+              </p>
+            </div>
+          </div>
+
+          {/* Continue Button */}
+          <div className="pt-8 animate-in fade-in slide-in-from-bottom-8 duration-700" style={{ animationDelay: '400ms' }}>
+            <button
+              onClick={handleTapComplete}
+              className="w-full py-4 px-6 bg-primary/10 hover:bg-primary/20 text-primary rounded-xl font-light transition-all border border-primary/20"
+            >
+              Continue
+            </button>
           </div>
         </div>
       </div>
