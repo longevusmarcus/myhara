@@ -1,6 +1,6 @@
 import BottomNav from "@/components/BottomNav";
 import { Card } from "@/components/ui/card";
-import { TrendingUp, Clock, Target, Zap, Heart, Loader2, Eye, Info, MessageCircle } from "lucide-react";
+import { TrendingUp, Sparkles, Compass, Heart, Loader2, Lightbulb, Shield } from "lucide-react";
 import { useState, useEffect } from "react";
 import { getGamificationData } from "@/utils/gamification";
 import { supabase } from "@/integrations/supabase/client";
@@ -294,12 +294,14 @@ const Insights = () => {
         </div>
 
         {/* Daily Guidance */}
-        <Card className={`${hasSeenToday && !showDailyGuidance ? 'bg-card/50' : 'bg-card'} border-border p-6 rounded-3xl`}>
+        <Card className={`${hasSeenToday && !showDailyGuidance ? 'bg-card/50' : 'bg-card'} border-border p-6 rounded-[1.25rem]`}>
           {!showDailyGuidance ? (
             <div className="space-y-4">
-              <div className="flex items-center gap-3">
-                <Target className="w-5 h-5 text-primary" />
-                <p className="text-lg font-medium text-foreground">Daily Guidance</p>
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 rounded-full border-2 border-border/50 flex items-center justify-center flex-shrink-0">
+                  <Compass className="w-5 h-5 text-muted-foreground" strokeWidth={1.5} />
+                </div>
+                <p className="text-lg font-light text-foreground">Daily Guidance</p>
               </div>
               <p className="text-base font-light text-muted-foreground">
                 {hasSeenToday 
@@ -310,7 +312,7 @@ const Insights = () => {
               {!hasSeenToday && (
                 <button
                   onClick={handleStartGuidance}
-                  className="px-6 py-3 bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl text-sm font-light transition-colors"
+                  className="px-6 py-3 bg-primary hover:bg-primary/90 text-primary-foreground rounded-[1rem] text-sm font-light transition-colors hover:scale-[1.02]"
                 >
                   Get Today's Guidance
                 </button>
@@ -349,11 +351,11 @@ const Insights = () => {
         </Card>
 
         {/* Trust Score */}
-        <Card className="bg-card border-border p-6 rounded-3xl">
+        <Card className="bg-card border-border p-6 rounded-[1.25rem]">
           {entries.length === 0 ? (
             <div className="text-center py-8 space-y-3">
-              <div className="w-12 h-12 rounded-full bg-secondary/50 flex items-center justify-center mx-auto">
-                <Heart className="w-6 h-6 text-muted-foreground" />
+              <div className="w-12 h-12 rounded-full border-2 border-border/50 flex items-center justify-center mx-auto">
+                <Heart className="w-6 h-6 text-muted-foreground" strokeWidth={1.5} />
               </div>
               <p className="text-base text-muted-foreground font-light">
                 Start checking in to build your trust score
@@ -361,13 +363,13 @@ const Insights = () => {
             </div>
           ) : (
             <div className="space-y-4">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                  <TrendingUp className="w-5 h-5 text-primary" strokeWidth={1.5} />
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 rounded-full border-2 border-border/50 flex items-center justify-center flex-shrink-0">
+                  <TrendingUp className="w-5 h-5 text-muted-foreground" strokeWidth={1.5} />
                 </div>
-                <div>
+                <div className="flex-1">
                   <p className="text-sm text-muted-foreground font-light">Trust Score</p>
-                  <p className="text-2xl font-medium text-foreground">{trustScore}%</p>
+                  <p className="text-2xl font-light text-foreground">{trustScore}%</p>
                 </div>
               </div>
               <div className="w-full h-2 bg-secondary rounded-full overflow-hidden">
@@ -392,13 +394,13 @@ const Insights = () => {
         {/* Patterns */}
         {entries.length >= 3 && (
           <div className="space-y-4">
-            <h2 className="text-lg font-medium text-foreground">Your Patterns</h2>
+            <h2 className="text-lg font-light text-foreground">Your Patterns</h2>
             
             {loadingPatterns && !patterns && (
-              <Card className="bg-card border-border p-8 rounded-2xl">
+              <Card className="bg-card border-border p-8 rounded-[1.25rem]">
                 <div className="flex flex-col items-center gap-4 text-muted-foreground">
                   <Loader2 className="w-8 h-8 animate-spin text-primary" />
-                  <p className="text-sm">Discovering your intuition patterns...</p>
+                  <p className="text-sm font-light">Discovering your intuition patterns...</p>
                 </div>
               </Card>
             )}
@@ -429,8 +431,8 @@ const Insights = () => {
                   const patternData = JSON.parse(jsonStr);
                   
                   if (Array.isArray(patternData) && patternData.length > 0) {
-                    const icons = [Heart, Eye, Info];
-                    const colors = ["primary", "accent", "primary"];
+                    const icons = [Lightbulb, Sparkles, Shield];
+                    const colors = ["primary", "accent", "secondary"];
                     
                     return (
                       <div className="space-y-3 animate-fade-in">
@@ -508,30 +510,38 @@ const Insights = () => {
 
         {/* Weekly Summary */}
         <div className="space-y-3">
-          <h2 className="text-lg font-medium text-foreground">This Week</h2>
+          <h2 className="text-lg font-light text-foreground">This Week</h2>
           
-          <Card className="bg-card border-border p-6 rounded-3xl">
-            <div className="grid grid-cols-3 gap-6">
-              <div className="text-center">
-                <p className="text-2xl font-medium text-foreground">{weekStats.checkins}</p>
-                <p className="text-xs text-muted-foreground font-light mt-1">Check-ins</p>
+          <Card className="bg-card border-border p-6 rounded-[1.25rem]">
+            <div className="space-y-4">
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 rounded-full border-2 border-border/50 flex items-center justify-center flex-shrink-0">
+                  <Sparkles className="w-5 h-5 text-muted-foreground" strokeWidth={1.5} />
+                </div>
+                <div className="flex-1 flex items-center justify-between">
+                  <p className="text-base font-light text-foreground">Check-ins</p>
+                  <p className="text-xl font-light text-foreground">{weekStats.checkins}</p>
+                </div>
               </div>
-              <div className="text-center">
-                <p className="text-2xl font-medium text-foreground">{getGamificationData().currentStreak}</p>
-                <p className="text-xs text-muted-foreground font-light mt-1">Day streak</p>
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 rounded-full border-2 border-border/50 flex items-center justify-center flex-shrink-0">
+                  <Heart className="w-5 h-5 text-muted-foreground" strokeWidth={1.5} />
+                </div>
+                <div className="flex-1 flex items-center justify-between">
+                  <p className="text-base font-light text-foreground">Gut honored</p>
+                  <p className="text-xl font-light text-foreground">{weekStats.honored}</p>
+                </div>
               </div>
-              <div className="text-center">
-                <p className="text-2xl font-medium text-foreground">{weekStats.honored}</p>
-                <p className="text-xs text-muted-foreground font-light mt-1">Honored</p>
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 rounded-full border-2 border-border/50 flex items-center justify-center flex-shrink-0">
+                  <Shield className="w-5 h-5 text-muted-foreground" strokeWidth={1.5} />
+                </div>
+                <div className="flex-1 flex items-center justify-between">
+                  <p className="text-base font-light text-foreground">Decisions made</p>
+                  <p className="text-xl font-light text-foreground">{weekStats.decisions}</p>
+                </div>
               </div>
             </div>
-            {weekStats.decisions > 0 && (
-              <div className="mt-4 pt-4 border-t border-border/50">
-                <p className="text-sm text-center text-muted-foreground font-light">
-                  {weekStats.decisions} decision{weekStats.decisions !== 1 ? 's' : ''} tracked this week
-                </p>
-              </div>
-            )}
           </Card>
         </div>
       </div>
