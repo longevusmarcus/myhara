@@ -36,7 +36,7 @@ export const PatternCard = ({
       {/* Header - Always visible */}
       <button
         onClick={() => setIsExpanded(!isExpanded)}
-        className={`w-full p-6 flex items-center gap-4 text-left transition-all duration-200 ${
+        className={`w-full p-6 flex items-start gap-4 text-left transition-all duration-200 ${
           isExpanded ? bgColor : 'hover:bg-accent/5'
         }`}
       >
