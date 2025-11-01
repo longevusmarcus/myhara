@@ -10,6 +10,7 @@ const Auth = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [isLogin, setIsLogin] = useState(true);
+  const [isForgotPassword, setIsForgotPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [nickname, setNickname] = useState("");
@@ -37,7 +38,19 @@ const Auth = () => {
     setLoading(true);
 
     try {
-      if (isLogin) {
+      if (isForgotPassword) {
+        const { error } = await supabase.auth.resetPasswordForEmail(email, {
+          redirectTo: `${window.location.origin}/`,
+        });
+
+        if (error) throw error;
+
+        toast({
+          title: "Check your email",
+          description: "We've sent you a password reset link.",
+        });
+        setIsForgotPassword(false);
+      } else if (isLogin) {
         const { error } = await supabase.auth.signInWithPassword({
           email,
           password,
@@ -106,7 +119,7 @@ const Auth = () => {
         {/* Auth form card */}
         <div className="backdrop-blur-xl bg-card/40 border border-border/30 rounded-[1.5rem] p-8 shadow-2xl animate-in fade-in slide-in-from-bottom-8 duration-700" style={{ animationDelay: '400ms' }}>
           <form onSubmit={handleAuth} className="space-y-5">
-            {!isLogin && (
+            {!isLogin && !isForgotPassword && (
               <div>
                 <Input
                   type="text"
@@ -128,42 +141,57 @@ const Auth = () => {
                 className="bg-background/60 border-border/40 rounded-[1rem] h-12 text-base placeholder:text-muted-foreground/60 focus:border-primary/50 transition-all"
               />
             </div>
-            <div>
-              <Input
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                minLength={6}
-                className="bg-background/60 border-border/40 rounded-[1rem] h-12 text-base placeholder:text-muted-foreground/60 focus:border-primary/50 transition-all"
-              />
-              {!isLogin && (
-                <p className="text-xs text-muted-foreground/70 mt-2 ml-1">
-                  8+ characters, 1 uppercase, 1 number recommended
-                </p>
-              )}
-            </div>
+            {!isForgotPassword && (
+              <div>
+                <Input
+                  type="password"
+                  placeholder="Password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  minLength={6}
+                  className="bg-background/60 border-border/40 rounded-[1rem] h-12 text-base placeholder:text-muted-foreground/60 focus:border-primary/50 transition-all"
+                />
+                {!isLogin && (
+                  <p className="text-xs text-muted-foreground/70 mt-2 ml-1">
+                    8+ characters, 1 uppercase, 1 number recommended
+                  </p>
+                )}
+              </div>
+            )}
 
             <Button
               type="submit"
               disabled={loading}
               className="w-full rounded-[1rem] h-12 text-base font-medium bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/25 transition-all hover:shadow-xl hover:shadow-primary/30 hover:scale-[1.02]"
             >
-              {loading ? "Loading..." : isLogin ? "Sign in" : "Get started"}
+              {loading ? "Loading..." : isForgotPassword ? "Send reset link" : isLogin ? "Sign in" : "Get started"}
             </Button>
           </form>
 
-          <div className="mt-6 text-center">
+          <div className="mt-6 text-center space-y-3">
+            {isLogin && !isForgotPassword && (
+              <button
+                onClick={() => setIsForgotPassword(true)}
+                className="text-sm text-muted-foreground/80 font-light hover:text-foreground transition-colors block w-full"
+              >
+                Forgot password?
+              </button>
+            )}
             <button
-              onClick={() => setIsLogin(!isLogin)}
+              onClick={() => {
+                setIsLogin(!isLogin);
+                setIsForgotPassword(false);
+              }}
               className="text-sm text-muted-foreground/80 font-light hover:text-foreground transition-colors"
             >
-              {isLogin
+              {isForgotPassword
+                ? "Back to sign in"
+                : isLogin
                 ? "Don't have an account? "
                 : "Already have an account? "}
               <span className="text-primary font-medium">
-                {isLogin ? "Sign up" : "Sign in"}
+                {isForgotPassword ? "" : isLogin ? "Sign up" : "Sign in"}
               </span>
             </button>
           </div>
