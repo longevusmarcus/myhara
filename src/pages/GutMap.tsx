@@ -361,7 +361,7 @@ const GutMap = () => {
                             Gut: {entry.gutFeeling} • {entry.willIgnore === "no" ? "Honored it" : "Ignored it"}
                           </p>
                           {entry.decision && (
-                            <div className="mt-4 space-y-3">
+                            <div className="mt-4">
                               <div className="p-4 bg-secondary/30 rounded-2xl border border-border/50">
                                 <div className="flex items-start gap-3">
                                   <FileText className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
@@ -370,73 +370,76 @@ const GutMap = () => {
                                   </p>
                                 </div>
                               </div>
-                              
-                              {selectedEntry === index ? (
-                                <div className="space-y-3 animate-in slide-in-from-top-2 duration-300">
-                                  <Textarea
-                                    value={consequence}
-                                    onChange={(e) => setConsequence(e.target.value)}
-                                    placeholder="What happened? How did it turn out?"
-                                    className="bg-background/80 border-border/50 rounded-2xl min-h-[100px] resize-none text-sm focus:border-primary/50 transition-all"
-                                    autoFocus
-                                  />
-                                  <div className="flex gap-2">
-                                    <button
-                                      onClick={() => {
-                                        setSelectedEntry(null);
-                                        setConsequence("");
-                                      }}
-                                      className="flex-1 py-2 px-4 rounded-xl text-sm font-light text-muted-foreground hover:text-foreground hover:bg-secondary/50 transition-all"
-                                    >
-                                      Cancel
-                                    </button>
-                                    <button
-                                      onClick={() => updateConsequence(index)}
-                                      disabled={!consequence.trim()}
-                                      className="flex-1 py-2 px-4 rounded-xl text-sm font-light bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-                                    >
-                                      Save
-                                    </button>
-                                  </div>
-                                </div>
-                              ) : entry.consequence ? (
-                                <div className="p-4 bg-primary/5 rounded-2xl border border-primary/10 animate-in fade-in duration-300 group">
-                                  <div className="flex items-start justify-between gap-3">
-                                    <div className="flex-1">
-                                      <p className="text-xs text-primary/70 font-medium mb-2 uppercase tracking-wide">
-                                        Outcome
-                                      </p>
-                                      <p className="text-sm text-foreground/90 font-light leading-relaxed">
-                                        {entry.consequence}
-                                      </p>
-                                    </div>
-                                    <button
-                                      onClick={() => removeConsequence(index)}
-                                      className="opacity-0 group-hover:opacity-100 transition-opacity p-1.5 hover:bg-destructive/10 rounded-lg"
-                                      title="Remove outcome"
-                                    >
-                                      <X className="w-4 h-4 text-muted-foreground hover:text-destructive transition-colors" />
-                                    </button>
-                                  </div>
-                                </div>
-                              ) : (
-                                <button
-                                  onClick={() => {
-                                    setSelectedEntry(index);
-                                    setConsequence("");
-                                  }}
-                                  className="w-full py-3 px-4 rounded-xl border border-dashed border-border/50 hover:border-primary/50 hover:bg-primary/5 transition-all group"
-                                >
-                                  <div className="flex items-center justify-center gap-2">
-                                    <Plus className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
-                                    <span className="text-sm text-muted-foreground group-hover:text-primary font-light transition-colors">
-                                      Log outcome
-                                    </span>
-                                  </div>
-                                </button>
-                              )}
                             </div>
                           )}
+                          
+                          {/* Outcome logging for tap entries */}
+                          <div className="mt-4 space-y-3">
+                            {selectedEntry === index ? (
+                              <div className="space-y-3 animate-in slide-in-from-top-2 duration-300">
+                                <Textarea
+                                  value={consequence}
+                                  onChange={(e) => setConsequence(e.target.value)}
+                                  placeholder="What happened? How did it turn out?"
+                                  className="bg-background/80 border-border/50 rounded-2xl min-h-[100px] resize-none text-sm focus:border-primary/50 transition-all"
+                                  autoFocus
+                                />
+                                <div className="flex gap-2">
+                                  <button
+                                    onClick={() => {
+                                      setSelectedEntry(null);
+                                      setConsequence("");
+                                    }}
+                                    className="flex-1 py-2 px-4 rounded-xl text-sm font-light text-muted-foreground hover:text-foreground hover:bg-secondary/50 transition-all"
+                                  >
+                                    Cancel
+                                  </button>
+                                  <button
+                                    onClick={() => updateConsequence(index)}
+                                    disabled={!consequence.trim()}
+                                    className="flex-1 py-2 px-4 rounded-xl text-sm font-light bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                                  >
+                                    Save
+                                  </button>
+                                </div>
+                              </div>
+                            ) : entry.consequence ? (
+                              <div className="p-4 bg-primary/5 rounded-2xl border border-primary/10 animate-in fade-in duration-300 group">
+                                <div className="flex items-start justify-between gap-3">
+                                  <div className="flex-1">
+                                    <p className="text-xs text-primary/70 font-medium mb-2 uppercase tracking-wide">
+                                      Outcome
+                                    </p>
+                                    <p className="text-sm text-foreground/90 font-light leading-relaxed">
+                                      {entry.consequence}
+                                    </p>
+                                  </div>
+                                  <button
+                                    onClick={() => removeConsequence(index)}
+                                    className="opacity-0 group-hover:opacity-100 transition-opacity p-1.5 hover:bg-destructive/10 rounded-lg"
+                                    title="Remove outcome"
+                                  >
+                                    <X className="w-4 h-4 text-muted-foreground hover:text-destructive transition-colors" />
+                                  </button>
+                                </div>
+                              </div>
+                            ) : (
+                              <button
+                                onClick={() => {
+                                  setSelectedEntry(index);
+                                  setConsequence("");
+                                }}
+                                className="w-full py-3 px-4 rounded-xl border border-dashed border-border/50 hover:border-primary/50 hover:bg-primary/5 transition-all group"
+                              >
+                                <div className="flex items-center justify-center gap-2">
+                                  <Plus className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                                  <span className="text-sm text-muted-foreground group-hover:text-primary font-light transition-colors">
+                                    Log outcome
+                                  </span>
+                                </div>
+                              </button>
+                            )}
+                          </div>
                         </>
                       )}
                       {entry.mode === "voice" && (
