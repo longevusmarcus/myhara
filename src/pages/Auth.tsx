@@ -100,8 +100,11 @@ const Auth = () => {
           <h1 className="text-4xl font-cursive text-foreground tracking-tight mb-2 animate-in fade-in slide-in-from-bottom-4 duration-700" style={{ animationDelay: '200ms' }}>
             Hara
           </h1>
-          <p className="text-base text-muted-foreground font-light animate-in fade-in slide-in-from-bottom-4 duration-700" style={{ animationDelay: '300ms' }}>
-            {isLogin ? "Welcome back to your journey" : "Begin your journey to inner balance"}
+          <p className="text-lg text-foreground font-light animate-in fade-in slide-in-from-bottom-4 duration-700" style={{ animationDelay: '300ms' }}>
+            Trust your gut.
+          </p>
+          <p className="text-base text-muted-foreground font-light animate-in fade-in slide-in-from-bottom-4 duration-700" style={{ animationDelay: '400ms' }}>
+            Make better decisions with it.
           </p>
         </div>
 
