@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
+import haraMascot from "@/assets/hara-mascot.png";
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -82,82 +82,118 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-6">
-      <Card className="w-full max-w-md bg-card border-border p-8 rounded-[1.25rem]">
+    <div className="min-h-screen bg-background flex items-center justify-center p-6 relative overflow-hidden">
+      {/* Decorative background elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-20 left-10 w-3 h-3 rounded-full bg-accent/20 animate-pulse" style={{ animationDelay: '0s', animationDuration: '3s' }} />
+        <div className="absolute top-40 right-20 w-2 h-2 rounded-full bg-primary/30 animate-pulse" style={{ animationDelay: '1s', animationDuration: '4s' }} />
+        <div className="absolute bottom-32 left-1/4 w-2.5 h-2.5 rounded-full bg-secondary/25 animate-pulse" style={{ animationDelay: '2s', animationDuration: '3.5s' }} />
+        <div className="absolute top-1/3 right-10 w-2 h-2 rounded-full bg-accent/15 animate-pulse" style={{ animationDelay: '1.5s', animationDuration: '5s' }} />
+      </div>
+
+      <div className="w-full max-w-md relative">
+        {/* Mascot and branding */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-cursive text-foreground tracking-tight mb-2">Hara</h1>
-          <p className="text-base text-muted-foreground font-light">
-            {isLogin ? "Welcome back" : "Begin your journey"}
+          <div className="mb-6 flex justify-center">
+            <img 
+              src={haraMascot} 
+              alt="Hara mascot" 
+              className="w-32 h-32 object-contain animate-in fade-in zoom-in duration-700"
+            />
+          </div>
+          <h1 className="text-4xl font-cursive text-foreground tracking-tight mb-2 animate-in fade-in slide-in-from-bottom-4 duration-700" style={{ animationDelay: '200ms' }}>
+            Hara
+          </h1>
+          <p className="text-base text-muted-foreground font-light animate-in fade-in slide-in-from-bottom-4 duration-700" style={{ animationDelay: '300ms' }}>
+            {isLogin ? "Welcome back to your journey" : "Begin your journey to inner balance"}
           </p>
         </div>
 
-        <form onSubmit={handleAuth} className="space-y-4">
-          {!isLogin && (
-            <>
-              <div>
-                <Input
-                  type="text"
-                  placeholder="First Name"
-                  value={firstName}
-                  onChange={(e) => setFirstName(e.target.value)}
-                  required
-                  className="bg-background border-border rounded-[1.25rem]"
-                />
+        {/* Auth form card */}
+        <div className="backdrop-blur-xl bg-card/40 border border-border/30 rounded-[1.5rem] p-8 shadow-2xl animate-in fade-in slide-in-from-bottom-8 duration-700" style={{ animationDelay: '400ms' }}>
+          <form onSubmit={handleAuth} className="space-y-5">
+            {!isLogin && (
+              <div className="space-y-4">
+                <div>
+                  <Input
+                    type="text"
+                    placeholder="First name"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    required
+                    className="bg-background/60 border-border/40 rounded-[1rem] h-12 text-base placeholder:text-muted-foreground/60 focus:border-primary/50 transition-all"
+                  />
+                </div>
+                <div>
+                  <Input
+                    type="text"
+                    placeholder="Last name"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                    required
+                    className="bg-background/60 border-border/40 rounded-[1rem] h-12 text-base placeholder:text-muted-foreground/60 focus:border-primary/50 transition-all"
+                  />
+                </div>
               </div>
-              <div>
-                <Input
-                  type="text"
-                  placeholder="Last Name"
-                  value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
-                  required
-                  className="bg-background border-border rounded-[1.25rem]"
-                />
-              </div>
-            </>
-          )}
-          <div>
-            <Input
-              type="email"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="bg-background border-border rounded-[1.25rem]"
-            />
-          </div>
-          <div>
-            <Input
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              minLength={6}
-              className="bg-background border-border rounded-[1.25rem]"
-            />
-          </div>
+            )}
+            <div>
+              <Input
+                type="email"
+                placeholder="Email address"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className="bg-background/60 border-border/40 rounded-[1rem] h-12 text-base placeholder:text-muted-foreground/60 focus:border-primary/50 transition-all"
+              />
+            </div>
+            <div>
+              <Input
+                type="password"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                minLength={6}
+                className="bg-background/60 border-border/40 rounded-[1rem] h-12 text-base placeholder:text-muted-foreground/60 focus:border-primary/50 transition-all"
+              />
+              {!isLogin && (
+                <p className="text-xs text-muted-foreground/70 mt-2 ml-1">
+                  8+ characters, 1 uppercase, 1 number recommended
+                </p>
+              )}
+            </div>
 
-          <Button
-            type="submit"
-            disabled={loading}
-            className="w-full rounded-[1.25rem]"
-          >
-            {loading ? "Loading..." : isLogin ? "Sign In" : "Sign Up"}
-          </Button>
-        </form>
+            <Button
+              type="submit"
+              disabled={loading}
+              className="w-full rounded-[1rem] h-12 text-base font-medium bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/25 transition-all hover:shadow-xl hover:shadow-primary/30 hover:scale-[1.02]"
+            >
+              {loading ? "Loading..." : isLogin ? "Sign in" : "Get started"}
+            </Button>
+          </form>
 
-        <div className="mt-6 text-center">
-          <button
-            onClick={() => setIsLogin(!isLogin)}
-            className="text-sm text-muted-foreground font-light hover:text-foreground transition-colors"
-          >
-            {isLogin
-              ? "Don't have an account? Sign up"
-              : "Already have an account? Sign in"}
-          </button>
+          <div className="mt-6 text-center">
+            <button
+              onClick={() => setIsLogin(!isLogin)}
+              className="text-sm text-muted-foreground/80 font-light hover:text-foreground transition-colors"
+            >
+              {isLogin
+                ? "Don't have an account? "
+                : "Already have an account? "}
+              <span className="text-primary font-medium">
+                {isLogin ? "Sign up" : "Sign in"}
+              </span>
+            </button>
+          </div>
         </div>
-      </Card>
+
+        {/* Footer text */}
+        {!isLogin && (
+          <p className="text-center text-xs text-muted-foreground/60 mt-6 animate-in fade-in duration-700" style={{ animationDelay: '600ms' }}>
+            By continuing, you agree to Hara's Terms of Service and Privacy Policy
+          </p>
+        )}
+      </div>
     </div>
   );
 };
