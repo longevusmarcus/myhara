@@ -27,8 +27,7 @@ const Achievements = () => {
       xp: 10,
       icon: Ear,
       condition: { type: "checkins", value: 1 },
-      progress: gamData.totalCheckins,
-      color: "text-cyan-500"
+      progress: gamData.totalCheckins
     },
     {
       id: "streak_3",
@@ -37,8 +36,7 @@ const Achievements = () => {
       xp: 30,
       icon: Flame,
       condition: { type: "streak", value: 3 },
-      progress: gamData.currentStreak,
-      color: "text-orange-500"
+      progress: gamData.currentStreak
     },
     {
       id: "decision_tracker",
@@ -47,8 +45,7 @@ const Achievements = () => {
       xp: 30,
       icon: Target,
       condition: { type: "decisions", value: 1 },
-      progress: decisionsTracked,
-      color: "text-blue-500"
+      progress: decisionsTracked
     },
     {
       id: "pattern_master",
@@ -57,8 +54,7 @@ const Achievements = () => {
       xp: 100,
       icon: Star,
       condition: { type: "consequences", value: 5 },
-      progress: consequencesLogged,
-      color: "text-amber-500"
+      progress: consequencesLogged
     },
     {
       id: "gut_honor",
@@ -67,8 +63,7 @@ const Achievements = () => {
       xp: 25,
       icon: Heart,
       condition: { type: "honored", value: 1 },
-      progress: honoredCount,
-      color: "text-pink-500"
+      progress: honoredCount
     },
     {
       id: "trust_builder",
@@ -77,8 +72,7 @@ const Achievements = () => {
       xp: 50,
       icon: Shield,
       condition: { type: "honored", value: 5 },
-      progress: honoredCount,
-      color: "text-green-500"
+      progress: honoredCount
     },
     {
       id: "intuition_master",
@@ -87,8 +81,7 @@ const Achievements = () => {
       xp: 150,
       icon: Crown,
       condition: { type: "honored", value: 15 },
-      progress: honoredCount,
-      color: "text-yellow-500"
+      progress: honoredCount
     }
   ];
 
@@ -150,7 +143,7 @@ const Achievements = () => {
               >
                 <div className="flex items-start gap-4">
                   {unlocked ? (
-                    <Icon className={`w-7 h-7 ${achievement.color} flex-shrink-0`} strokeWidth={1.5} />
+                    <Icon className="w-7 h-7 text-foreground flex-shrink-0" strokeWidth={1.5} />
                   ) : (
                     <Lock className="w-7 h-7 text-muted-foreground/50 flex-shrink-0" strokeWidth={1.5} />
                   )}
@@ -184,7 +177,7 @@ const Achievements = () => {
                       </div>
                     )}
 
-                    <div className={`text-xs font-medium ${unlocked ? achievement.color : 'text-muted-foreground/50'}`}>
+                    <div className={`text-xs font-medium ${unlocked ? 'text-foreground' : 'text-muted-foreground/50'}`}>
                       +{achievement.xp} XP
                     </div>
                   </div>

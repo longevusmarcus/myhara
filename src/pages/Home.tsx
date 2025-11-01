@@ -53,9 +53,9 @@ const Home = () => {
 
   const generateMissions = (entries: any[]) => {
     const defaultMissions = [
-      { id: 1, title: "Pause before saying yes to something", category: "gut trust", color: "text-cyan-500", Icon: Pause },
-      { id: 2, title: "Notice one body signal today", category: "awareness", color: "text-purple-500", Icon: Sparkles },
-      { id: 3, title: "Honor a no that feels right", category: "boundaries", color: "text-green-500", Icon: Shield },
+      { id: 1, title: "Pause before saying yes to something", category: "gut trust", Icon: Pause },
+      { id: 2, title: "Notice one body signal today", category: "awareness", Icon: Sparkles },
+      { id: 3, title: "Honor a no that feels right", category: "boundaries", Icon: Shield },
     ];
 
     if (entries.length === 0) return defaultMissions;
@@ -71,7 +71,6 @@ const Home = () => {
         id: 1,
         title: "Practice honoring one gut feeling today",
         category: "trust building",
-        color: "text-cyan-500",
         Icon: Pause
       });
     } else {
@@ -79,7 +78,6 @@ const Home = () => {
         id: 1,
         title: "Notice when your gut feels strongest",
         category: "awareness",
-        color: "text-cyan-500",
         Icon: Sparkles
       });
     }
@@ -91,7 +89,6 @@ const Home = () => {
         id: 2,
         title: "Check in when you feel tension today",
         category: "body awareness",
-        color: "text-purple-500",
         Icon: Sparkles
       });
     } else {
@@ -105,7 +102,6 @@ const Home = () => {
         id: 3,
         title: "Track one decision you make today",
         category: "follow-through",
-        color: "text-green-500",
         Icon: Shield
       });
     } else {
@@ -113,7 +109,6 @@ const Home = () => {
         id: 3,
         title: "Review a past decision outcome",
         category: "reflection",
-        color: "text-green-500",
         Icon: Shield
       });
     }
@@ -229,12 +224,12 @@ const Home = () => {
               key={mission.id}
               className="bg-card border-border p-4 rounded-[1.25rem] flex items-center gap-4 hover:bg-card/80 transition-colors cursor-pointer"
             >
-              <div className={`w-10 h-10 rounded-full border-2 ${mission.color.replace('text', 'border')} flex items-center justify-center flex-shrink-0`}>
-                <mission.Icon className={`w-5 h-5 ${mission.color}`} strokeWidth={1.5} />
+              <div className="w-10 h-10 rounded-full border-2 border-muted-foreground/20 flex items-center justify-center flex-shrink-0">
+                <mission.Icon className="w-5 h-5 text-muted-foreground" strokeWidth={1.5} />
               </div>
               <div className="flex-1">
                 <p className="text-base font-light text-foreground">{mission.title}</p>
-                <p className={`text-xs font-light ${mission.color}`}>{mission.category}</p>
+                <p className="text-xs font-light text-muted-foreground">{mission.category}</p>
               </div>
             </Card>
           ))}
