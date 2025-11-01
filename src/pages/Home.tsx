@@ -288,33 +288,33 @@ const Home = () => {
       </div>
 
       {/* Today's Focus Card */}
-      <div className="px-6 mb-8">
-        <h2 className="text-xs uppercase tracking-wider text-muted-foreground mb-3 font-light">
+      <div className="px-6 mb-6">
+        <h2 className="text-xs uppercase tracking-wider text-muted-foreground mb-2 font-light">
           today's focus
         </h2>
-        <Card className="bg-card border-border p-5 rounded-[1.25rem]">
+        <Card className="bg-card border-border p-3 rounded-[1.25rem]">
           {loadingFocus ? (
             <div className="flex items-center gap-2 text-muted-foreground w-full">
-              <Loader2 className="w-4 h-4 animate-spin" />
-              <p className="text-sm font-light">Loading your focus...</p>
+              <Loader2 className="w-3 h-3 animate-spin" />
+              <p className="text-xs font-light">Loading your focus...</p>
             </div>
           ) : (
-            <div className="space-y-4">
+            <div className="space-y-2.5">
               {/* Focus text with arrow */}
-              <div className="flex items-start justify-between gap-4">
-                <p className="text-base font-light text-foreground leading-relaxed">
+              <div className="flex items-start justify-between gap-3">
+                <p className="text-sm font-light text-foreground leading-snug">
                   {dailyFocus}
                 </p>
                 <button 
                   onClick={() => navigate("/map")}
-                  className="flex-shrink-0 w-8 h-8 rounded-full bg-foreground/10 flex items-center justify-center hover:bg-foreground/20 transition-colors"
+                  className="flex-shrink-0 w-6 h-6 rounded-full bg-foreground/10 flex items-center justify-center hover:bg-foreground/20 transition-colors"
                 >
-                  <ArrowRight className="w-4 h-4 text-foreground" />
+                  <ArrowRight className="w-3 h-3 text-foreground" />
                 </button>
               </div>
 
               {/* Weekly calendar */}
-              <div className="flex justify-between items-center gap-1 pt-2 border-t border-border/50">
+              <div className="flex justify-between items-center gap-0.5 pt-1.5 border-t border-border/50">
                 {(() => {
                   const today = new Date();
                   const currentDay = today.getDay();
@@ -331,12 +331,12 @@ const Home = () => {
                   return weekDays.map((day, idx) => (
                     <div 
                       key={idx}
-                      className="flex flex-col items-center gap-1 flex-1"
+                      className="flex flex-col items-center gap-0.5 flex-1"
                     >
-                      <span className="text-[10px] text-muted-foreground font-light">
+                      <span className="text-[9px] text-muted-foreground font-light">
                         {days[idx]}
                       </span>
-                      <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-light transition-colors ${
+                      <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-light transition-colors ${
                         day.isToday 
                           ? 'bg-primary text-primary-foreground' 
                           : 'text-muted-foreground hover:bg-secondary/50'
