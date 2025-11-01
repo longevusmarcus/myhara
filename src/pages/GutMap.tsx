@@ -323,10 +323,19 @@ const GutMap = () => {
   };
 
   const formatAIInsights = (text: string) => {
-    // Remove all ** markers first
-    const cleanText = text.replace(/\*\*/g, '');
-    const lines = cleanText.split('\n').filter(line => line.trim());
+    const lines = text.split('\n').filter(line => line.trim());
     const elements = [];
+    
+    // Helper to parse bold text within a string
+    const parseBoldText = (text: string) => {
+      const parts = text.split(/(\*\*.*?\*\*)/g);
+      return parts.map((part, i) => {
+        if (part.startsWith('**') && part.endsWith('**')) {
+          return <strong key={i} className="font-semibold text-foreground">{part.slice(2, -2)}</strong>;
+        }
+        return part;
+      });
+    };
     
     lines.forEach((line, idx) => {
       const trimmedLine = line.trim();
@@ -339,7 +348,7 @@ const GutMap = () => {
           <div key={idx} className="flex gap-2 mb-1.5 ml-1">
             <span className="text-primary mt-0.5 flex-shrink-0">•</span>
             <p className="text-sm text-foreground/80 font-light leading-relaxed">
-              {bulletMatch[1]}
+              {parseBoldText(bulletMatch[1])}
             </p>
           </div>
         );
@@ -350,7 +359,7 @@ const GutMap = () => {
       ) {
         elements.push(
           <h4 key={idx} className="text-sm font-medium text-foreground mt-3 first:mt-0 mb-1.5">
-            {trimmedLine}
+            {parseBoldText(trimmedLine)}
           </h4>
         );
       } 
@@ -358,7 +367,7 @@ const GutMap = () => {
       else {
         elements.push(
           <p key={idx} className="text-sm text-foreground/80 font-light leading-relaxed mb-2">
-            {trimmedLine}
+            {parseBoldText(trimmedLine)}
           </p>
         );
       }
