@@ -213,7 +213,7 @@ const Insights = () => {
     setHasSeenToday(true);
 
     try {
-      const currentUserName = sessionStorage.getItem("currentUserName") || userName || "the user";
+      const currentUserName = sessionStorage.getItem("currentUserName") || userName || "you";
       
       const recentEntries = entries.slice(-7).map((e: any) => ({
         timestamp: e.timestamp,
@@ -223,6 +223,11 @@ const Insights = () => {
         honored: e.willIgnore === "no",
         aiInsights: e.aiInsights
       }));
+
+      const hasData = entries.length > 0;
+      const userMessage = hasData 
+        ? `Provide personalized guidance based on ${currentUserName}'s recent check-ins:\n\n${JSON.stringify(recentEntries, null, 2)}`
+        : `${currentUserName} is just beginning their intuition journey. Provide welcoming guidance to help them start connecting with their gut feelings.`;
 
       const response = await fetch(
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/gut-coach`,
@@ -236,7 +241,7 @@ const Insights = () => {
             messages: [
               {
                 role: "user",
-                content: `Based on ${currentUserName}'s recent check-ins, provide daily guidance:\n\n${JSON.stringify(recentEntries, null, 2)}`
+                content: userMessage
               }
             ],
             type: "daily_guidance",
