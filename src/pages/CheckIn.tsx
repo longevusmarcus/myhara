@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { ArrowLeft, Mic, Zap, Waves, Sun, Circle, Droplet, Sparkles, Cloud, CheckCircle, XCircle, Pause, Plus } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Card } from "@/components/ui/card";
@@ -8,6 +8,54 @@ import { useToast } from "@/hooks/use-toast";
 
 type TapStep = "context" | "describe" | "body" | "gut" | "ignore" | "decision";
 type VoiceStep = "recording" | "processing" | "label" | "response";
+
+interface SpeechRecognition extends EventTarget {
+  continuous: boolean;
+  interimResults: boolean;
+  lang: string;
+  start(): void;
+  stop(): void;
+  abort(): void;
+  onstart: ((this: SpeechRecognition, ev: Event) => any) | null;
+  onend: ((this: SpeechRecognition, ev: Event) => any) | null;
+  onerror: ((this: SpeechRecognition, ev: SpeechRecognitionErrorEvent) => any) | null;
+  onresult: ((this: SpeechRecognition, ev: SpeechRecognitionEvent) => any) | null;
+}
+
+interface SpeechRecognitionErrorEvent extends Event {
+  error: string;
+  message: string;
+}
+
+interface SpeechRecognitionEvent extends Event {
+  resultIndex: number;
+  results: SpeechRecognitionResultList;
+}
+
+interface SpeechRecognitionResultList {
+  length: number;
+  item(index: number): SpeechRecognitionResult;
+  [index: number]: SpeechRecognitionResult;
+}
+
+interface SpeechRecognitionResult {
+  isFinal: boolean;
+  length: number;
+  item(index: number): SpeechRecognitionAlternative;
+  [index: number]: SpeechRecognitionAlternative;
+}
+
+interface SpeechRecognitionAlternative {
+  transcript: string;
+  confidence: number;
+}
+
+declare global {
+  interface Window {
+    SpeechRecognition: new () => SpeechRecognition;
+    webkitSpeechRecognition: new () => SpeechRecognition;
+  }
+}
 
 const CheckIn = () => {
   const navigate = useNavigate();
@@ -32,26 +80,136 @@ const CheckIn = () => {
   const [transcript, setTranscript] = useState("");
   const [selectedLabel, setSelectedLabel] = useState("");
   const [wantsResponse, setWantsResponse] = useState<boolean | null>(null);
+  const recognitionRef = useRef<SpeechRecognition | null>(null);
 
   useEffect(() => {
     if (mode === "voice") {
       startVoiceRecording();
     }
+    
+    return () => {
+      // Cleanup: stop recognition if component unmounts
+      if (recognitionRef.current) {
+        recognitionRef.current.abort();
+      }
+    };
   }, [mode]);
 
   const startVoiceRecording = () => {
-    setIsRecording(true);
-    // Simulate voice recording for 3 seconds
-    setTimeout(() => {
-      setIsRecording(false);
-      setTranscript("My stomach just twisted when I got this message from my boss. I don't know why.");
-      setVoiceStep("processing");
+    // Check if browser supports Speech Recognition
+    const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
+    
+    if (!SpeechRecognitionAPI) {
+      toast({
+        title: "Not supported",
+        description: "Your browser doesn't support voice recording. Please try Chrome or Safari.",
+        variant: "destructive",
+      });
+      navigate("/home");
+      return;
+    }
+
+    const recognition = new SpeechRecognitionAPI();
+    recognitionRef.current = recognition;
+
+    // Configure recognition
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognition.lang = 'en-US';
+
+    let finalTranscript = '';
+    let silenceTimer: NodeJS.Timeout | null = null;
+
+    recognition.onstart = () => {
+      console.log('Voice recognition started');
+      setIsRecording(true);
+    };
+
+    recognition.onresult = (event: SpeechRecognitionEvent) => {
+      let interimTranscript = '';
+
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        const transcriptPiece = event.results[i][0].transcript;
+        if (event.results[i].isFinal) {
+          finalTranscript += transcriptPiece + ' ';
+        } else {
+          interimTranscript += transcriptPiece;
+        }
+      }
+
+      // Update transcript in real-time
+      setTranscript(finalTranscript + interimTranscript);
+
+      // Reset silence timer
+      if (silenceTimer) {
+        clearTimeout(silenceTimer);
+      }
+
+      // Stop recording after 2 seconds of silence
+      silenceTimer = setTimeout(() => {
+        if (recognition) {
+          recognition.stop();
+        }
+      }, 2000);
+    };
+
+    recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
+      console.error('Speech recognition error:', event.error);
       
-      // Simulate AI processing
-      setTimeout(() => {
-        setVoiceStep("label");
-      }, 1500);
-    }, 3000);
+      if (event.error === 'not-allowed') {
+        toast({
+          title: "Microphone access denied",
+          description: "Please allow microphone access to use voice recording.",
+          variant: "destructive",
+        });
+        navigate("/home");
+      } else if (event.error === 'no-speech') {
+        // User didn't speak, just continue
+        console.log('No speech detected');
+      }
+      
+      setIsRecording(false);
+    };
+
+    recognition.onend = () => {
+      console.log('Voice recognition ended');
+      setIsRecording(false);
+      
+      if (silenceTimer) {
+        clearTimeout(silenceTimer);
+      }
+
+      if (finalTranscript.trim().length > 0) {
+        setTranscript(finalTranscript.trim());
+        setVoiceStep("processing");
+        
+        // Simulate brief processing time for better UX
+        setTimeout(() => {
+          setVoiceStep("label");
+        }, 1000);
+      } else {
+        toast({
+          title: "No speech detected",
+          description: "Please try again and speak clearly.",
+        });
+        navigate("/home");
+      }
+    };
+
+    // Request microphone permission and start recording
+    navigator.mediaDevices.getUserMedia({ audio: true })
+      .then(() => {
+        recognition.start();
+      })
+      .catch((err) => {
+        console.error('Microphone access error:', err);
+        toast({
+          title: "Microphone error",
+          description: "Could not access microphone. Please check your permissions.",
+          variant: "destructive",
+        });
+        navigate("/home");
+      });
   };
 
   const handleTapComplete = async () => {
@@ -211,7 +369,14 @@ const CheckIn = () => {
               <p className="text-sm text-muted-foreground font-light">tap to speak</p>
             )}
             {isRecording && (
-              <p className="text-base text-foreground font-medium animate-pulse">Listening...</p>
+              <div className="space-y-3 text-center max-w-md">
+                <p className="text-base text-foreground font-medium animate-pulse">Listening...</p>
+                {transcript && (
+                  <p className="text-sm text-muted-foreground italic px-4">
+                    "{transcript}"
+                  </p>
+                )}
+              </div>
             )}
             {voiceStep === "processing" && (
               <p className="text-base text-foreground font-medium animate-pulse">Processing...</p>
