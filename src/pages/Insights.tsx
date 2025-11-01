@@ -1,6 +1,6 @@
 import BottomNav from "@/components/BottomNav";
 import { Card } from "@/components/ui/card";
-import { TrendingUp, Compass, Heart, Loader2, Circle, Feather, Eye, Sparkles, Target } from "lucide-react";
+import { TrendingUp, Compass, Heart, Loader2, Waves, Activity, Moon, Wind, Leaf, Sparkles, Target } from "lucide-react";
 import { useState, useEffect } from "react";
 import { getGamificationData } from "@/utils/gamification";
 import { supabase } from "@/integrations/supabase/client";
@@ -436,8 +436,8 @@ const Insights = () => {
                   const patternData = JSON.parse(jsonStr);
                   
                   if (Array.isArray(patternData) && patternData.length > 0) {
-                    const icons = [Circle, Feather, Eye];
-                    const colors = ["primary", "accent", "secondary"];
+                    const icons = [Compass, Waves, Activity, Moon, Wind, Leaf];
+                    const colors = ["primary", "accent", "primary", "accent", "primary", "accent"];
                     
                     return (
                       <div className="space-y-3 animate-fade-in">
