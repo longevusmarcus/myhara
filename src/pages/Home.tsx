@@ -325,7 +325,18 @@ const Home = () => {
                   const weekDays = Array.from({ length: 7 }, (_, i) => {
                     const date = new Date(startOfWeek);
                     date.setDate(startOfWeek.getDate() + i);
-                    return { date, isToday: date.toDateString() === today.toDateString() };
+                    
+                    // Check if there are any check-ins on this day
+                    const hasActivity = entries.some(entry => {
+                      const entryDate = new Date(entry.timestamp);
+                      return entryDate.toDateString() === date.toDateString();
+                    });
+                    
+                    return { 
+                      date, 
+                      isToday: date.toDateString() === today.toDateString(),
+                      hasActivity 
+                    };
                   });
 
                   return weekDays.map((day, idx) => (
@@ -339,7 +350,9 @@ const Home = () => {
                       <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-light transition-colors ${
                         day.isToday 
                           ? 'bg-primary text-primary-foreground' 
-                          : 'text-muted-foreground hover:bg-secondary/50'
+                          : day.hasActivity
+                          ? 'bg-secondary/50 text-foreground'
+                          : 'bg-card text-muted-foreground border border-border/30'
                       }`}>
                         {day.date.getDate()}
                       </div>
