@@ -1,9 +1,10 @@
 import BottomNav from "@/components/BottomNav";
 import { Card } from "@/components/ui/card";
-import { TrendingUp, Clock, Target, Zap, Heart, Loader2 } from "lucide-react";
+import { TrendingUp, Clock, Target, Zap, Heart, Loader2, Brain, Compass, TrendingDown } from "lucide-react";
 import { useState, useEffect } from "react";
 import { getGamificationData } from "@/utils/gamification";
 import { supabase } from "@/integrations/supabase/client";
+import { PatternCard } from "@/components/PatternCard";
 
 const Insights = () => {
   const [entries, setEntries] = useState<any[]>([]);
@@ -72,7 +73,24 @@ const Insights = () => {
             messages: [
               {
                 role: "user",
-                content: `Analyze these check-in entries and identify patterns:\n\n${JSON.stringify(entriesSummary, null, 2)}`
+                content: `Analyze these check-in entries and provide 2-3 distinct patterns. For each pattern, provide:
+1. Pattern Title (clear and specific)
+2. Observation (what you noticed)
+3. Intuition Guide (actionable insight)
+4. Questions (2-3 reflection questions)
+
+Format your response as JSON array:
+[
+  {
+    "title": "Pattern name",
+    "observation": "What you observed",
+    "intuitionGuide": "Actionable guidance",
+    "relatedEntries": ["brief entry summaries"],
+    "questions": ["question 1", "question 2"]
+  }
+]
+
+Entries:\n${JSON.stringify(entriesSummary, null, 2)}`
               }
             ],
             type: "pattern_analysis"
@@ -301,45 +319,86 @@ const Insights = () => {
         {entries.length >= 3 && (
           <div className="space-y-4">
             <div className="flex items-center gap-3">
-              <Zap className="w-5 h-5 text-primary" />
+              <Brain className="w-5 h-5 text-primary" />
               <h2 className="text-lg font-medium text-foreground">Your Patterns</h2>
             </div>
             
-            <Card className="bg-card border-border p-6 rounded-3xl">
-              {loadingPatterns && !patterns && (
-                <div className="flex items-center gap-2 text-muted-foreground py-4">
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  <p className="text-sm">Discovering your patterns...</p>
+            {loadingPatterns && !patterns && (
+              <Card className="bg-card border-border p-8 rounded-2xl">
+                <div className="flex flex-col items-center gap-4 text-muted-foreground">
+                  <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                  <p className="text-sm">Discovering your intuition patterns...</p>
                 </div>
-              )}
-              {patterns && (
-                <div className="space-y-4 prose prose-sm max-w-none">
-                  {patterns.split('\n').map((line, idx) => {
-                    if (line.startsWith('**') && line.endsWith('**')) {
-                      return (
-                        <h3 key={idx} className="text-base font-medium text-foreground mt-4 first:mt-0">
-                          {line.replace(/\*\*/g, '')}
-                        </h3>
-                      );
-                    } else if (line.trim()) {
-                      return (
-                        <p key={idx} className="text-sm text-foreground/80 font-light leading-relaxed">
-                          {line}
-                        </p>
-                      );
-                    }
-                    return null;
-                  })}
-                </div>
-              )}
-              {!loadingPatterns && !patterns && (
-                <div className="text-center py-4">
+              </Card>
+            )}
+            
+            {patterns && (() => {
+              try {
+                // Try to parse as JSON array first
+                const jsonMatch = patterns.match(/\[[\s\S]*\]/);
+                if (jsonMatch) {
+                  const patternData = JSON.parse(jsonMatch[0]);
+                  const icons = [Brain, Compass, TrendingDown];
+                  const colors = ["primary", "accent", "primary"];
+                  
+                  return (
+                    <div className="space-y-3">
+                      {patternData.map((pattern: any, idx: number) => (
+                        <PatternCard
+                          key={idx}
+                          title={pattern.title}
+                          observation={pattern.observation}
+                          intuitionGuide={pattern.intuitionGuide}
+                          relatedEntries={pattern.relatedEntries || []}
+                          questions={pattern.questions || []}
+                          icon={icons[idx % icons.length] && (() => {
+                            const Icon = icons[idx % icons.length];
+                            return <Icon className={`w-6 h-6 text-${colors[idx % colors.length]}`} />;
+                          })()}
+                          accentColor={colors[idx % colors.length]}
+                        />
+                      ))}
+                    </div>
+                  );
+                }
+              } catch (e) {
+                console.error("Failed to parse patterns as JSON", e);
+              }
+              
+              // Fallback to text rendering
+              return (
+                <Card className="bg-card border-border p-6 rounded-3xl">
+                  <div className="space-y-4 prose prose-sm max-w-none">
+                    {patterns.split('\n').map((line, idx) => {
+                      if (line.startsWith('**') && line.endsWith('**')) {
+                        return (
+                          <h3 key={idx} className="text-base font-medium text-foreground mt-4 first:mt-0">
+                            {line.replace(/\*\*/g, '')}
+                          </h3>
+                        );
+                      } else if (line.trim()) {
+                        return (
+                          <p key={idx} className="text-sm text-foreground/80 font-light leading-relaxed">
+                            {line}
+                          </p>
+                        );
+                      }
+                      return null;
+                    })}
+                  </div>
+                </Card>
+              );
+            })()}
+            
+            {!loadingPatterns && !patterns && (
+              <Card className="bg-card border-border p-8 rounded-2xl">
+                <div className="text-center">
                   <p className="text-sm text-muted-foreground font-light">
                     Keep checking in to discover your patterns
                   </p>
                 </div>
-              )}
-            </Card>
+              </Card>
+            )}
           </div>
         )}
 

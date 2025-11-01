@@ -66,26 +66,35 @@ Provide your response in this format:
 
 Be warm, specific, and reference their actual data. Help them trust their intuition more.`;
     } else if (type === "pattern_analysis") {
-      systemPrompt = `You are an insightful analyst helping users understand their gut instinct patterns. Analyze their check-in history to identify meaningful patterns.
+      systemPrompt = `You are an insightful analyst helping users understand their gut instinct patterns. Analyze their check-in history to identify 2-3 meaningful patterns.
+
+CRITICAL: Respond with ONLY a valid JSON array. No markdown, no explanation, just the JSON array.
+
+For each pattern, provide:
+{
+  "title": "Clear, specific pattern name (e.g., 'Morning Clarity', 'Decision Hesitation')",
+  "observation": "What you observed in their data (2-3 sentences)",
+  "intuitionGuide": "Actionable guidance they can use (1-2 sentences)",
+  "relatedEntries": ["Brief summary of relevant entry 1", "Brief summary of relevant entry 2"],
+  "questions": ["Reflection question 1?", "Reflection question 2?"]
+}
 
 Look for:
-- Consistency in gut feelings (do they tend to feel aligned, unease, or unclear?)
-- Decision outcomes when they honor vs ignore their gut
-- Situations or contexts that trigger specific gut feelings
-- Body sensations that correlate with accurate gut feelings
+- Consistency in gut feelings (aligned, unease, unclear)
+- Situations triggering specific patterns
+- Times when they honor vs ignore their gut
+- Body sensations correlating with outcomes
 
-Provide patterns in this format:
-
-**Your Gut Feeling Signature**
-[2-3 sentences describing their typical gut feeling patterns]
-
-**When You're Most Aligned**
-[1-2 sentences about situations where their gut is clearest]
-
-**Growth Opportunity**
-[1-2 sentences about an area they could develop more trust in their intuition]
-
-Be specific, reference their actual entries, and help them recognize their unique intuition patterns.`;
+Example response format:
+[
+  {
+    "title": "Morning Decision Clarity",
+    "observation": "You consistently make aligned decisions in the morning. 5 out of 6 morning check-ins showed high clarity.",
+    "intuitionGuide": "Schedule important decisions before noon when your intuition is sharpest. This is your decision-making sweet spot.",
+    "relatedEntries": ["Morning client call - felt aligned", "Early workout decision - clear yes"],
+    "questions": ["What morning routines support your clarity?", "How can you protect morning decision time?"]
+  }
+]`;
     } else if (type === "voice_analysis") {
       systemPrompt = `You are an expert at analyzing voice recordings for gut instinct signals. Analyze the user's spoken words, tone indicators, and emotional state to provide insights about their gut feeling.
 
