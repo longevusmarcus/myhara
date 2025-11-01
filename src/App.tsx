@@ -45,37 +45,31 @@ const App = () => {
     setHasCompletedOnboarding(true);
   };
 
-  if (!hasCompletedOnboarding) {
-    return <Onboarding onComplete={handleOnboardingComplete} />;
-  }
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <p className="text-muted-foreground font-light">Loading...</p>
-      </div>
-    );
-  }
-
-  if (!session) {
-    return <Auth />;
-  }
-
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Navigate to="/home" replace />} />
-            <Route path="/home" element={<Home />} />
-            <Route path="/check-in" element={<CheckIn />} />
-            <Route path="/insights" element={<Insights />} />
-            <Route path="/map" element={<GutMap />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+          {!hasCompletedOnboarding ? (
+            <Onboarding onComplete={handleOnboardingComplete} />
+          ) : loading ? (
+            <div className="min-h-screen bg-background flex items-center justify-center">
+              <p className="text-muted-foreground font-light">Loading...</p>
+            </div>
+          ) : !session ? (
+            <Auth />
+          ) : (
+            <Routes>
+              <Route path="/" element={<Navigate to="/home" replace />} />
+              <Route path="/home" element={<Home />} />
+              <Route path="/check-in" element={<CheckIn />} />
+              <Route path="/insights" element={<Insights />} />
+              <Route path="/map" element={<GutMap />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          )}
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>
