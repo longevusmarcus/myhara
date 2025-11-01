@@ -1,6 +1,6 @@
 import BottomNav from "@/components/BottomNav";
 import { Card } from "@/components/ui/card";
-import { TrendingUp, Clock, Target, Zap, Heart, Loader2, Sparkles, Flower2, Star } from "lucide-react";
+import { TrendingUp, Clock, Target, Zap, Heart, Loader2, Eye, Moon, Compass } from "lucide-react";
 import { useState, useEffect } from "react";
 import { getGamificationData } from "@/utils/gamification";
 import { supabase } from "@/integrations/supabase/client";
@@ -335,7 +335,7 @@ const Insights = () => {
         {entries.length >= 3 && (
           <div className="space-y-4">
             <div className="flex items-center gap-3">
-              <Sparkles className="w-5 h-5 text-primary" strokeWidth={1.5} />
+              <Compass className="w-5 h-5 text-primary" strokeWidth={1.5} />
               <h2 className="text-lg font-medium text-foreground">Your Patterns</h2>
             </div>
             
@@ -374,7 +374,7 @@ const Insights = () => {
                   const patternData = JSON.parse(jsonStr);
                   
                   if (Array.isArray(patternData) && patternData.length > 0) {
-                    const icons = [Sparkles, Flower2, Star];
+                    const icons = [Heart, Eye, Moon];
                     const colors = ["primary", "accent", "primary"];
                     
                     return (
