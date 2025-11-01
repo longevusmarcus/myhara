@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { Session } from "@supabase/supabase-js";
+import { ScrollToTop } from "./components/ScrollToTop";
 import Onboarding from "./components/Onboarding";
 import Home from "./pages/Home";
 import CheckIn from "./pages/CheckIn";
@@ -53,6 +54,7 @@ const App = () => {
         <Toaster />
         <Sonner />
         <BrowserRouter>
+          <ScrollToTop />
           {!hasCompletedOnboarding ? (
             <Onboarding onComplete={handleOnboardingComplete} />
           ) : loading ? (
