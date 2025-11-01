@@ -2,15 +2,38 @@ import { useState, useEffect } from "react";
 import BottomNav from "@/components/BottomNav";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Calendar, Circle, Droplet, Sparkles } from "lucide-react";
+import { Calendar, Circle, Droplet, Sparkles, CheckCircle2, AlertTriangle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/hooks/use-toast";
 
 const GutMap = () => {
   const [entries, setEntries] = useState<any[]>([]);
+  const [selectedEntry, setSelectedEntry] = useState<any>(null);
+  const [consequence, setConsequence] = useState("");
+  const { toast } = useToast();
 
   useEffect(() => {
     const storedEntries = JSON.parse(localStorage.getItem("gutEntries") || "[]");
     setEntries(storedEntries);
   }, []);
+
+  const updateConsequence = (index: number) => {
+    const updatedEntries = [...entries];
+    updatedEntries[index] = {
+      ...updatedEntries[index],
+      consequence,
+      consequenceDate: new Date().toISOString()
+    };
+    localStorage.setItem("gutEntries", JSON.stringify(updatedEntries));
+    setEntries(updatedEntries);
+    setSelectedEntry(null);
+    setConsequence("");
+    toast({
+      title: "Consequence tracked",
+      description: "You can now see how honoring your gut played out",
+    });
+  };
 
   const getOutcomeColor = (outcome: string) => {
     switch (outcome) {
@@ -87,8 +110,36 @@ const GutMap = () => {
                             {entry.context} • {entry.bodySensation}
                           </p>
                           <p className="text-sm text-muted-foreground font-light">
-                            Gut: {entry.gutFeeling} • Will ignore: {entry.willIgnore}
+                            Gut: {entry.gutFeeling} • {entry.willIgnore === "no" ? "Honored it" : "Ignored it"}
                           </p>
+                          {entry.decision && (
+                            <p className="text-sm text-foreground font-light mt-2 italic">
+                              Decision: "{entry.decision}"
+                            </p>
+                          )}
+                          {entry.consequence && (
+                            <div className="mt-3 p-3 bg-secondary/20 rounded-lg">
+                              <p className="text-xs text-muted-foreground font-light mb-1">
+                                What happened:
+                              </p>
+                              <p className="text-sm text-foreground font-light">
+                                {entry.consequence}
+                              </p>
+                            </div>
+                          )}
+                          {entry.needsFollowUp && !entry.consequence && (
+                            <Button
+                              onClick={() => {
+                                setSelectedEntry(index);
+                                setConsequence("");
+                              }}
+                              variant="outline"
+                              size="sm"
+                              className="mt-3"
+                            >
+                              Track consequence
+                            </Button>
+                          )}
                         </>
                       )}
                       {entry.mode === "voice" && (
@@ -107,6 +158,47 @@ const GutMap = () => {
               ))
             )}
           </TabsContent>
+
+          {/* Modal for tracking consequence */}
+          {selectedEntry !== null && (
+            <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-6">
+              <Card className="bg-card border-border p-6 rounded-[1.25rem] w-full max-w-md">
+                <div className="space-y-4">
+                  <h3 className="text-lg font-medium text-foreground">
+                    What happened?
+                  </h3>
+                  <p className="text-sm text-muted-foreground font-light">
+                    Track the consequence of honoring your gut
+                  </p>
+                  <Textarea
+                    value={consequence}
+                    onChange={(e) => setConsequence(e.target.value)}
+                    placeholder="E.g., 'I felt relieved and the situation resolved itself' or 'Things turned out better than expected'..."
+                    className="bg-background border-border rounded-[1.25rem] min-h-[120px]"
+                  />
+                  <div className="flex gap-2">
+                    <Button
+                      onClick={() => {
+                        setSelectedEntry(null);
+                        setConsequence("");
+                      }}
+                      variant="outline"
+                      className="flex-1"
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      onClick={() => updateConsequence(selectedEntry)}
+                      disabled={!consequence.trim()}
+                      className="flex-1"
+                    >
+                      Save
+                    </Button>
+                  </div>
+                </div>
+              </Card>
+            </div>
+          )}
 
           {/* Signals Tab */}
           <TabsContent value="signals" className="space-y-4 mt-6">

@@ -1,1 +1,4 @@
 project_id = "mvpucnnobuuvshrxpfmj"
+
+[functions.gut-coach]
+verify_jwt = false

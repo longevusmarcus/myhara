@@ -3,9 +3,10 @@ import { ArrowLeft, Mic, Zap, Waves, Sun, Circle, Droplet, Sparkles, Cloud, Chec
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 
-type TapStep = "context" | "describe" | "body" | "gut" | "ignore";
+type TapStep = "context" | "describe" | "body" | "gut" | "ignore" | "decision";
 type VoiceStep = "recording" | "processing" | "label" | "response";
 
 const CheckIn = () => {
@@ -23,6 +24,7 @@ const CheckIn = () => {
   const [customSensation, setCustomSensation] = useState("");
   const [gutFeeling, setGutFeeling] = useState("");
   const [willIgnore, setWillIgnore] = useState("");
+  const [decision, setDecision] = useState("");
 
   // Voice Flow State
   const [voiceStep, setVoiceStep] = useState<VoiceStep>("recording");
@@ -61,8 +63,10 @@ const CheckIn = () => {
       bodySensation: bodySensation || customSensation,
       gutFeeling,
       willIgnore,
+      decision: decision || null,
       timestamp: new Date().toISOString(),
-      xp: 5
+      xp: willIgnore === "no" ? 10 : 5,
+      needsFollowUp: willIgnore === "no" && decision.trim().length > 0
     };
     
     // Save to localStorage
@@ -71,8 +75,8 @@ const CheckIn = () => {
     localStorage.setItem("gutEntries", JSON.stringify(entries));
     
     toast({
-      title: "+5 XP",
-      description: "You checked in.",
+      title: `+${entry.xp} XP`,
+      description: willIgnore === "no" ? "Great choice honoring your gut!" : "You checked in.",
     });
     navigate("/map");
   };
@@ -496,12 +500,51 @@ const CheckIn = () => {
             <Card
               onClick={() => {
                 setWillIgnore("no");
-                handleTapComplete();
+                setTapStep("decision");
               }}
               className="bg-card border-border p-6 cursor-pointer hover:bg-card/80 transition-colors rounded-[1.25rem]"
             >
-              <span className="text-base text-foreground font-light">No</span>
+              <span className="text-base text-foreground font-light">No, I'll honor it</span>
             </Card>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (tapStep === "decision") {
+    return (
+      <div className="min-h-screen bg-background flex flex-col p-6">
+        <button onClick={() => setTapStep("ignore")} className="self-start mb-8">
+          <ArrowLeft className="w-6 h-6 text-foreground" />
+        </button>
+
+        <div className="flex-1 flex flex-col justify-center max-w-md mx-auto w-full space-y-8">
+          <div className="space-y-2">
+            <h2 className="text-2xl font-medium text-foreground">
+              What will you do instead?
+            </h2>
+            <p className="text-sm text-muted-foreground font-light">
+              Optional: Track your decision to see the consequences later
+            </p>
+          </div>
+
+          <div className="space-y-4">
+            <Textarea
+              value={decision}
+              onChange={(e) => setDecision(e.target.value)}
+              placeholder="E.g., 'I'll pause before responding' or 'I'll decline the offer'..."
+              className="bg-card border-border rounded-[1.25rem] min-h-[100px]"
+            />
+
+            <div className="space-y-2">
+              <button
+                onClick={handleTapComplete}
+                className="w-full bg-primary text-primary-foreground py-3 rounded-[1.25rem] font-light hover:bg-primary/90 transition-colors"
+              >
+                {decision.trim() ? "Track this decision" : "Skip for now"}
+              </button>
+            </div>
           </div>
         </div>
       </div>

@@ -1,8 +1,31 @@
 import BottomNav from "@/components/BottomNav";
 import { Card } from "@/components/ui/card";
-import { TrendingUp, Clock, Target } from "lucide-react";
+import { TrendingUp, Clock, Target, Sparkles } from "lucide-react";
+import { AICoach } from "@/components/AICoach";
+import { useState, useEffect } from "react";
 
 const Insights = () => {
+  const [entries, setEntries] = useState<any[]>([]);
+  const [showAI, setShowAI] = useState(false);
+
+  useEffect(() => {
+    const storedEntries = JSON.parse(localStorage.getItem("gutEntries") || "[]");
+    setEntries(storedEntries);
+  }, []);
+
+  const getAIPrompt = () => {
+    if (entries.length === 0) {
+      return "I'm just starting my gut intuition journey. Can you help me understand what to pay attention to?";
+    }
+    
+    const recentEntries = entries.slice(-5);
+    const summary = recentEntries.map(e => 
+      `- ${e.context || e.label}: felt ${e.bodySensation || e.transcript?.substring(0, 50)}, gut said ${e.gutFeeling}, ${e.willIgnore === 'yes' ? 'ignored it' : 'honored it'}`
+    ).join('\n');
+    
+    return `Here are my recent gut check-ins:\n${summary}\n\nWhat patterns do you notice? What should I pay attention to?`;
+  };
+
   return (
     <div className="min-h-screen bg-background pb-24">
       <div className="p-6 space-y-6">
@@ -12,6 +35,34 @@ const Insights = () => {
             Your intuition patterns over time
           </p>
         </div>
+
+        {/* AI Coach Section */}
+        <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20 p-6 rounded-3xl">
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
+                  <Sparkles className="w-5 h-5 text-primary" />
+                </div>
+                <div>
+                  <p className="text-base font-medium text-foreground">Your AI Gut Coach</p>
+                  <p className="text-sm text-muted-foreground font-light">Get personalized insights</p>
+                </div>
+              </div>
+            </div>
+            
+            {!showAI ? (
+              <button
+                onClick={() => setShowAI(true)}
+                className="w-full bg-primary text-primary-foreground py-3 rounded-[1.25rem] font-light hover:bg-primary/90 transition-colors"
+              >
+                Start Conversation
+              </button>
+            ) : (
+              <AICoach type="insight" initialPrompt={getAIPrompt()} />
+            )}
+          </div>
+        </Card>
 
         {/* Trust Score */}
         <Card className="bg-card border-border p-6 rounded-3xl">

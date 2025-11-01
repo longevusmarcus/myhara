@@ -2,9 +2,25 @@ import { useNavigate } from "react-router-dom";
 import { ArrowRight, Flame, Pause, Sparkles, Shield } from "lucide-react";
 import BottomNav from "@/components/BottomNav";
 import { Card } from "@/components/ui/card";
+import { useState, useEffect } from "react";
+import { AICoach } from "@/components/AICoach";
 
 const Home = () => {
   const navigate = useNavigate();
+  const [showDailyCoach, setShowDailyCoach] = useState(false);
+  const [hasSeenToday, setHasSeenToday] = useState(false);
+
+  useEffect(() => {
+    const lastSeen = localStorage.getItem("lastDailyCoach");
+    const today = new Date().toDateString();
+    setHasSeenToday(lastSeen === today);
+  }, []);
+
+  const handleOpenCoach = () => {
+    setShowDailyCoach(true);
+    localStorage.setItem("lastDailyCoach", new Date().toDateString());
+    setHasSeenToday(true);
+  };
 
   const missions = [
     { id: 1, title: "Pause before saying yes to something", category: "gut trust", color: "text-cyan-500", Icon: Pause },
@@ -35,6 +51,35 @@ const Home = () => {
           <button className="flex-shrink-0 w-8 h-8 rounded-full bg-foreground/10 flex items-center justify-center hover:bg-foreground/20 transition-colors">
             <ArrowRight className="w-4 h-4 text-foreground" />
           </button>
+        </Card>
+      </div>
+
+      {/* Daily AI Coach */}
+      <div className="px-6 mb-8">
+        <h2 className="text-xs uppercase tracking-wider text-muted-foreground mb-3 font-light">
+          daily guidance
+        </h2>
+        <Card className={`${hasSeenToday ? 'bg-card/50' : 'bg-gradient-to-br from-primary/10 to-primary/5'} border-${hasSeenToday ? 'border' : 'primary/20'} p-5 rounded-[1.25rem]`}>
+          {!showDailyCoach ? (
+            <div className="space-y-3">
+              <p className="text-base font-light text-foreground leading-relaxed">
+                {hasSeenToday 
+                  ? "Check back tomorrow for new guidance"
+                  : "Your gut coach has a message for you today"
+                }
+              </p>
+              {!hasSeenToday && (
+                <button
+                  onClick={handleOpenCoach}
+                  className="w-full bg-primary text-primary-foreground py-3 rounded-[1.25rem] font-light hover:bg-primary/90 transition-colors"
+                >
+                  Start Daily Check-in
+                </button>
+              )}
+            </div>
+          ) : (
+            <AICoach type="daily" initialPrompt="I'm ready for today's check-in. What should I reflect on?" />
+          )}
         </Card>
       </div>
 
