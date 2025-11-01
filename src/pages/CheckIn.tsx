@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import VoiceBubbleLogo from "@/components/VoiceBubbleLogo";
 
 type TapStep = "context" | "describe" | "body" | "gut" | "ignore" | "gentle-reminder" | "decision";
 type VoiceStep = "recording" | "processing" | "label" | "response" | "analyzing" | "insights" | "gut" | "ignore" | "gentle-reminder";
@@ -736,12 +737,10 @@ const CheckIn = () => {
       return (
         <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6">
           <div className="max-w-md w-full space-y-12 text-center">
-            {/* Bubble Logo */}
-            <div className="flex justify-center animate-in fade-in slide-in-from-bottom-4 duration-700">
-              <div className="w-24 h-24 rounded-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20">
-                <Sparkles className="w-12 h-12 text-primary" strokeWidth={1.5} />
-              </div>
-            </div>
+          {/* Bubble Logo */}
+          <div className="flex justify-center animate-in fade-in slide-in-from-bottom-4 duration-700">
+            <VoiceBubbleLogo size="md" animated={true} />
+          </div>
 
             {/* Gentle Reminder Text */}
             <div className="space-y-6 animate-in fade-in slide-in-from-bottom-6 duration-700" style={{ animationDelay: '200ms' }}>
@@ -1011,12 +1010,10 @@ const CheckIn = () => {
     return (
       <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6">
         <div className="max-w-md w-full space-y-12 text-center">
-          {/* Bubble Logo */}
-          <div className="flex justify-center animate-in fade-in slide-in-from-bottom-4 duration-700">
-            <div className="w-24 h-24 rounded-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20">
-              <Sparkles className="w-12 h-12 text-primary" strokeWidth={1.5} />
-            </div>
-          </div>
+        {/* Bubble Logo */}
+        <div className="flex justify-center animate-in fade-in slide-in-from-bottom-4 duration-700">
+          <VoiceBubbleLogo size="md" animated={true} />
+        </div>
 
           {/* Gentle Reminder Text */}
           <div className="space-y-6 animate-in fade-in slide-in-from-bottom-6 duration-700" style={{ animationDelay: '200ms' }}>
