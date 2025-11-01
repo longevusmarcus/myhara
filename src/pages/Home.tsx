@@ -3,16 +3,19 @@ import { ArrowRight, Flame, Pause, Sparkles, Shield } from "lucide-react";
 import BottomNav from "@/components/BottomNav";
 import { Card } from "@/components/ui/card";
 import { useState, useEffect } from "react";
+import { getGamificationData, calculateLevel, getLevelName } from "@/utils/gamification";
 
 const Home = () => {
   const navigate = useNavigate();
   const [entries, setEntries] = useState<any[]>([]);
   const [missions, setMissions] = useState<any[]>([]);
   const [insights, setInsights] = useState<string[]>([]);
+  const [gamData, setGamData] = useState(getGamificationData());
 
   useEffect(() => {
     const storedEntries = JSON.parse(localStorage.getItem("gutEntries") || "[]");
     setEntries(storedEntries);
+    setGamData(getGamificationData());
     
     // Generate personalized missions based on user data
     const generatedMissions = generateMissions(storedEntries);
@@ -22,6 +25,9 @@ const Home = () => {
     const generatedInsights = generateInsights(storedEntries);
     setInsights(generatedInsights);
   }, []);
+
+  const levelInfo = calculateLevel(gamData.totalXP);
+  const levelName = getLevelName(levelInfo.level);
 
   const generateMissions = (entries: any[]) => {
     const defaultMissions = [
@@ -135,7 +141,7 @@ const Home = () => {
         <h1 className="text-4xl font-cursive text-foreground tracking-tight">Hara</h1>
         <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-card border border-border">
           <Flame className="w-4 h-4 text-orange-500" />
-          <span className="text-sm font-medium">0</span>
+          <span className="text-sm font-medium">{gamData.currentStreak}</span>
         </div>
       </div>
 
@@ -184,9 +190,9 @@ const Home = () => {
         {/* Level & Days */}
         <div className="text-center space-y-1">
           <p className="text-sm text-foreground font-light">
-            level 1 <span className="text-muted-foreground">•</span> the listener
+            level {levelInfo.level} <span className="text-muted-foreground">•</span> {levelName.toLowerCase()}
           </p>
-          <p className="text-xs text-muted-foreground font-light">0 days together</p>
+          <p className="text-xs text-muted-foreground font-light">{gamData.currentStreak} days together</p>
         </div>
       </div>
 

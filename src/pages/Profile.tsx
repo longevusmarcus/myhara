@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { getGamificationData, calculateLevel, getLevelName, getRecentAchievements, formatTimeAgo } from "@/utils/gamification";
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -18,19 +19,17 @@ const Profile = () => {
   const [lastName, setLastName] = useState("");
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
+  const [gamData, setGamData] = useState(getGamificationData());
+  const [recentAchievements, setRecentAchievements] = useState(getRecentAchievements(3));
 
-  const stats = {
-    level: 3,
-    totalXP: 445,
-    nextLevelXP: 500,
-    totalCheckins: 35,
-    currentStreak: 7,
-  };
-
-  const progress = (stats.totalXP / stats.nextLevelXP) * 100;
+  const levelInfo = calculateLevel(gamData.totalXP);
+  const levelName = getLevelName(levelInfo.level);
 
   useEffect(() => {
     fetchProfile();
+    // Refresh gamification data
+    setGamData(getGamificationData());
+    setRecentAchievements(getRecentAchievements(3));
   }, []);
 
   const fetchProfile = async () => {
@@ -225,7 +224,7 @@ const Profile = () => {
                     <Edit className="w-4 h-4 text-muted-foreground" />
                   </button>
                 </div>
-                <p className="text-base text-muted-foreground font-light">Level {stats.level} Intuitive</p>
+                <p className="text-base text-muted-foreground font-light">Level {levelInfo.level} {levelName}</p>
               </>
             )}
           </div>
@@ -239,12 +238,12 @@ const Profile = () => {
                 <Award className="w-5 h-5 text-foreground" />
               </div>
               <div className="flex-1">
-                <p className="text-sm text-muted-foreground font-light">Progress to Level {stats.level + 1}</p>
-                <p className="text-base font-medium text-foreground">{stats.totalXP} / {stats.nextLevelXP} XP</p>
+                <p className="text-sm text-muted-foreground font-light">Progress to Level {levelInfo.level + 1}</p>
+                <p className="text-base font-medium text-foreground">{gamData.totalXP} / {levelInfo.nextLevelXP} XP</p>
               </div>
             </div>
             <div className="w-full h-2 bg-secondary rounded-full overflow-hidden">
-              <div className="h-full bg-foreground rounded-full transition-all" style={{ width: `${progress}%` }} />
+              <div className="h-full bg-foreground rounded-full transition-all" style={{ width: `${Math.min(levelInfo.progress, 100)}%` }} />
             </div>
           </div>
         </Card>
@@ -252,11 +251,11 @@ const Profile = () => {
         {/* Stats */}
         <div className="grid grid-cols-2 gap-4">
           <Card className="bg-card border-border p-6 rounded-3xl text-center">
-            <p className="text-3xl font-medium text-foreground mb-1">{stats.currentStreak}</p>
+            <p className="text-3xl font-medium text-foreground mb-1">{gamData.currentStreak}</p>
             <p className="text-sm text-muted-foreground font-light">Day Streak</p>
           </Card>
           <Card className="bg-card border-border p-6 rounded-3xl text-center">
-            <p className="text-3xl font-medium text-foreground mb-1">{stats.totalCheckins}</p>
+            <p className="text-3xl font-medium text-foreground mb-1">{gamData.totalCheckins}</p>
             <p className="text-sm text-muted-foreground font-light">Check-ins</p>
           </Card>
         </div>
@@ -265,21 +264,25 @@ const Profile = () => {
         <div className="space-y-3">
           <h2 className="text-lg font-medium text-foreground">Recent Achievements</h2>
           
-          {[
-            { name: "First Voice Check", xp: 10, date: "2 days ago" },
-            { name: "Week Warrior", xp: 50, date: "Yesterday" },
-            { name: "Pattern Spotter", xp: 25, date: "Today" },
-          ].map((achievement) => (
-            <Card key={achievement.name} className="bg-card border-border p-5 rounded-2xl">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-base font-medium text-foreground">{achievement.name}</p>
-                  <p className="text-sm text-muted-foreground font-light">{achievement.date}</p>
-                </div>
-                <span className="text-sm font-medium text-foreground">+{achievement.xp} XP</span>
-              </div>
+          {recentAchievements.length === 0 ? (
+            <Card className="bg-card border-border p-6 rounded-2xl">
+              <p className="text-sm text-muted-foreground font-light text-center">
+                Start checking in to unlock achievements
+              </p>
             </Card>
-          ))}
+          ) : (
+            recentAchievements.map((achievement) => (
+              <Card key={achievement.id} className="bg-card border-border p-5 rounded-2xl">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-base font-medium text-foreground">{achievement.name}</p>
+                    <p className="text-sm text-muted-foreground font-light">{formatTimeAgo(achievement.unlockedAt)}</p>
+                  </div>
+                  <span className="text-sm font-medium text-foreground">+{achievement.xp} XP</span>
+                </div>
+              </Card>
+            ))
+          )}
         </div>
 
         {/* Menu Items */}

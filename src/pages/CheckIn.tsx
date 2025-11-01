@@ -54,7 +54,7 @@ const CheckIn = () => {
     }, 3000);
   };
 
-  const handleTapComplete = () => {
+  const handleTapComplete = async () => {
     const entry = {
       mode: "tap",
       context,
@@ -74,6 +74,10 @@ const CheckIn = () => {
     entries.push(entry);
     localStorage.setItem("gutEntries", JSON.stringify(entries));
     
+    // Update gamification
+    const { addCheckIn } = await import("@/utils/gamification");
+    const gamData = addCheckIn(entry.xp);
+    
     toast({
       title: `+${entry.xp} XP`,
       description: willIgnore === "no" ? "Great choice honoring your gut!" : "You checked in.",
@@ -81,7 +85,7 @@ const CheckIn = () => {
     navigate("/map");
   };
 
-  const handleVoiceComplete = () => {
+  const handleVoiceComplete = async () => {
     const entry = {
       mode: "voice",
       transcript,
@@ -95,6 +99,10 @@ const CheckIn = () => {
     const entries = JSON.parse(localStorage.getItem("gutEntries") || "[]");
     entries.push(entry);
     localStorage.setItem("gutEntries", JSON.stringify(entries));
+    
+    // Update gamification
+    const { addCheckIn } = await import("@/utils/gamification");
+    const gamData = addCheckIn(entry.xp);
     
     toast({
       title: "+10 XP",
