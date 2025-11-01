@@ -192,6 +192,13 @@ const CheckIn = () => {
     }
   };
 
+  const stopVoiceRecording = () => {
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state === "recording") {
+      mediaRecorderRef.current.stop();
+      setIsRecording(false);
+    }
+  };
+
   const handleTapComplete = async () => {
     const entry = {
       mode: "tap",
@@ -331,10 +338,14 @@ const CheckIn = () => {
               Speak freely — what's your body saying?
             </p>
 
-            <div className="relative flex items-center justify-center">
+            <button 
+              onClick={isRecording ? stopVoiceRecording : undefined}
+              className="relative flex items-center justify-center focus:outline-none"
+              disabled={!isRecording}
+            >
               {/* Outer ambient glow */}
               <div 
-                className={`absolute w-80 h-80 rounded-full blur-[80px] transition-all duration-1000 ${
+                className={`absolute w-80 h-80 rounded-full blur-[80px] transition-all duration-1000 pointer-events-none ${
                   isRecording 
                     ? 'bg-gradient-to-br from-primary/30 via-accent/20 to-primary/30 opacity-100' 
                     : 'bg-gradient-to-br from-primary/10 via-accent/5 to-primary/10 opacity-60'
@@ -346,7 +357,7 @@ const CheckIn = () => {
               
               {/* Middle gradient ring */}
               <div 
-                className={`absolute w-64 h-64 rounded-full blur-3xl transition-all duration-700 ${
+                className={`absolute w-64 h-64 rounded-full blur-3xl transition-all duration-700 pointer-events-none ${
                   isRecording 
                     ? 'bg-gradient-to-tr from-primary/40 via-accent/30 to-primary/40 opacity-100' 
                     : 'bg-gradient-to-tr from-primary/15 via-accent/10 to-primary/15 opacity-70'
@@ -360,7 +371,7 @@ const CheckIn = () => {
               <div 
                 className={`relative w-56 h-56 rounded-full backdrop-blur-xl border shadow-2xl flex items-center justify-center transition-all duration-500 ${
                   isRecording
-                    ? 'bg-gradient-to-br from-primary/30 via-accent/25 to-primary/35 border-primary/30 shadow-[0_0_60px_rgba(var(--primary-rgb),0.4)]'
+                    ? 'bg-gradient-to-br from-primary/30 via-accent/25 to-primary/35 border-primary/30 shadow-[0_0_60px_rgba(var(--primary-rgb),0.4)] cursor-pointer hover:scale-105'
                     : 'bg-gradient-to-br from-primary/15 via-accent/10 to-primary/20 border-primary/15 shadow-[0_0_30px_rgba(var(--primary-rgb),0.2)]'
                 }`}
                 style={{
@@ -371,7 +382,7 @@ const CheckIn = () => {
                 }}
               >
                 {/* Inner gradient glow */}
-                <div className={`absolute inset-12 rounded-full blur-2xl transition-all duration-500 ${
+                <div className={`absolute inset-12 rounded-full blur-2xl transition-all duration-500 pointer-events-none ${
                   isRecording 
                     ? 'bg-gradient-to-br from-primary/40 to-accent/30 opacity-100' 
                     : 'bg-gradient-to-br from-primary/20 to-accent/15 opacity-60'
@@ -380,7 +391,7 @@ const CheckIn = () => {
                 {/* Subtle rotating gradient overlay */}
                 {isRecording && (
                   <div 
-                    className="absolute inset-0 rounded-full bg-gradient-to-r from-transparent via-white/5 to-transparent"
+                    className="absolute inset-0 rounded-full bg-gradient-to-r from-transparent via-white/5 to-transparent pointer-events-none"
                     style={{
                       animation: 'rotate 4s linear infinite'
                     }}
@@ -392,33 +403,34 @@ const CheckIn = () => {
               {isRecording && (
                 <>
                   <div 
-                    className="absolute w-56 h-56 rounded-full border-2 border-primary/20"
+                    className="absolute w-56 h-56 rounded-full border-2 border-primary/20 pointer-events-none"
                     style={{
                       animation: 'expandFade 2.5s cubic-bezier(0, 0, 0.2, 1) infinite'
                     }}
                   />
                   <div 
-                    className="absolute w-56 h-56 rounded-full border-2 border-accent/15"
+                    className="absolute w-56 h-56 rounded-full border-2 border-accent/15 pointer-events-none"
                     style={{
                       animation: 'expandFade 2.5s cubic-bezier(0, 0, 0.2, 1) infinite 0.8s'
                     }}
                   />
                   <div 
-                    className="absolute w-56 h-56 rounded-full border border-primary/10"
+                    className="absolute w-56 h-56 rounded-full border border-primary/10 pointer-events-none"
                     style={{
                       animation: 'expandFade 2.5s cubic-bezier(0, 0, 0.2, 1) infinite 1.6s'
                     }}
                   />
                 </>
               )}
-            </div>
+            </button>
 
             {!isRecording && (
               <p className="text-sm text-muted-foreground font-light">tap to speak</p>
             )}
             {isRecording && (
-              <div className="space-y-3 text-center max-w-md">
+              <div className="space-y-4 text-center max-w-md">
                 <p className="text-base text-foreground font-medium animate-pulse">Listening...</p>
+                <p className="text-sm text-muted-foreground/70 font-light">Tap the orb to finish</p>
                 {transcript && (
                   <p className="text-sm text-muted-foreground italic px-4">
                     "{transcript}"
