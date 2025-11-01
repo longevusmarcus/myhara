@@ -1,6 +1,6 @@
 import BottomNav from "@/components/BottomNav";
 import { Card } from "@/components/ui/card";
-import { TrendingUp, Sparkles, Compass, Heart, Loader2, Lightbulb, Shield } from "lucide-react";
+import { TrendingUp, Compass, Heart, Loader2, Circle, Feather, Eye, Sparkles, Target } from "lucide-react";
 import { useState, useEffect } from "react";
 import { getGamificationData } from "@/utils/gamification";
 import { supabase } from "@/integrations/supabase/client";
@@ -436,7 +436,7 @@ const Insights = () => {
                   const patternData = JSON.parse(jsonStr);
                   
                   if (Array.isArray(patternData) && patternData.length > 0) {
-                    const icons = [Lightbulb, Sparkles, Shield];
+                    const icons = [Circle, Feather, Eye];
                     const colors = ["primary", "accent", "secondary"];
                     
                     return (
@@ -453,7 +453,7 @@ const Insights = () => {
                               intuitionGuide={pattern.intuitionGuide || ""}
                               relatedEntries={Array.isArray(pattern.relatedEntries) ? pattern.relatedEntries : []}
                               questions={Array.isArray(pattern.questions) ? pattern.questions : []}
-                              icon={<Icon className={`w-5 h-5 ${color === "accent" ? "text-accent" : "text-primary"}`} strokeWidth={1.5} />}
+                              icon={<Icon className={`w-5 h-5 ${color === "accent" ? "text-accent" : "text-primary"}`} strokeWidth={1} />}
                               accentColor={color}
                             />
                           );
@@ -521,7 +521,7 @@ const Insights = () => {
             <div className="space-y-4">
               <div className="flex items-center gap-4">
                 <div className="w-10 h-10 rounded-full border-2 border-border/50 flex items-center justify-center flex-shrink-0">
-                  <Sparkles className="w-5 h-5 text-muted-foreground" strokeWidth={1.5} />
+                  <Sparkles className="w-5 h-5 text-muted-foreground" strokeWidth={1} />
                 </div>
                 <div className="flex-1 flex items-center justify-between">
                   <p className="text-base font-light text-foreground">Check-ins</p>
@@ -530,7 +530,7 @@ const Insights = () => {
               </div>
               <div className="flex items-center gap-4">
                 <div className="w-10 h-10 rounded-full border-2 border-border/50 flex items-center justify-center flex-shrink-0">
-                  <Heart className="w-5 h-5 text-muted-foreground" strokeWidth={1.5} />
+                  <Heart className="w-5 h-5 text-muted-foreground" strokeWidth={1} />
                 </div>
                 <div className="flex-1 flex items-center justify-between">
                   <p className="text-base font-light text-foreground">Gut honored</p>
@@ -539,7 +539,7 @@ const Insights = () => {
               </div>
               <div className="flex items-center gap-4">
                 <div className="w-10 h-10 rounded-full border-2 border-border/50 flex items-center justify-center flex-shrink-0">
-                  <Shield className="w-5 h-5 text-muted-foreground" strokeWidth={1.5} />
+                  <Target className="w-5 h-5 text-muted-foreground" strokeWidth={1} />
                 </div>
                 <div className="flex-1 flex items-center justify-between">
                   <p className="text-base font-light text-foreground">Decisions made</p>
