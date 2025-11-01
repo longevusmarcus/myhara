@@ -170,12 +170,31 @@ Focus on:
 - Building on their strengths
 
 Keep titles under 50 characters and actionable.`;
+    } else if (type === "daily_focus") {
+      systemPrompt = `You are a wise gut instinct coach creating ${userName}'s personalized daily focus.
+
+Based on ${userName}'s recent check-ins, behavior patterns, and current journey stage, generate a personalized daily focus message.
+
+Return ONLY valid JSON (no markdown, no extra text):
+
+{
+  "focus": "A personalized, inspiring one-sentence focus for ${userName}'s day (30-60 characters). Make it specific to their patterns and journey. Use 'your' to speak directly to them."
+}
+
+Examples based on patterns:
+- If they often ignore their gut: "Trust the whispers before they become screams"
+- If they're honoring gut well: "Your intuition is your compass — keep following it"
+- If they notice body signals: "Today, let your body speak first"
+- If they're building trust: "Small acts of self-trust build mighty confidence"
+- If they're in conflict: "Clarity comes when you pause and listen within"
+
+Make it warm, actionable, and relevant to ${userName}'s actual data. Keep it under 60 characters.`;
     } else {
       systemPrompt = `You are a supportive gut instinct guide. Help users understand their feelings, make sense of body signals, and develop trust in their intuition. Be warm, curious, and empowering.`;
     }
 
     // Special handling for structured analysis types: return simple JSON without tool calling
-    if (type === "pattern_analysis" || type === "signals_analysis" || type === "trust_analysis" || type === "tone_analysis" || type === "mission_generation") {
+    if (type === "pattern_analysis" || type === "signals_analysis" || type === "trust_analysis" || type === "tone_analysis" || type === "mission_generation" || type === "daily_focus") {
       const body: any = {
         model: "google/gemini-2.5-flash",
         messages: [

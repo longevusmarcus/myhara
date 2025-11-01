@@ -14,6 +14,8 @@ const Home = () => {
   const [gamData, setGamData] = useState(getGamificationData());
   const [userName, setUserName] = useState("there");
   const [loadingMissions, setLoadingMissions] = useState(false);
+  const [dailyFocus, setDailyFocus] = useState("return to your center — where gut-driven decisions are born");
+  const [loadingFocus, setLoadingFocus] = useState(false);
 
   useEffect(() => {
     const storedEntries = JSON.parse(localStorage.getItem("gutEntries") || "[]");
@@ -33,23 +35,104 @@ const Home = () => {
         
         if (data?.nickname) {
           setUserName(String(data.nickname));
+          sessionStorage.setItem("currentUserName", String(data.nickname));
         }
       } catch (error) {
         console.error("Error fetching profile:", error);
       }
     };
-    fetchProfile();
     
-    // Generate insights
-    const generatedInsights = generateInsights(storedEntries);
-    setInsights(generatedInsights);
+    const loadData = async () => {
+      await fetchProfile();
+      
+      // Generate insights
+      const generatedInsights = generateInsights(storedEntries);
+      setInsights(generatedInsights);
 
-    // Load or generate missions
-    loadMissions(storedEntries);
+      // Load or generate missions
+      await loadMissions(storedEntries);
+      
+      // Load daily focus
+      await loadDailyFocus(storedEntries);
+    };
+    
+    loadData();
   }, []);
 
   const levelInfo = calculateLevel(gamData.totalXP);
   const levelName = getLevelName(levelInfo.level);
+
+  const loadDailyFocus = async (allEntries: any[]) => {
+    // Check for cached focus from today
+    const cachedFocus = localStorage.getItem("cachedDailyFocus");
+    const cachedFocusDate = localStorage.getItem("cachedDailyFocusDate");
+    const today = new Date().toDateString();
+
+    if (cachedFocus && cachedFocusDate === today) {
+      setDailyFocus(cachedFocus);
+      return;
+    }
+
+    // If less than 3 entries, use default focus
+    if (allEntries.length < 3) {
+      setDailyFocus("return to your center — where gut-driven decisions are born");
+      return;
+    }
+
+    // Generate AI-powered focus
+    setLoadingFocus(true);
+    try {
+      const currentUserName = sessionStorage.getItem("currentUserName") || userName || "the user";
+      
+      const entriesSummary = allEntries.slice(-10).map((e: any) => ({
+        timestamp: e.timestamp,
+        mode: e.mode,
+        label: e.label || e.gutFeeling,
+        bodySensation: e.bodySensation,
+        honored: e.willIgnore === "no",
+        decision: e.decision,
+        consequence: e.consequence
+      }));
+
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/gut-coach`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          },
+          body: JSON.stringify({
+            messages: [
+              {
+                role: "user",
+                content: `Generate personalized daily focus for ${currentUserName} based on their check-in data:\n\n${JSON.stringify(entriesSummary, null, 2)}`
+              }
+            ],
+            type: "daily_focus",
+            userName: currentUserName
+          }),
+        }
+      );
+
+      if (!response.ok) throw new Error("Failed to generate focus");
+
+      const data = await response.json();
+      
+      if (data.focus) {
+        setDailyFocus(data.focus);
+        
+        // Cache focus for today
+        localStorage.setItem("cachedDailyFocus", data.focus);
+        localStorage.setItem("cachedDailyFocusDate", today);
+      }
+    } catch (error) {
+      console.error("Focus generation error:", error);
+      // Keep default focus on error
+    } finally {
+      setLoadingFocus(false);
+    }
+  };
 
   const loadMissions = async (allEntries: any[]) => {
     // Check for cached missions from today
@@ -195,12 +278,21 @@ const Home = () => {
           today's focus
         </h2>
         <Card className="bg-card border-border p-5 rounded-[1.25rem] flex items-start justify-between gap-4">
-          <p className="text-base font-light text-foreground leading-relaxed">
-            return to your center — where gut-driven decisions are born
-          </p>
-          <button className="flex-shrink-0 w-8 h-8 rounded-full bg-foreground/10 flex items-center justify-center hover:bg-foreground/20 transition-colors">
-            <ArrowRight className="w-4 h-4 text-foreground" />
-          </button>
+          {loadingFocus ? (
+            <div className="flex items-center gap-2 text-muted-foreground w-full">
+              <Loader2 className="w-4 h-4 animate-spin" />
+              <p className="text-sm font-light">Loading your focus...</p>
+            </div>
+          ) : (
+            <>
+              <p className="text-base font-light text-foreground leading-relaxed">
+                {dailyFocus}
+              </p>
+              <button className="flex-shrink-0 w-8 h-8 rounded-full bg-foreground/10 flex items-center justify-center hover:bg-foreground/20 transition-colors">
+                <ArrowRight className="w-4 h-4 text-foreground" />
+              </button>
+            </>
+          )}
         </Card>
       </div>
 
