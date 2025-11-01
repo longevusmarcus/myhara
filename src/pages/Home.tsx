@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { ArrowRight, Flame, Pause, Sparkles, Shield } from "lucide-react";
+import { ArrowRight, Flame, Pause, Sparkles, Shield, Loader2 } from "lucide-react";
 import BottomNav from "@/components/BottomNav";
 import { Card } from "@/components/ui/card";
 import { useState, useEffect } from "react";
@@ -13,6 +13,7 @@ const Home = () => {
   const [insights, setInsights] = useState<string[]>([]);
   const [gamData, setGamData] = useState(getGamificationData());
   const [userName, setUserName] = useState("there");
+  const [loadingMissions, setLoadingMissions] = useState(false);
 
   useEffect(() => {
     const storedEntries = JSON.parse(localStorage.getItem("gutEntries") || "[]");
@@ -39,81 +40,107 @@ const Home = () => {
     };
     fetchProfile();
     
-    // Generate personalized missions based on user data
-    const generatedMissions = generateMissions(storedEntries);
-    setMissions(generatedMissions);
-    
     // Generate insights
     const generatedInsights = generateInsights(storedEntries);
     setInsights(generatedInsights);
+
+    // Load or generate missions
+    loadMissions(storedEntries);
   }, []);
 
   const levelInfo = calculateLevel(gamData.totalXP);
   const levelName = getLevelName(levelInfo.level);
 
-  const generateMissions = (entries: any[]) => {
-    const defaultMissions = [
-      { id: 1, title: "Pause before saying yes to something", category: "gut trust", Icon: Pause },
-      { id: 2, title: "Notice one body signal today", category: "awareness", Icon: Sparkles },
-      { id: 3, title: "Honor a no that feels right", category: "boundaries", Icon: Shield },
-    ];
+  const loadMissions = async (allEntries: any[]) => {
+    // Check for cached missions from today
+    const cachedMissions = localStorage.getItem("cachedMissions");
+    const cachedMissionsDate = localStorage.getItem("cachedMissionsDate");
+    const today = new Date().toDateString();
 
-    if (entries.length === 0) return defaultMissions;
-
-    const personalizedMissions = [];
-    const ignoredCount = entries.filter(e => e.willIgnore === "yes").length;
-    const totalCount = entries.length;
-    const ignoredRate = ignoredCount / totalCount;
-
-    // Mission based on ignore rate
-    if (ignoredRate > 0.5) {
-      personalizedMissions.push({
-        id: 1,
-        title: "Practice honoring one gut feeling today",
-        category: "trust building",
-        Icon: Pause
-      });
-    } else {
-      personalizedMissions.push({
-        id: 1,
-        title: "Notice when your gut feels strongest",
-        category: "awareness",
-        Icon: Sparkles
-      });
+    if (cachedMissions && cachedMissionsDate === today) {
+      // Use cached missions if they're from today
+      setMissions(JSON.parse(cachedMissions));
+      return;
     }
 
-    // Mission based on most common body sensation
-    const sensations = entries.map(e => e.bodySensation).filter(Boolean);
-    if (sensations.length > 0) {
-      personalizedMissions.push({
-        id: 2,
-        title: "Check in when you feel tension today",
-        category: "body awareness",
-        Icon: Sparkles
-      });
-    } else {
-      personalizedMissions.push(defaultMissions[1]);
+    // If less than 3 entries, use default missions
+    if (allEntries.length < 3) {
+      const defaultMissions = [
+        { id: 1, title: "Pause before saying yes to something", category: "gut trust", Icon: Pause },
+        { id: 2, title: "Notice one body signal today", category: "awareness", Icon: Sparkles },
+        { id: 3, title: "Honor a no that feels right", category: "boundaries", Icon: Shield },
+      ];
+      setMissions(defaultMissions);
+      return;
     }
 
-    // Mission based on decision tracking
-    const decisionsTracked = entries.filter(e => e.decision).length;
-    if (decisionsTracked < 3) {
-      personalizedMissions.push({
-        id: 3,
-        title: "Track one decision you make today",
-        category: "follow-through",
-        Icon: Shield
-      });
-    } else {
-      personalizedMissions.push({
-        id: 3,
-        title: "Review a past decision outcome",
-        category: "reflection",
-        Icon: Shield
-      });
-    }
+    // Generate AI-powered missions
+    setLoadingMissions(true);
+    try {
+      const currentUserName = userName || "the user";
+      
+      const entriesSummary = allEntries.slice(-10).map((e: any) => ({
+        timestamp: e.timestamp,
+        mode: e.mode,
+        label: e.label || e.gutFeeling,
+        bodySensation: e.bodySensation,
+        honored: e.willIgnore === "no",
+        decision: e.decision,
+        consequence: e.consequence
+      }));
 
-    return personalizedMissions.slice(0, 3);
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/gut-coach`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          },
+          body: JSON.stringify({
+            messages: [
+              {
+                role: "user",
+                content: `Generate 3 personalized missions for ${currentUserName} based on their check-in data:\n\n${JSON.stringify(entriesSummary, null, 2)}`
+              }
+            ],
+            type: "mission_generation",
+            userName: currentUserName
+          }),
+        }
+      );
+
+      if (!response.ok) throw new Error("Failed to generate missions");
+
+      const data = await response.json();
+      
+      if (data.missions && Array.isArray(data.missions)) {
+        const iconMap = [Pause, Sparkles, Shield];
+        const missionsWithIcons = data.missions.map((m: any, idx: number) => ({
+          id: idx + 1,
+          title: m.title,
+          category: m.category,
+          Icon: iconMap[idx % iconMap.length]
+        }));
+        
+        setMissions(missionsWithIcons);
+        
+        // Cache missions for today
+        localStorage.setItem("cachedMissions", JSON.stringify(missionsWithIcons));
+        localStorage.setItem("cachedMissionsDate", today);
+      }
+    } catch (error) {
+      console.error("Mission generation error:", error);
+      // Fall back to default missions
+      const defaultMissions = [
+        { id: 1, title: "Pause before saying yes to something", category: "gut trust", Icon: Pause },
+        { id: 2, title: "Notice one body signal today", category: "awareness", Icon: Sparkles },
+        { id: 3, title: "Honor a no that feels right", category: "boundaries", Icon: Shield },
+      ];
+      setMissions(defaultMissions);
+    } finally {
+      setLoadingMissions(false);
+    }
   };
 
   const generateInsights = (entries: any[]) => {
@@ -218,22 +245,29 @@ const Home = () => {
         <h2 className="text-xs uppercase tracking-wider text-muted-foreground mb-3 font-light">
           today's missions
         </h2>
-        <div className="space-y-3">
-          {missions.map((mission) => (
-            <Card
-              key={mission.id}
-              className="bg-card border-border p-4 rounded-[1.25rem] flex items-center gap-4 hover:bg-card/80 transition-colors cursor-pointer"
-            >
-              <div className="w-10 h-10 rounded-full border-2 border-muted-foreground/20 flex items-center justify-center flex-shrink-0">
-                <mission.Icon className="w-5 h-5 text-muted-foreground" strokeWidth={1.5} />
-              </div>
-              <div className="flex-1">
-                <p className="text-base font-light text-foreground">{mission.title}</p>
-                <p className="text-xs font-light text-muted-foreground">{mission.category}</p>
-              </div>
-            </Card>
-          ))}
-        </div>
+        {loadingMissions ? (
+          <Card className="bg-card border-border p-8 rounded-[1.25rem] flex flex-col items-center justify-center gap-3">
+            <Loader2 className="w-6 h-6 animate-spin text-primary" />
+            <p className="text-sm text-muted-foreground">Generating personalized missions...</p>
+          </Card>
+        ) : (
+          <div className="space-y-3">
+            {missions.map((mission) => (
+              <Card
+                key={mission.id}
+                className="bg-card border-border p-4 rounded-[1.25rem] flex items-center gap-4 hover:bg-card/80 transition-colors cursor-pointer"
+              >
+                <div className="w-10 h-10 rounded-full border-2 border-muted-foreground/20 flex items-center justify-center flex-shrink-0">
+                  <mission.Icon className="w-5 h-5 text-muted-foreground" strokeWidth={1.5} />
+                </div>
+                <div className="flex-1">
+                  <p className="text-base font-light text-foreground">{mission.title}</p>
+                  <p className="text-xs font-light text-muted-foreground">{mission.category}</p>
+                </div>
+              </Card>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Recent Insights */}

@@ -139,12 +139,43 @@ Return ONLY valid JSON (no markdown, no extra text):
 }
 
 Set insufficientData to true if less than 3 voice entries. Keep all text to 1-2 sentences.`;
+    } else if (type === "mission_generation") {
+      systemPrompt = `You are analyzing ${userName}'s gut instinct journey to create personalized daily missions.
+
+Based on their check-in history, patterns, and progress, generate 3 actionable missions for today.
+
+Return ONLY valid JSON (no markdown, no extra text):
+
+{
+  "missions": [
+    {
+      "title": "Short, actionable mission (e.g., 'Notice tension before making a choice')",
+      "category": "Category name (e.g., 'body awareness', 'trust building', 'decision tracking')"
+    },
+    {
+      "title": "Second mission",
+      "category": "Category"
+    },
+    {
+      "title": "Third mission",
+      "category": "Category"
+    }
+  ]
+}
+
+Focus on:
+- What ${userName} needs to practice based on their patterns
+- Areas where ${userName} is struggling (e.g., ignoring gut too often)
+- Next steps in their growth journey
+- Building on their strengths
+
+Keep titles under 50 characters and actionable.`;
     } else {
       systemPrompt = `You are a supportive gut instinct guide. Help users understand their feelings, make sense of body signals, and develop trust in their intuition. Be warm, curious, and empowering.`;
     }
 
     // Special handling for structured analysis types: return simple JSON without tool calling
-    if (type === "pattern_analysis" || type === "signals_analysis" || type === "trust_analysis" || type === "tone_analysis") {
+    if (type === "pattern_analysis" || type === "signals_analysis" || type === "trust_analysis" || type === "tone_analysis" || type === "mission_generation") {
       const body: any = {
         model: "google/gemini-2.5-flash",
         messages: [
