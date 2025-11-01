@@ -264,6 +264,32 @@ const GutMap = () => {
     return date.toLocaleDateString();
   };
 
+  const getCategoryTag = (entry: any): string => {
+    const text = (entry.context || entry.label || '').toLowerCase();
+    
+    if (text.includes('money') || text.includes('financial') || text.includes('career') || 
+        text.includes('job') || text.includes('business') || text.includes('investment') ||
+        text.includes('salary') || text.includes('deal')) {
+      return 'Financial';
+    }
+    
+    if (text.includes('relationship') || text.includes('partner') || text.includes('dating') || 
+        text.includes('friend') || text.includes('family') || text.includes('love') ||
+        text.includes('marriage') || text.includes('breakup')) {
+      return 'Relationship';
+    }
+    
+    if (text.includes('health') || text.includes('wellness') || text.includes('medical')) {
+      return 'Health';
+    }
+    
+    if (text.includes('decision') || text.includes('choice')) {
+      return 'Decision';
+    }
+    
+    return 'General';
+  };
+
   const formatAIInsights = (text: string) => {
     // Remove all ** markers first
     const cleanText = text.replace(/\*\*/g, '');
@@ -342,6 +368,11 @@ const GutMap = () => {
               entries.map((entry, index) => (
                 <Card key={index} className="bg-card border-border p-6 rounded-[1.25rem]">
                   <div className="space-y-3">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-xs px-2 py-0.5 rounded-full border border-border/50 text-muted-foreground font-light">
+                        {getCategoryTag(entry)}
+                      </span>
+                    </div>
                     <div className="flex items-center gap-2">
                       <Calendar className="w-4 h-4 text-muted-foreground" />
                       <p className="text-sm text-muted-foreground font-light">
