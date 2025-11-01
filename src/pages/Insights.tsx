@@ -43,6 +43,24 @@ const Insights = () => {
 
     // Load patterns if we have enough data
     if (storedEntries.length >= 3) {
+      // Check if we have cached patterns
+      const cachedPatterns = localStorage.getItem("cachedPatterns");
+      const cachedPatternsTimestamp = localStorage.getItem("cachedPatternsTimestamp");
+      const lastEntryTimestamp = storedEntries[storedEntries.length - 1]?.timestamp;
+      
+      // Use cached patterns if they exist and are still valid (no new entries since last analysis)
+      if (cachedPatterns && cachedPatternsTimestamp && lastEntryTimestamp) {
+        const cachedTime = new Date(cachedPatternsTimestamp).getTime();
+        const lastEntryTime = new Date(lastEntryTimestamp).getTime();
+        
+        if (cachedTime >= lastEntryTime) {
+          // Use cached patterns
+          setPatterns(cachedPatterns);
+          return;
+        }
+      }
+      
+      // Generate new patterns if no valid cache
       loadPatternAnalysis(storedEntries);
     }
   }, []);
@@ -86,7 +104,13 @@ const Insights = () => {
       const contentType = response.headers.get("Content-Type") || "";
       if (contentType.includes("application/json")) {
         const json = await response.json();
-        setPatterns(JSON.stringify(json));
+        const patternsStr = JSON.stringify(json);
+        setPatterns(patternsStr);
+        
+        // Cache the patterns
+        localStorage.setItem("cachedPatterns", patternsStr);
+        localStorage.setItem("cachedPatternsTimestamp", new Date().toISOString());
+        
         setLoadingPatterns(false);
         return;
       }
@@ -424,6 +448,8 @@ const Insights = () => {
                   <button
                     onClick={() => {
                       setPatterns("");
+                      localStorage.removeItem("cachedPatterns");
+                      localStorage.removeItem("cachedPatternsTimestamp");
                       loadPatternAnalysis(entries);
                     }}
                     className="px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm hover:bg-primary/90 transition-colors"
