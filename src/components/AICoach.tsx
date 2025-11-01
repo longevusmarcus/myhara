@@ -25,7 +25,9 @@ export const AICoach = ({ initialPrompt }: AICoachProps) => {
   }, [initialPrompt]);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (messages.length > 0 && messages[messages.length - 1].role === "assistant") {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
   }, [messages]);
 
   const sendMessage = async (text: string, isInitial = false) => {
@@ -112,8 +114,8 @@ export const AICoach = ({ initialPrompt }: AICoachProps) => {
   };
 
   return (
-    <div className="space-y-3">
-      <div className="space-y-2 max-h-[500px] overflow-y-auto">
+    <div className="flex flex-col h-[400px]">
+      <div className="flex-1 overflow-y-auto space-y-2 mb-3 px-1">
         {messages.map((msg, idx) => (
           <div
             key={idx}
@@ -147,7 +149,7 @@ export const AICoach = ({ initialPrompt }: AICoachProps) => {
         <div ref={messagesEndRef} />
       </div>
 
-      <div className="flex gap-2 items-end">
+      <div className="flex gap-2 items-end flex-shrink-0">
         <input
           type="text"
           value={input}
