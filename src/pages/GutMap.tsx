@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import BottomNav from "@/components/BottomNav";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Calendar, Circle, Droplet, Sparkles, CheckCircle2, AlertTriangle } from "lucide-react";
+import { Calendar, Circle, Droplet, Sparkles, CheckCircle2, AlertTriangle, Plus, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
@@ -18,7 +18,7 @@ const GutMap = () => {
     setEntries(storedEntries);
   }, []);
 
-  const updateConsequence = (index: number) => {
+  const updateConsequence = async (index: number) => {
     const updatedEntries = [...entries];
     updatedEntries[index] = {
       ...updatedEntries[index],
@@ -29,9 +29,14 @@ const GutMap = () => {
     setEntries(updatedEntries);
     setSelectedEntry(null);
     setConsequence("");
+    
+    // Update gamification for consequence tracking
+    const { addCheckIn } = await import("@/utils/gamification");
+    addCheckIn(0); // Trigger achievement check without adding XP
+    
     toast({
-      title: "Consequence tracked",
-      description: "You can now see how honoring your gut played out",
+      title: "Outcome logged",
+      description: "Your pattern is learning from this",
     });
   };
 
@@ -113,32 +118,36 @@ const GutMap = () => {
                             Gut: {entry.gutFeeling} • {entry.willIgnore === "no" ? "Honored it" : "Ignored it"}
                           </p>
                           {entry.decision && (
-                            <p className="text-sm text-foreground font-light mt-2 italic">
-                              Decision: "{entry.decision}"
-                            </p>
-                          )}
-                          {entry.consequence && (
-                            <div className="mt-3 p-3 bg-secondary/20 rounded-lg">
-                              <p className="text-xs text-muted-foreground font-light mb-1">
-                                What happened:
-                              </p>
-                              <p className="text-sm text-foreground font-light">
-                                {entry.consequence}
-                              </p>
+                            <div className="mt-3 space-y-2">
+                              <div className="flex items-start gap-2">
+                                <FileText className="w-4 h-4 text-muted-foreground mt-0.5 flex-shrink-0" />
+                                <p className="text-sm text-foreground font-light italic">
+                                  {entry.decision}
+                                </p>
+                              </div>
+                              {entry.consequence && (
+                                <div className="pl-6 pt-2 border-l-2 border-primary/20 ml-0.5">
+                                  <p className="text-xs text-primary font-medium mb-1">
+                                    What happened
+                                  </p>
+                                  <p className="text-sm text-muted-foreground font-light">
+                                    {entry.consequence}
+                                  </p>
+                                </div>
+                              )}
+                              {!entry.consequence && (
+                                <button
+                                  onClick={() => {
+                                    setSelectedEntry(index);
+                                    setConsequence("");
+                                  }}
+                                  className="pl-6 flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors group"
+                                >
+                                  <Plus className="w-3.5 h-3.5 group-hover:text-primary transition-colors" />
+                                  <span className="font-light">Log outcome</span>
+                                </button>
+                              )}
                             </div>
-                          )}
-                          {entry.needsFollowUp && !entry.consequence && (
-                            <Button
-                              onClick={() => {
-                                setSelectedEntry(index);
-                                setConsequence("");
-                              }}
-                              variant="outline"
-                              size="sm"
-                              className="mt-3"
-                            >
-                              Track consequence
-                            </Button>
                           )}
                         </>
                       )}
@@ -161,38 +170,41 @@ const GutMap = () => {
 
           {/* Modal for tracking consequence */}
           {selectedEntry !== null && (
-            <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-6">
-              <Card className="bg-card border-border p-6 rounded-[1.25rem] w-full max-w-md">
-                <div className="space-y-4">
-                  <h3 className="text-lg font-medium text-foreground">
-                    What happened?
-                  </h3>
-                  <p className="text-sm text-muted-foreground font-light">
-                    Track the consequence of honoring your gut
-                  </p>
+            <div className="fixed inset-0 bg-background/95 backdrop-blur-md z-50 flex items-end sm:items-center justify-center p-0 sm:p-6 animate-in fade-in duration-200">
+              <Card className="bg-card border-border border-t sm:border rounded-t-[2rem] sm:rounded-[1.5rem] w-full max-w-md shadow-2xl animate-in slide-in-from-bottom-4 sm:slide-in-from-bottom-0 duration-300">
+                <div className="p-6 space-y-5">
+                  <div className="space-y-1">
+                    <h3 className="text-xl font-medium text-foreground">
+                      Log outcome
+                    </h3>
+                    <p className="text-sm text-muted-foreground font-light">
+                      What happened after your decision?
+                    </p>
+                  </div>
                   <Textarea
                     value={consequence}
                     onChange={(e) => setConsequence(e.target.value)}
-                    placeholder="E.g., 'I felt relieved and the situation resolved itself' or 'Things turned out better than expected'..."
-                    className="bg-background border-border rounded-[1.25rem] min-h-[120px]"
+                    placeholder="It worked out because... / I learned that... / The result was..."
+                    className="bg-background/50 border-border rounded-2xl min-h-[140px] resize-none focus:bg-background transition-colors"
+                    autoFocus
                   />
-                  <div className="flex gap-2">
+                  <div className="flex gap-3 pt-2">
                     <Button
                       onClick={() => {
                         setSelectedEntry(null);
                         setConsequence("");
                       }}
                       variant="outline"
-                      className="flex-1"
+                      className="flex-1 rounded-xl"
                     >
                       Cancel
                     </Button>
                     <Button
                       onClick={() => updateConsequence(selectedEntry)}
                       disabled={!consequence.trim()}
-                      className="flex-1"
+                      className="flex-1 rounded-xl"
                     >
-                      Save
+                      Save outcome
                     </Button>
                   </div>
                 </div>

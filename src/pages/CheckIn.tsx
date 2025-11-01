@@ -66,7 +66,7 @@ const CheckIn = () => {
       decision: decision || null,
       timestamp: new Date().toISOString(),
       xp: willIgnore === "no" ? 10 : 5,
-      needsFollowUp: willIgnore === "no" && decision.trim().length > 0
+      needsFollowUp: decision.trim().length > 0
     };
     
     // Save to localStorage
