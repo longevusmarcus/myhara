@@ -265,26 +265,15 @@ const GutMap = () => {
   };
 
   const getCategoryTag = (entry: any): string => {
-    const text = (entry.context || entry.label || '').toLowerCase();
-    
-    if (text.includes('money') || text.includes('financial') || text.includes('career') || 
-        text.includes('job') || text.includes('business') || text.includes('investment') ||
-        text.includes('salary') || text.includes('deal')) {
-      return 'Financial';
+    // For tap mode, use the context directly
+    if (entry.mode === "tap" && entry.context) {
+      return entry.context;
     }
     
-    if (text.includes('relationship') || text.includes('partner') || text.includes('dating') || 
-        text.includes('friend') || text.includes('family') || text.includes('love') ||
-        text.includes('marriage') || text.includes('breakup')) {
-      return 'Relationship';
-    }
-    
-    if (text.includes('health') || text.includes('wellness') || text.includes('medical')) {
-      return 'Health';
-    }
-    
-    if (text.includes('decision') || text.includes('choice')) {
-      return 'Decision';
+    // For voice mode, use the label
+    if (entry.mode === "voice" && entry.label) {
+      // Capitalize first letter
+      return entry.label.charAt(0).toUpperCase() + entry.label.slice(1);
     }
     
     return 'General';
