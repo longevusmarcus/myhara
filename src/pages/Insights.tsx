@@ -1,6 +1,6 @@
 import BottomNav from "@/components/BottomNav";
 import { Card } from "@/components/ui/card";
-import { TrendingUp, Clock, Target, Zap, Heart, Loader2, User, Bookmark, Mic } from "lucide-react";
+import { TrendingUp, Clock, Target, Zap, Heart, Loader2, Eye, Info, MessageCircle } from "lucide-react";
 import { useState, useEffect } from "react";
 import { getGamificationData } from "@/utils/gamification";
 import { supabase } from "@/integrations/supabase/client";
@@ -374,7 +374,7 @@ const Insights = () => {
                   const patternData = JSON.parse(jsonStr);
                   
                   if (Array.isArray(patternData) && patternData.length > 0) {
-                    const icons = [User, Bookmark, Mic];
+                    const icons = [Heart, Eye, Info];
                     const colors = ["primary", "accent", "primary"];
                     
                     return (
