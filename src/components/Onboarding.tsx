@@ -44,7 +44,7 @@ const Onboarding = ({ onComplete }: OnboardingProps) => {
             </h1>
             
             <p className="text-base text-muted-foreground/70 font-light mb-8">
-              Your gut instinct processes information faster than conscious thought — backed by neuroscience research
+              Your gut instinct processes information faster than conscious thought, backed by neuroscience research
             </p>
 
             <div className="space-y-4 mb-8">
