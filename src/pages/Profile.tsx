@@ -13,10 +13,9 @@ const Profile = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [profile, setProfile] = useState<{ first_name: string | null; last_name: string | null; avatar_url: string | null } | null>(null);
+  const [profile, setProfile] = useState<{ first_name: string | null; last_name: string | null; nickname: string | null; avatar_url: string | null } | null>(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
+  const [nickname, setNickname] = useState("");
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [gamData, setGamData] = useState(getGamificationData());
@@ -47,8 +46,7 @@ const Profile = () => {
 
       setProfile(data);
       if (data) {
-        setFirstName(data.first_name || "");
-        setLastName(data.last_name || "");
+        setNickname(data.nickname || "");
       }
     } catch (error) {
       console.error("Error fetching profile:", error);
@@ -65,14 +63,13 @@ const Profile = () => {
       const { error } = await supabase
         .from("profiles")
         .update({
-          first_name: firstName,
-          last_name: lastName,
+          nickname: nickname,
         })
         .eq("id", user.id);
 
       if (error) throw error;
 
-      setProfile({ ...profile, first_name: firstName, last_name: lastName });
+      setProfile({ ...profile, nickname: nickname });
       setIsEditing(false);
       toast({
         title: "Profile updated",
@@ -159,7 +156,7 @@ const Profile = () => {
                 />
               ) : (
                 <span className="text-3xl font-medium">
-                  {profile?.first_name?.[0] || "U"}
+                  {profile?.nickname?.[0] || profile?.first_name?.[0] || "U"}
                 </span>
               )}
             </div>
@@ -183,16 +180,9 @@ const Profile = () => {
               <div className="space-y-3 max-w-sm mx-auto">
                 <Input
                   type="text"
-                  placeholder="First Name"
-                  value={firstName}
-                  onChange={(e) => setFirstName(e.target.value)}
-                  className="bg-background border-border rounded-[1.25rem]"
-                />
-                <Input
-                  type="text"
-                  placeholder="Last Name"
-                  value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
+                  placeholder="Nickname"
+                  value={nickname}
+                  onChange={(e) => setNickname(e.target.value)}
                   className="bg-background border-border rounded-[1.25rem]"
                 />
                 <div className="flex gap-2">
@@ -214,7 +204,7 @@ const Profile = () => {
             ) : (
               <>
                 <h1 className="text-3xl font-cursive text-foreground tracking-tight">
-                  {loading ? "Loading..." : profile ? `${profile.first_name || ""} ${profile.last_name || ""}`.trim() || "Your Profile" : "Your Profile"}
+                  {loading ? "Loading..." : profile?.nickname || "Your Profile"}
                 </h1>
                 <p className="text-base text-muted-foreground font-light mt-2">Level {levelInfo.level} {levelName}</p>
                 <button
