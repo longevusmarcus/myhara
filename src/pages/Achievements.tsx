@@ -149,17 +149,11 @@ const Achievements = () => {
                 }`}
               >
                 <div className="flex items-start gap-4">
-                  <div className={`w-14 h-14 rounded-full flex items-center justify-center flex-shrink-0 ${
-                    unlocked 
-                      ? `bg-${achievement.color.split('-')[1]}-500/10` 
-                      : 'bg-secondary'
-                  }`}>
-                    {unlocked ? (
-                      <Icon className={`w-7 h-7 ${achievement.color}`} strokeWidth={1.5} />
-                    ) : (
-                      <Lock className="w-7 h-7 text-muted-foreground/50" strokeWidth={1.5} />
-                    )}
-                  </div>
+                  {unlocked ? (
+                    <Icon className={`w-7 h-7 ${achievement.color} flex-shrink-0`} strokeWidth={1.5} />
+                  ) : (
+                    <Lock className="w-7 h-7 text-muted-foreground/50 flex-shrink-0" strokeWidth={1.5} />
+                  )}
                   
                   <div className="flex-1 space-y-3">
                     <div>

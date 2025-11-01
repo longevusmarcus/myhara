@@ -222,9 +222,7 @@ const Profile = () => {
         <Card className="bg-card border-border p-6 rounded-3xl">
           <div className="space-y-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center">
-                <Award className="w-5 h-5 text-foreground" />
-              </div>
+              <Award className="w-5 h-5 text-primary" strokeWidth={1.5} />
               <div className="flex-1">
                 <p className="text-sm text-muted-foreground font-light">Progress to Level {levelInfo.level + 1}</p>
                 <p className="text-base font-medium text-foreground">{gamData.totalXP} / {levelInfo.nextLevelXP} XP</p>
@@ -291,7 +289,7 @@ const Profile = () => {
                 onClick={item.action}
                 className="w-full flex items-center gap-4 p-4 rounded-2xl hover:bg-card transition-colors"
               >
-                <Icon className="w-5 h-5 text-muted-foreground" />
+                <Icon className="w-5 h-5 text-muted-foreground" strokeWidth={1.5} />
                 <span className="text-base font-light text-foreground">{item.label}</span>
               </button>
             );
