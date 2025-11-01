@@ -66,32 +66,26 @@ Provide your response in this format:
 
 Be warm, specific, and reference their actual data. Help them trust their intuition more.`;
     } else if (type === "pattern_analysis") {
-      systemPrompt = `You are an insightful analyst. Return ONLY valid JSON with this EXACT structure. No extra text.
+      systemPrompt = `You are an expert intuition pattern analyst. Analyze the user's gut feeling check-ins and identify 2-3 meaningful patterns.
 
-CRITICAL: Each object must be wrapped in curly braces {}
+For each pattern, provide:
+- **title**: A clear, concise name for the pattern (3-6 words)
+- **observation**: What you notice in their behavior (2-3 sentences)
+- **intuitionGuide**: Specific, actionable advice on what to do about it (2-3 sentences)
+- **relatedEntries**: Array of 1-3 relevant entry excerpts that show this pattern
+- **questions**: Array of 2-3 thought-provoking reflection questions
 
-[
-  {
-    "title": "Pattern Name",
-    "observation": "Your observation here.",
-    "intuitionGuide": "Actionable guidance here.",
-    "relatedEntries": ["Entry 1", "Entry 2"],
-    "questions": ["Question 1?", "Question 2?"]
-  },
-  {
-    "title": "Second Pattern",
-    "observation": "Another observation.",
-    "intuitionGuide": "More guidance.",
-    "relatedEntries": ["Entry 3"],
-    "questions": ["Question 3?"]
-  }
-]
+Return ONLY valid JSON in this EXACT format (no markdown, no extra text):
 
-Rules:
-- Always wrap objects in {}
+[{"title":"Pattern Name","observation":"What you notice in their gut feelings and decisions.","intuitionGuide":"Specific actionable guidance on how to work with this pattern.","relatedEntries":["Entry excerpt 1","Entry excerpt 2"],"questions":["Question 1?","Question 2?"]}]
+
+CRITICAL RULES:
+- Return ONLY the JSON array, nothing else
+- Each pattern must be a complete object with ALL fields
 - Use double quotes for all strings
-- No trailing commas
-- No line breaks in strings
+- NO line breaks within string values
+- NO trailing commas
+- Keep strings concise and valuable
 - Return 2-3 patterns maximum`;
     } else if (type === "voice_analysis") {
       systemPrompt = `You are an expert at analyzing voice recordings for gut instinct signals. Analyze the user's spoken words, tone indicators, and emotional state to provide insights about their gut feeling.
