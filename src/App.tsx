@@ -28,26 +28,35 @@ const App = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const completed = localStorage.getItem("onboarding_completed");
-    setHasCompletedOnboarding(completed === "true");
-
     // Check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
+      if (session?.user) {
+        const completed = localStorage.getItem(`onboarding_completed_${session.user.id}`);
+        setHasCompletedOnboarding(completed === "true");
+      }
       setLoading(false);
     });
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
+      if (session?.user) {
+        const completed = localStorage.getItem(`onboarding_completed_${session.user.id}`);
+        setHasCompletedOnboarding(completed === "true");
+      } else {
+        setHasCompletedOnboarding(false);
+      }
     });
 
     return () => subscription.unsubscribe();
   }, []);
 
   const handleOnboardingComplete = () => {
-    localStorage.setItem("onboarding_completed", "true");
-    setHasCompletedOnboarding(true);
+    if (session?.user) {
+      localStorage.setItem(`onboarding_completed_${session.user.id}`, "true");
+      setHasCompletedOnboarding(true);
+    }
   };
 
   return (
@@ -58,14 +67,14 @@ const App = () => {
         <MobileOnly>
           <BrowserRouter>
           <ScrollToTop />
-          {!hasCompletedOnboarding ? (
-            <Onboarding onComplete={handleOnboardingComplete} />
-          ) : loading ? (
+          {loading ? (
             <div className="min-h-screen bg-background flex items-center justify-center">
               <p className="text-muted-foreground font-light">Loading...</p>
             </div>
           ) : !session ? (
             <Auth />
+          ) : !hasCompletedOnboarding ? (
+            <Onboarding onComplete={handleOnboardingComplete} />
           ) : (
             <Routes>
               <Route path="/" element={<Navigate to="/home" replace />} />
