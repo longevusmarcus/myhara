@@ -172,13 +172,13 @@ const CheckIn = () => {
       setIsRecording(true);
       mediaRecorder.start();
 
-      // Auto-stop after 10 seconds
+      // Auto-stop after 60 seconds
       setTimeout(() => {
         if (mediaRecorder.state === "recording") {
           mediaRecorder.stop();
           setIsRecording(false);
         }
-      }, 10000);
+      }, 60000);
 
     } catch (error) {
       console.error("Error starting voice recording:", error);
