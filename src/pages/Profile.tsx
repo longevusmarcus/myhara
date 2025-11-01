@@ -140,8 +140,8 @@ const Profile = () => {
   };
 
   const menuItems = [
-    { icon: Settings, label: "Settings", action: () => {} },
-    { icon: HelpCircle, label: "Help & Support", action: () => {} },
+    { icon: Settings, label: "Settings", action: () => navigate("/settings") },
+    { icon: HelpCircle, label: "Help & Support", action: () => navigate("/help") },
     { icon: LogOut, label: "Sign Out", action: handleSignOut },
   ];
 

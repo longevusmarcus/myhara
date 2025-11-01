@@ -12,6 +12,8 @@ import CheckIn from "./pages/CheckIn";
 import Insights from "./pages/Insights";
 import GutMap from "./pages/GutMap";
 import Profile from "./pages/Profile";
+import Settings from "./pages/Settings";
+import Help from "./pages/Help";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 
@@ -67,6 +69,8 @@ const App = () => {
               <Route path="/insights" element={<Insights />} />
               <Route path="/map" element={<GutMap />} />
               <Route path="/profile" element={<Profile />} />
+              <Route path="/settings" element={<Settings />} />
+              <Route path="/help" element={<Help />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           )}

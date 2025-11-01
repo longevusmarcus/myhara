@@ -2,15 +2,131 @@ import { useNavigate } from "react-router-dom";
 import { ArrowRight, Flame, Pause, Sparkles, Shield } from "lucide-react";
 import BottomNav from "@/components/BottomNav";
 import { Card } from "@/components/ui/card";
+import { useState, useEffect } from "react";
 
 const Home = () => {
   const navigate = useNavigate();
+  const [entries, setEntries] = useState<any[]>([]);
+  const [missions, setMissions] = useState<any[]>([]);
+  const [insights, setInsights] = useState<string[]>([]);
 
-  const missions = [
-    { id: 1, title: "Pause before saying yes to something", category: "gut trust", color: "text-cyan-500", Icon: Pause },
-    { id: 2, title: "Notice one body signal today", category: "awareness", color: "text-purple-500", Icon: Sparkles },
-    { id: 3, title: "Honor a no that feels right", category: "boundaries", color: "text-green-500", Icon: Shield },
-  ];
+  useEffect(() => {
+    const storedEntries = JSON.parse(localStorage.getItem("gutEntries") || "[]");
+    setEntries(storedEntries);
+    
+    // Generate personalized missions based on user data
+    const generatedMissions = generateMissions(storedEntries);
+    setMissions(generatedMissions);
+    
+    // Generate insights
+    const generatedInsights = generateInsights(storedEntries);
+    setInsights(generatedInsights);
+  }, []);
+
+  const generateMissions = (entries: any[]) => {
+    const defaultMissions = [
+      { id: 1, title: "Pause before saying yes to something", category: "gut trust", color: "text-cyan-500", Icon: Pause },
+      { id: 2, title: "Notice one body signal today", category: "awareness", color: "text-purple-500", Icon: Sparkles },
+      { id: 3, title: "Honor a no that feels right", category: "boundaries", color: "text-green-500", Icon: Shield },
+    ];
+
+    if (entries.length === 0) return defaultMissions;
+
+    const personalizedMissions = [];
+    const ignoredCount = entries.filter(e => e.willIgnore === "yes").length;
+    const totalCount = entries.length;
+    const ignoredRate = ignoredCount / totalCount;
+
+    // Mission based on ignore rate
+    if (ignoredRate > 0.5) {
+      personalizedMissions.push({
+        id: 1,
+        title: "Practice honoring one gut feeling today",
+        category: "trust building",
+        color: "text-cyan-500",
+        Icon: Pause
+      });
+    } else {
+      personalizedMissions.push({
+        id: 1,
+        title: "Notice when your gut feels strongest",
+        category: "awareness",
+        color: "text-cyan-500",
+        Icon: Sparkles
+      });
+    }
+
+    // Mission based on most common body sensation
+    const sensations = entries.map(e => e.bodySensation).filter(Boolean);
+    if (sensations.length > 0) {
+      personalizedMissions.push({
+        id: 2,
+        title: "Check in when you feel tension today",
+        category: "body awareness",
+        color: "text-purple-500",
+        Icon: Sparkles
+      });
+    } else {
+      personalizedMissions.push(defaultMissions[1]);
+    }
+
+    // Mission based on decision tracking
+    const decisionsTracked = entries.filter(e => e.decision).length;
+    if (decisionsTracked < 3) {
+      personalizedMissions.push({
+        id: 3,
+        title: "Track one decision you make today",
+        category: "follow-through",
+        color: "text-green-500",
+        Icon: Shield
+      });
+    } else {
+      personalizedMissions.push({
+        id: 3,
+        title: "Review a past decision outcome",
+        category: "reflection",
+        color: "text-green-500",
+        Icon: Shield
+      });
+    }
+
+    return personalizedMissions.slice(0, 3);
+  };
+
+  const generateInsights = (entries: any[]) => {
+    if (entries.length === 0) {
+      return ["Start checking in to see personalized insights"];
+    }
+
+    const insights = [];
+    const recentEntries = entries.slice(-7);
+    
+    // Insight about check-in frequency
+    if (recentEntries.length >= 5) {
+      insights.push(`You've checked in ${recentEntries.length} times this week`);
+    }
+
+    // Insight about honoring gut
+    const honored = recentEntries.filter(e => e.willIgnore === "no").length;
+    if (honored > recentEntries.length / 2) {
+      insights.push("You're honoring your gut more often lately");
+    } else if (honored < recentEntries.length / 3) {
+      insights.push("Try honoring your gut feelings more this week");
+    }
+
+    // Insight about body sensations
+    const sensations = recentEntries.map(e => e.bodySensation).filter(Boolean);
+    if (sensations.length > 0) {
+      const mostCommon = sensations.sort((a, b) =>
+        sensations.filter(v => v === a).length - sensations.filter(v => v === b).length
+      ).pop();
+      if (mostCommon) {
+        insights.push(`"${mostCommon}" is your most common signal`);
+      }
+    }
+
+    return insights.slice(0, 3);
+  };
 
   return (
     <div className="min-h-screen bg-background pb-24">
@@ -102,6 +218,13 @@ const Home = () => {
         <h2 className="text-xs uppercase tracking-wider text-muted-foreground mb-3 font-light">
           recent insights
         </h2>
+        <div className="space-y-2">
+          {insights.map((insight, idx) => (
+            <Card key={idx} className="bg-card border-border p-4 rounded-[1.25rem]">
+              <p className="text-sm text-foreground font-light">{insight}</p>
+            </Card>
+          ))}
+        </div>
       </div>
 
       <BottomNav />
