@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import VoiceBubbleLogo from "@/components/VoiceBubbleLogo";
+import { Star } from "lucide-react";
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -159,6 +160,23 @@ const Auth = () => {
           <h1 className="text-2xl font-cursive text-foreground tracking-tight mb-1 animate-in fade-in slide-in-from-bottom-4 duration-700" style={{ animationDelay: '200ms' }}>
             Welcome to Hara
           </h1>
+          
+          {/* Rating display */}
+          <div className="flex items-center justify-center gap-1.5 mb-2 animate-in fade-in slide-in-from-bottom-4 duration-700" style={{ animationDelay: '250ms' }}>
+            <div className="flex gap-0.5">
+              {[1, 2, 3, 4].map((star) => (
+                <Star key={star} className="w-4 h-4 fill-primary text-primary" />
+              ))}
+              <div className="relative">
+                <Star className="w-4 h-4 text-muted-foreground/20" />
+                <div className="absolute inset-0 overflow-hidden" style={{ width: '80%' }}>
+                  <Star className="w-4 h-4 fill-primary text-primary" />
+                </div>
+              </div>
+            </div>
+            <span className="text-xs font-medium text-muted-foreground/70 ml-1">4.8</span>
+          </div>
+          
           <p className="text-sm text-muted-foreground/70 font-light animate-in fade-in slide-in-from-bottom-4 duration-700" style={{ animationDelay: '300ms' }}>
             Trust your gut. Make better decisions with it.
           </p>
