@@ -239,6 +239,22 @@ const GutMap = () => {
     });
   };
 
+  const removeEntry = (index: number) => {
+    const updatedEntries = entries.filter((_, i) => i !== index);
+    localStorage.setItem("gutEntries", JSON.stringify(updatedEntries));
+    setEntries(updatedEntries);
+    
+    // Clear any cached analyses
+    localStorage.removeItem("cachedSignals");
+    localStorage.removeItem("cachedTrust");
+    localStorage.removeItem("cachedTone");
+    
+    toast({
+      title: "Entry removed",
+      description: "This check-in has been deleted",
+    });
+  };
+
   const removeConsequence = (index: number) => {
     const updatedEntries = [...entries];
     updatedEntries[index] = {
@@ -407,7 +423,16 @@ const GutMap = () => {
               </Card>
             ) : (
               entries.map((entry, index) => (
-                <Card key={index} className="bg-card border-border p-6 rounded-[1.25rem]">
+                <Card key={index} className="bg-card border-border p-6 rounded-[1.25rem] group relative">
+                  {/* Remove Entry Button */}
+                  <button
+                    onClick={() => removeEntry(index)}
+                    className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity p-1.5 hover:bg-destructive/10 rounded-lg"
+                    title="Remove entry"
+                  >
+                    <X className="w-4 h-4 text-muted-foreground hover:text-destructive transition-colors" />
+                  </button>
+                  
                   <div className="space-y-3">
                     <div className="flex items-center gap-2 mb-1">
                       <span className="text-xs px-2 py-0.5 rounded-full border border-border/50 text-muted-foreground font-light">
