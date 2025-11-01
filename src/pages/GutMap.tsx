@@ -478,7 +478,7 @@ const GutMap = () => {
                                   value={consequence}
                                   onChange={(e) => setConsequence(e.target.value)}
                                   placeholder="What happened? How did it turn out?"
-                                  className="bg-background/80 border-border/50 rounded-2xl min-h-[100px] resize-none text-sm focus:border-primary/50 transition-all"
+                                  className="bg-background/80 border-border/50 rounded-2xl min-h-[100px] resize-none text-sm transition-all"
                                   autoFocus
                                 />
                                 <div className="flex gap-2">
@@ -579,7 +579,7 @@ const GutMap = () => {
                                   value={consequence}
                                   onChange={(e) => setConsequence(e.target.value)}
                                   placeholder="What happened? How did it turn out?"
-                                  className="bg-background/80 border-border/50 rounded-2xl min-h-[100px] resize-none text-sm focus:border-primary/50 transition-all"
+                                  className="bg-background/80 border-border/50 rounded-2xl min-h-[100px] resize-none text-sm transition-all"
                                   autoFocus
                                 />
                                 <div className="flex gap-2">
