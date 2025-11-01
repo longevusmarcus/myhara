@@ -126,11 +126,25 @@ const Onboarding = ({ onComplete }: OnboardingProps) => {
 
   // Step 3: Common Challenge
   if (step === 3) {
-    const challenges = [
-      { id: "please-others", icon: Frown, label: "Putting my needs last to please others", color: "text-secondary" },
-      { id: "avoid-conflict", icon: MessageSquareOff, label: "Keeping quiet to avoid conflict", color: "text-secondary" },
-      { id: "insecure", icon: AlertCircle, label: "Slipping back into insecure patterns", color: "text-secondary" }
-    ];
+    const challengesByGoal: Record<string, Array<{ id: string; icon: any; label: string; color: string }>> = {
+      financial: [
+        { id: "ignore-warnings", icon: AlertCircle, label: "Ignoring gut warnings about risky decisions", color: "text-secondary" },
+        { id: "follow-others", icon: Users, label: "Following others' advice against my instinct", color: "text-secondary" },
+        { id: "fear-override", icon: Frown, label: "Letting fear override gut feelings about opportunities", color: "text-secondary" }
+      ],
+      relationships: [
+        { id: "ignore-red-flags", icon: AlertCircle, label: "Ignoring red flags my gut is showing me", color: "text-secondary" },
+        { id: "stay-despite-warning", icon: Frown, label: "Staying despite gut warnings something is off", color: "text-secondary" },
+        { id: "dismiss-intuition", icon: MessageSquareOff, label: "Dismissing my intuition about people", color: "text-secondary" }
+      ],
+      career: [
+        { id: "ignore-opportunities", icon: AlertCircle, label: "Ignoring gut pulls toward certain paths", color: "text-secondary" },
+        { id: "safe-path", icon: Frown, label: "Taking the 'safe path' against my instinct", color: "text-secondary" },
+        { id: "dismiss-calling", icon: MessageSquareOff, label: "Dismissing intuitive feelings about my calling", color: "text-secondary" }
+      ]
+    };
+
+    const challenges = challengesByGoal[selectedGoal] || challengesByGoal.financial;
 
     return (
       <div className="min-h-screen bg-background flex items-center justify-center p-6">
