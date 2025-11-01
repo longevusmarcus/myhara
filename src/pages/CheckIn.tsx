@@ -608,31 +608,38 @@ const CheckIn = () => {
 
             <div className="space-y-6">
               {aiInsights.split('\n').map((section, idx) => {
-                // Parse markdown sections
-                if (section.startsWith('**') && section.endsWith('**')) {
-                  const title = section.replace(/\*\*/g, '').trim();
-                  return (
-                    <div key={idx} className="space-y-2">
-                      <h2 className="text-xl text-foreground font-medium">{title}</h2>
-                    </div>
-                  );
-                } else if (section.startsWith('•') || section.startsWith('-')) {
+                const trimmed = section.trim();
+                if (!trimmed) return null;
+                
+                // Helper to parse bold text within a string
+                const parseBoldText = (text: string) => {
+                  const parts = text.split(/(\*\*.*?\*\*)/g);
+                  return parts.map((part, i) => {
+                    if (part.startsWith('**') && part.endsWith('**')) {
+                      return <strong key={i} className="font-semibold text-foreground">{part.slice(2, -2)}</strong>;
+                    }
+                    return part;
+                  });
+                };
+                
+                // Check if it's a bullet point
+                if (trimmed.startsWith('•') || trimmed.startsWith('-')) {
                   return (
                     <div key={idx} className="flex gap-3 pl-2">
                       <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
                       <p className="text-base text-foreground/90 font-light leading-relaxed flex-1">
-                        {section.replace(/^[•\-]\s*/, '')}
+                        {parseBoldText(trimmed.replace(/^[•\-]\s*/, ''))}
                       </p>
                     </div>
                   );
-                } else if (section.trim()) {
-                  return (
-                    <p key={idx} className="text-base text-foreground/80 font-light leading-relaxed">
-                      {section}
-                    </p>
-                  );
                 }
-                return null;
+                
+                // Regular paragraph
+                return (
+                  <p key={idx} className="text-base text-foreground/80 font-light leading-relaxed">
+                    {parseBoldText(trimmed)}
+                  </p>
+                );
               })}
             </div>
 
