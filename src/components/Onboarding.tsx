@@ -40,7 +40,7 @@ const Onboarding = ({ onComplete }: OnboardingProps) => {
             </div>
             
             <h1 className="text-3xl font-cursive text-foreground mb-4">
-              Built on what science says works
+              Built on what psychology and science say works
             </h1>
             
             <p className="text-base text-muted-foreground/70 font-light mb-8">
