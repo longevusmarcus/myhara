@@ -154,10 +154,13 @@ const GutMap = () => {
     const cachedTime = localStorage.getItem("cachedToneTime");
     const lastEntry = allEntries[allEntries.length - 1]?.timestamp;
     
-    // Filter for voice entries - check both mode field and presence of transcript/aiInsights
-    const voiceEntries = allEntries.filter(e => 
-      e.mode === "voice" || e.transcript || e.aiInsights
-    );
+    // Filter for voice entries - normalize mode and check transcript/insights
+    const voiceEntries = allEntries.filter((e) => {
+      const mode = (e?.mode ?? '').toString().trim().toLowerCase();
+      const hasTranscript = typeof e?.transcript === 'string' && e.transcript.trim().length > 0;
+      const hasInsights = typeof e?.aiInsights === 'string' && e.aiInsights.trim().length > 0;
+      return mode === 'voice' || hasTranscript || hasInsights;
+    });
     
     console.log('Tone analysis - Voice entries found:', voiceEntries.length, voiceEntries);
     
