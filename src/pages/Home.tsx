@@ -27,7 +27,7 @@ const Home = () => {
         
         const { data }: any = await (supabase.from("profiles") as any)
           .select("nickname")
-          .eq("user_id", user.id)
+          .eq("id", user.id)
           .maybeSingle();
         
         if (data?.nickname) {
