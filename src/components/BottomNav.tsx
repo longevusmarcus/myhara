@@ -54,7 +54,7 @@ const BottomNav = () => {
             </div>
           )}
           
-          <div className="backdrop-blur-xl bg-background/80 border border-border/50 rounded-full shadow-2xl px-2 py-2">
+          <div className="backdrop-blur-2xl bg-background/40 border border-border/30 rounded-full shadow-2xl px-2 py-2">
             <div className="flex justify-between items-center gap-1">
               {navItems.map((item) => {
                 const Icon = item.icon;
