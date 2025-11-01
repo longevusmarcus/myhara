@@ -160,9 +160,15 @@ const Auth = () => {
           <h1 className="text-2xl font-cursive text-foreground tracking-tight mb-1 animate-in fade-in slide-in-from-bottom-4 duration-700" style={{ animationDelay: '200ms' }}>
             Welcome to Hara
           </h1>
-          
+          <p className="text-sm text-muted-foreground/70 font-light animate-in fade-in slide-in-from-bottom-4 duration-700" style={{ animationDelay: '300ms' }}>
+            Trust your gut. Make better decisions with it.
+          </p>
+        </div>
+
+        {/* Auth form card */}
+        <div className="backdrop-blur-xl bg-card/40 border border-border/30 rounded-[1.5rem] p-6 shadow-2xl animate-in fade-in slide-in-from-bottom-8 duration-700" style={{ animationDelay: '400ms' }}>
           {/* Rating display */}
-          <div className="flex items-center justify-center gap-1.5 mb-2 animate-in fade-in slide-in-from-bottom-4 duration-700" style={{ animationDelay: '250ms' }}>
+          <div className="flex items-center justify-center gap-1.5 mb-4 animate-in fade-in duration-700" style={{ animationDelay: '500ms' }}>
             <div className="flex gap-0.5">
               {[1, 2, 3, 4].map((star) => (
                 <Star key={star} className="w-4 h-4 fill-primary text-primary" />
@@ -177,13 +183,6 @@ const Auth = () => {
             <span className="text-xs font-medium text-muted-foreground/70 ml-1">4.8</span>
           </div>
           
-          <p className="text-sm text-muted-foreground/70 font-light animate-in fade-in slide-in-from-bottom-4 duration-700" style={{ animationDelay: '300ms' }}>
-            Trust your gut. Make better decisions with it.
-          </p>
-        </div>
-
-        {/* Auth form card */}
-        <div className="backdrop-blur-xl bg-card/40 border border-border/30 rounded-[1.5rem] p-6 shadow-2xl animate-in fade-in slide-in-from-bottom-8 duration-700" style={{ animationDelay: '400ms' }}>
           <form onSubmit={handleAuth} className="space-y-3">
             {isResettingPassword && (
               <div className="mb-2">
