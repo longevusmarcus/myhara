@@ -152,25 +152,25 @@ const Auth = () => {
 
       <div className="w-full max-w-md relative">
         {/* Voice bubble logo and branding */}
-        <div className="text-center mb-8">
-          <div className="mb-6 flex justify-center animate-in fade-in zoom-in duration-700">
-            <VoiceBubbleLogo size="md" animated={true} />
+        <div className="text-center mb-4">
+          <div className="mb-3 flex justify-center animate-in fade-in zoom-in duration-700">
+            <VoiceBubbleLogo size="sm" animated={true} />
           </div>
-          <h1 className="text-3xl font-cursive text-foreground tracking-tight mb-3 animate-in fade-in slide-in-from-bottom-4 duration-700" style={{ animationDelay: '200ms' }}>
+          <h1 className="text-2xl font-cursive text-foreground tracking-tight mb-1 animate-in fade-in slide-in-from-bottom-4 duration-700" style={{ animationDelay: '200ms' }}>
             Welcome to Hara
           </h1>
-          <p className="text-base text-muted-foreground/70 font-light animate-in fade-in slide-in-from-bottom-4 duration-700" style={{ animationDelay: '300ms' }}>
+          <p className="text-sm text-muted-foreground/70 font-light animate-in fade-in slide-in-from-bottom-4 duration-700" style={{ animationDelay: '300ms' }}>
             Trust your gut. Make better decisions with it.
           </p>
         </div>
 
         {/* Auth form card */}
-        <div className="backdrop-blur-xl bg-card/40 border border-border/30 rounded-[1.5rem] p-8 shadow-2xl animate-in fade-in slide-in-from-bottom-8 duration-700" style={{ animationDelay: '400ms' }}>
-          <form onSubmit={handleAuth} className="space-y-5">
+        <div className="backdrop-blur-xl bg-card/40 border border-border/30 rounded-[1.5rem] p-6 shadow-2xl animate-in fade-in slide-in-from-bottom-8 duration-700" style={{ animationDelay: '400ms' }}>
+          <form onSubmit={handleAuth} className="space-y-3">
             {isResettingPassword && (
-              <div className="mb-4">
-                <h2 className="text-xl font-semibold text-foreground mb-2">Set new password</h2>
-                <p className="text-sm text-muted-foreground">Enter your new password below</p>
+              <div className="mb-2">
+                <h2 className="text-lg font-semibold text-foreground mb-1">Set new password</h2>
+                <p className="text-xs text-muted-foreground">Enter your new password below</p>
               </div>
             )}
             {!isLogin && !isForgotPassword && !isResettingPassword && (
@@ -181,7 +181,7 @@ const Auth = () => {
                   value={nickname}
                   onChange={(e) => setNickname(e.target.value)}
                   required
-                  className="bg-background/60 border-border/40 rounded-[1rem] h-12 text-base placeholder:text-muted-foreground/60 focus:border-primary/50 transition-all"
+                  className="bg-background/60 border-border/40 rounded-[1rem] h-10 text-sm placeholder:text-muted-foreground/60 focus:border-primary/50 transition-all"
                 />
               </div>
             )}
@@ -193,7 +193,7 @@ const Auth = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="bg-background/60 border-border/40 rounded-[1rem] h-12 text-base placeholder:text-muted-foreground/60 focus:border-primary/50 transition-all"
+                  className="bg-background/60 border-border/40 rounded-[1rem] h-10 text-sm placeholder:text-muted-foreground/60 focus:border-primary/50 transition-all"
                 />
               </div>
             )}
@@ -206,11 +206,11 @@ const Auth = () => {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   minLength={6}
-                  className="bg-background/60 border-border/40 rounded-[1rem] h-12 text-base placeholder:text-muted-foreground/60 focus:border-primary/50 transition-all"
+                  className="bg-background/60 border-border/40 rounded-[1rem] h-10 text-sm placeholder:text-muted-foreground/60 focus:border-primary/50 transition-all"
                 />
                 {(!isLogin || isResettingPassword) && (
-                  <p className="text-xs text-muted-foreground/70 mt-2 ml-1">
-                    8+ characters, 1 uppercase, 1 number recommended
+                  <p className="text-xs text-muted-foreground/70 mt-1 ml-1">
+                    8+ characters recommended
                   </p>
                 )}
               </div>
@@ -219,7 +219,7 @@ const Auth = () => {
             <Button
               type="submit"
               disabled={loading}
-              className="w-full rounded-[1rem] h-12 text-base font-medium bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/25 transition-all hover:shadow-xl hover:shadow-primary/30 hover:scale-[1.02]"
+              className="w-full rounded-[1rem] h-10 text-sm font-medium bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/25 transition-all hover:shadow-xl hover:shadow-primary/30 hover:scale-[1.02]"
             >
               {loading ? "Loading..." : isResettingPassword ? "Update password" : isForgotPassword ? "Send reset link" : isLogin ? "Sign in" : "Get started"}
             </Button>
@@ -227,7 +227,7 @@ const Auth = () => {
 
           {!isResettingPassword && !isForgotPassword && (
             <>
-              <div className="relative my-6">
+              <div className="relative my-3">
                 <div className="absolute inset-0 flex items-center">
                   <div className="w-full border-t border-border/40"></div>
                 </div>
@@ -240,7 +240,7 @@ const Auth = () => {
                 type="button"
                 onClick={handleGoogleSignIn}
                 variant="outline"
-                className="w-full rounded-[1rem] h-12 text-base font-medium bg-background/60 border-border/40 hover:bg-background/80"
+                className="w-full rounded-[1rem] h-10 text-sm font-medium bg-background/60 border-border/40 hover:bg-background/80"
               >
                 <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
                   <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -254,7 +254,7 @@ const Auth = () => {
           )}
 
           {!isResettingPassword && (
-            <div className="mt-6 text-center space-y-3">
+            <div className="mt-4 text-center space-y-2">
               {isLogin && !isForgotPassword && (
                 <button
                   onClick={() => setIsForgotPassword(true)}
@@ -285,7 +285,7 @@ const Auth = () => {
 
         {/* Footer text */}
         {!isLogin && (
-          <p className="text-center text-xs text-muted-foreground/60 mt-6 animate-in fade-in duration-700" style={{ animationDelay: '600ms' }}>
+          <p className="text-center text-xs text-muted-foreground/60 mt-4 animate-in fade-in duration-700" style={{ animationDelay: '600ms' }}>
             By continuing, you agree to Hara's{' '}
             <a href="/terms" className="text-primary hover:underline">Terms of Service</a>
             {' '}and{' '}
