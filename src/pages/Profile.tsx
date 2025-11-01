@@ -216,13 +216,13 @@ const Profile = () => {
                 <h1 className="text-3xl font-cursive text-foreground tracking-tight">
                   {loading ? "Loading..." : profile ? `${profile.first_name || ""} ${profile.last_name || ""}`.trim() || "Your Profile" : "Your Profile"}
                 </h1>
+                <p className="text-base text-muted-foreground font-light mt-2">Level {levelInfo.level} {levelName}</p>
                 <button
                   onClick={() => setIsEditing(true)}
                   className="p-1 hover:bg-card rounded-full transition-colors mx-auto mt-2 block"
                 >
                   <Edit className="w-4 h-4 text-muted-foreground" />
                 </button>
-                <p className="text-base text-muted-foreground font-light mt-2">Level {levelInfo.level} {levelName}</p>
               </>
             )}
           </div>
