@@ -73,7 +73,9 @@ const BottomNav = () => {
                     }`}
                   >
                     <Icon className="w-5 h-5" />
-                    <span className="text-[8px] font-medium whitespace-nowrap">{item.label}</span>
+                    {!item.isCheckIn && (
+                      <span className="text-[8px] font-medium whitespace-nowrap">{item.label}</span>
+                    )}
                   </button>
                 );
               })}
