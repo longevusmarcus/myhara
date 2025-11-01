@@ -34,9 +34,9 @@ const Onboarding = ({ onComplete }: OnboardingProps) => {
       <div className="min-h-screen bg-background flex items-center justify-center p-6">
         <div className="max-w-md w-full animate-in fade-in zoom-in duration-700">
           <div className="text-center mb-8">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-accent/10 border border-accent/20 rounded-full mb-6">
-              <Sparkles className="w-4 h-4 text-accent" />
-              <span className="text-sm text-accent font-light">Science-Based</span>
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-secondary/10 border border-secondary/20 rounded-full mb-6">
+              <Sparkles className="w-4 h-4 text-secondary" />
+              <span className="text-sm text-secondary font-light">Science-Based</span>
             </div>
             
             <h1 className="text-3xl font-cursive text-foreground mb-4">
@@ -83,8 +83,8 @@ const Onboarding = ({ onComplete }: OnboardingProps) => {
   // Step 2: Goal Selection
   if (step === 2) {
     const goals = [
-      { id: "financial", icon: DollarSign, label: "Better financial decisions", color: "text-accent" },
-      { id: "relationships", icon: Users, label: "Healthier relationships", color: "text-primary" },
+      { id: "financial", icon: DollarSign, label: "Better financial decisions", color: "text-secondary" },
+      { id: "relationships", icon: Users, label: "Healthier relationships", color: "text-secondary" },
       { id: "career", icon: Target, label: "Career & purpose clarity", color: "text-secondary" }
     ];
 
@@ -127,9 +127,9 @@ const Onboarding = ({ onComplete }: OnboardingProps) => {
   // Step 3: Common Challenge
   if (step === 3) {
     const challenges = [
-      { id: "please-others", icon: Frown, label: "Putting my needs last to please others", color: "text-primary" },
+      { id: "please-others", icon: Frown, label: "Putting my needs last to please others", color: "text-secondary" },
       { id: "avoid-conflict", icon: MessageSquareOff, label: "Keeping quiet to avoid conflict", color: "text-secondary" },
-      { id: "insecure", icon: AlertCircle, label: "Slipping back into insecure patterns", color: "text-accent" }
+      { id: "insecure", icon: AlertCircle, label: "Slipping back into insecure patterns", color: "text-secondary" }
     ];
 
     return (

@@ -278,7 +278,7 @@ const Home = () => {
       <div className="p-6 flex justify-between items-center">
         <h1 className="text-4xl font-cursive text-foreground tracking-tight">Hey, {userName}</h1>
         <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-card border border-border">
-          <Flame className="w-4 h-4 text-orange-500" />
+          <Flame className="w-4 h-4 text-secondary" />
           <span className="text-sm font-medium">{gamData.currentStreak}</span>
         </div>
       </div>
@@ -350,7 +350,7 @@ const Home = () => {
         </h2>
         {loadingMissions ? (
           <Card className="bg-card border-border p-8 rounded-[1.25rem] flex flex-col items-center justify-center gap-3">
-            <Loader2 className="w-6 h-6 animate-spin text-primary" />
+            <Loader2 className="w-6 h-6 animate-spin text-secondary" />
             <p className="text-sm text-muted-foreground">Generating personalized missions...</p>
           </Card>
         ) : (
@@ -360,8 +360,8 @@ const Home = () => {
                 key={mission.id}
                 className="bg-card border-border p-4 rounded-[1.25rem] flex items-center gap-4 hover:bg-card/80 transition-colors cursor-pointer"
               >
-                <div className="w-10 h-10 rounded-full border-2 border-muted-foreground/20 flex items-center justify-center flex-shrink-0">
-                  <mission.Icon className="w-5 h-5 text-muted-foreground" strokeWidth={1.5} />
+                <div className="w-10 h-10 rounded-full border-2 border-secondary/20 flex items-center justify-center flex-shrink-0">
+                  <mission.Icon className="w-5 h-5 text-secondary" strokeWidth={1.5} />
                 </div>
                 <div className="flex-1">
                   <p className="text-base font-light text-foreground">{mission.title}</p>
