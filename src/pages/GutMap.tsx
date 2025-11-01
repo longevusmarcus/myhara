@@ -270,10 +270,37 @@ const GutMap = () => {
       return entry.context;
     }
     
-    // For voice mode, use the label
-    if (entry.mode === "voice" && entry.label) {
-      // Capitalize first letter
-      return entry.label.charAt(0).toUpperCase() + entry.label.slice(1);
+    // For voice mode, analyze the transcript to determine category
+    if (entry.mode === "voice" && entry.transcript) {
+      const text = entry.transcript.toLowerCase();
+      
+      if (text.includes('money') || text.includes('financial') || text.includes('career') || 
+          text.includes('job') || text.includes('business') || text.includes('investment') ||
+          text.includes('salary') || text.includes('deal') || text.includes('finance')) {
+        return 'Financial';
+      }
+      
+      if (text.includes('relationship') || text.includes('partner') || text.includes('dating') || 
+          text.includes('friend') || text.includes('family') || text.includes('love') ||
+          text.includes('marriage') || text.includes('breakup')) {
+        return 'Relationship';
+      }
+      
+      if (text.includes('health') || text.includes('wellness') || text.includes('medical') ||
+          text.includes('doctor') || text.includes('exercise') || text.includes('diet')) {
+        return 'Health';
+      }
+      
+      if (text.includes('work') || text.includes('project') || text.includes('meeting') ||
+          text.includes('colleague') || text.includes('boss') || text.includes('office')) {
+        return 'Work';
+      }
+      
+      if (text.includes('decision') || text.includes('choice') || text.includes('should i')) {
+        return 'Decision';
+      }
+      
+      return 'Personal';
     }
     
     return 'General';
