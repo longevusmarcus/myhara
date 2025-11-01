@@ -264,6 +264,49 @@ const GutMap = () => {
     return date.toLocaleDateString();
   };
 
+  const formatAIInsights = (text: string) => {
+    const sections = text.split(/\*\*([^*]+)\*\*/g);
+    const elements = [];
+    
+    for (let i = 0; i < sections.length; i++) {
+      const section = sections[i];
+      if (!section.trim()) continue;
+      
+      if (i % 2 === 1) {
+        // This is a bold header
+        elements.push(
+          <h4 key={i} className="text-sm font-medium text-foreground mt-3 first:mt-0 mb-1.5">
+            {section}
+          </h4>
+        );
+      } else {
+        // This is regular text, parse bullet points
+        const lines = section.split('\n').filter(line => line.trim());
+        lines.forEach((line, idx) => {
+          const bulletMatch = line.match(/^[•·]\s*(.+)$/);
+          if (bulletMatch) {
+            elements.push(
+              <div key={`${i}-${idx}`} className="flex gap-2 mb-1.5 ml-1">
+                <span className="text-primary mt-0.5 flex-shrink-0">•</span>
+                <p className="text-sm text-foreground/80 font-light leading-relaxed">
+                  {bulletMatch[1]}
+                </p>
+              </div>
+            );
+          } else if (line.trim()) {
+            elements.push(
+              <p key={`${i}-${idx}`} className="text-sm text-foreground/80 font-light leading-relaxed mb-2">
+                {line.trim()}
+              </p>
+            );
+          }
+        });
+      }
+    }
+    
+    return <div className="space-y-1">{elements}</div>;
+  };
+
   return (
     <div className="min-h-screen bg-background pb-24">
       <div className="p-6 space-y-6">
@@ -416,14 +459,12 @@ const GutMap = () => {
                             
                             {entry.aiInsights && (
                               <div className="mt-3 p-4 bg-primary/5 rounded-2xl border border-primary/10">
-                                <p className="text-xs text-primary/70 font-medium mb-2 uppercase tracking-wide">
+                                <p className="text-xs text-primary/70 font-medium mb-3 uppercase tracking-wide">
                                   AI Insights
                                 </p>
-                                <p className={`text-sm text-foreground/90 font-light leading-relaxed ${
-                                  expandedVoice === index ? '' : 'line-clamp-2'
-                                }`}>
-                                  {entry.aiInsights}
-                                </p>
+                                <div className={expandedVoice === index ? '' : 'line-clamp-4'}>
+                                  {formatAIInsights(entry.aiInsights)}
+                                </div>
                               </div>
                             )}
                           </div>
