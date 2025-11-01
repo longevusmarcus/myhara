@@ -97,14 +97,11 @@ const Auth = () => {
           <div className="mb-6 flex justify-center animate-in fade-in zoom-in duration-700">
             <VoiceBubbleLogo size="md" animated={true} />
           </div>
-          <h1 className="text-4xl font-cursive text-foreground tracking-tight mb-2 animate-in fade-in slide-in-from-bottom-4 duration-700" style={{ animationDelay: '200ms' }}>
-            Hara
+          <h1 className="text-3xl font-cursive text-foreground tracking-tight mb-3 animate-in fade-in slide-in-from-bottom-4 duration-700" style={{ animationDelay: '200ms' }}>
+            Welcome to Hara
           </h1>
-          <p className="text-lg text-foreground font-light animate-in fade-in slide-in-from-bottom-4 duration-700" style={{ animationDelay: '300ms' }}>
-            Trust your gut.
-          </p>
-          <p className="text-base text-muted-foreground font-light animate-in fade-in slide-in-from-bottom-4 duration-700" style={{ animationDelay: '400ms' }}>
-            Make better decisions with it.
+          <p className="text-base text-muted-foreground/70 font-light animate-in fade-in slide-in-from-bottom-4 duration-700" style={{ animationDelay: '300ms' }}>
+            Trust your gut. Make better decisions with it.
           </p>
         </div>
 
