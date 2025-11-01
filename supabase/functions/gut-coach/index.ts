@@ -68,33 +68,30 @@ Be warm, specific, and reference their actual data. Help them trust their intuit
     } else if (type === "pattern_analysis") {
       systemPrompt = `You are an insightful analyst helping users understand their gut instinct patterns. Analyze their check-in history to identify 2-3 meaningful patterns.
 
-CRITICAL: Respond with ONLY a valid JSON array. No markdown, no explanation, just the JSON array.
+CRITICAL INSTRUCTIONS:
+1. Respond with ONLY valid JSON - no markdown, no backticks, no explanation
+2. Ensure all strings are properly escaped
+3. Do not use line breaks within string values
+4. Close all quotes and brackets properly
 
-For each pattern, provide:
-{
-  "title": "Clear, specific pattern name (e.g., 'Morning Clarity', 'Decision Hesitation')",
-  "observation": "What you observed in their data (2-3 sentences)",
-  "intuitionGuide": "Actionable guidance they can use (1-2 sentences)",
-  "relatedEntries": ["Brief summary of relevant entry 1", "Brief summary of relevant entry 2"],
-  "questions": ["Reflection question 1?", "Reflection question 2?"]
-}
-
-Look for:
-- Consistency in gut feelings (aligned, unease, unclear)
-- Situations triggering specific patterns
-- Times when they honor vs ignore their gut
-- Body sensations correlating with outcomes
-
-Example response format:
+Return a JSON array with this exact structure:
 [
   {
-    "title": "Morning Decision Clarity",
-    "observation": "You consistently make aligned decisions in the morning. 5 out of 6 morning check-ins showed high clarity.",
-    "intuitionGuide": "Schedule important decisions before noon when your intuition is sharpest. This is your decision-making sweet spot.",
-    "relatedEntries": ["Morning client call - felt aligned", "Early workout decision - clear yes"],
-    "questions": ["What morning routines support your clarity?", "How can you protect morning decision time?"]
+    "title": "Pattern name here",
+    "observation": "What you observed in 1-2 clear sentences.",
+    "intuitionGuide": "Actionable guidance in 1-2 sentences.",
+    "relatedEntries": ["Brief entry summary 1", "Brief entry summary 2"],
+    "questions": ["Question 1?", "Question 2?"]
   }
-]`;
+]
+
+Focus on patterns like:
+- When their intuition is clearest vs unclear
+- Body sensations that correlate with outcomes
+- Times they honor vs ignore their gut
+- Specific triggers or contexts
+
+Keep all text concise and valuable. Make insights specific to their actual data.`;
     } else if (type === "voice_analysis") {
       systemPrompt = `You are an expert at analyzing voice recordings for gut instinct signals. Analyze the user's spoken words, tone indicators, and emotional state to provide insights about their gut feeling.
 

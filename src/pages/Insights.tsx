@@ -334,23 +334,35 @@ Entries:\n${JSON.stringify(entriesSummary, null, 2)}`
             
             {patterns && (() => {
               try {
-                // Clean the patterns string and extract JSON
                 let cleanedPatterns = patterns.trim();
                 
-                // Remove markdown code blocks if present
-                cleanedPatterns = cleanedPatterns.replace(/```json\s*/g, '').replace(/```\s*/g, '');
+                // Remove markdown artifacts
+                cleanedPatterns = cleanedPatterns
+                  .replace(/```json\s*/gi, '')
+                  .replace(/```\s*/g, '')
+                  .replace(/^[^[{]*/,'') // Remove any text before JSON starts
+                  .replace(/[^}\]]*$/,''); // Remove any text after JSON ends
                 
-                // Find JSON array
+                // Find and extract JSON array
                 const jsonMatch = cleanedPatterns.match(/\[[\s\S]*\]/);
+                
                 if (jsonMatch) {
-                  const patternData = JSON.parse(jsonMatch[0]);
+                  let jsonStr = jsonMatch[0];
+                  
+                  // Fix common JSON issues
+                  jsonStr = jsonStr
+                    .replace(/,(\s*[}\]])/g, '$1') // Remove trailing commas
+                    .replace(/\n/g, ' ') // Remove line breaks within strings
+                    .replace(/\s+/g, ' '); // Normalize whitespace
+                  
+                  const patternData = JSON.parse(jsonStr);
                   
                   if (Array.isArray(patternData) && patternData.length > 0) {
                     const icons = [Brain, Compass, Zap];
                     const colors = ["primary", "accent", "primary"];
                     
                     return (
-                      <div className="space-y-3">
+                      <div className="space-y-3 animate-fade-in">
                         {patternData.map((pattern: any, idx: number) => {
                           const Icon = icons[idx % icons.length];
                           const color = colors[idx % colors.length];
@@ -358,11 +370,11 @@ Entries:\n${JSON.stringify(entriesSummary, null, 2)}`
                           return (
                             <PatternCard
                               key={idx}
-                              title={pattern.title || "Pattern"}
+                              title={pattern.title || "Pattern Discovered"}
                               observation={pattern.observation || ""}
                               intuitionGuide={pattern.intuitionGuide || ""}
-                              relatedEntries={pattern.relatedEntries || []}
-                              questions={pattern.questions || []}
+                              relatedEntries={Array.isArray(pattern.relatedEntries) ? pattern.relatedEntries : []}
+                              questions={Array.isArray(pattern.questions) ? pattern.questions : []}
                               icon={<Icon className={`w-5 h-5 ${color === "accent" ? "text-accent" : "text-primary"}`} />}
                               accentColor={color}
                             />
@@ -373,20 +385,20 @@ Entries:\n${JSON.stringify(entriesSummary, null, 2)}`
                   }
                 }
               } catch (e) {
-                console.error("Failed to parse patterns as JSON:", e);
-                console.log("Raw patterns:", patterns);
+                console.error("Failed to parse patterns:", e);
+                console.log("Raw patterns:", patterns.substring(0, 500));
               }
               
-              // Fallback: show loading or error state
+              // Fallback: still loading or couldn't parse
               return (
                 <Card className="bg-card border-border p-6 rounded-2xl">
-                  <div className="text-center py-4">
-                    <p className="text-sm text-muted-foreground font-light">
-                      Processing your patterns...
-                    </p>
-                    <pre className="text-xs text-muted-foreground/50 mt-4 overflow-auto max-h-40 text-left">
-                      {patterns}
-                    </pre>
+                  <div className="flex items-center justify-center py-8">
+                    <div className="text-center space-y-3">
+                      <Loader2 className="w-6 h-6 animate-spin text-primary mx-auto" />
+                      <p className="text-sm text-muted-foreground font-light">
+                        Analyzing your patterns...
+                      </p>
+                    </div>
                   </div>
                 </Card>
               );
