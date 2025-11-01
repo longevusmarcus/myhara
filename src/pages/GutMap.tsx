@@ -265,44 +265,46 @@ const GutMap = () => {
   };
 
   const formatAIInsights = (text: string) => {
-    const sections = text.split(/\*\*([^*]+)\*\*/g);
+    // Remove all ** markers first
+    const cleanText = text.replace(/\*\*/g, '');
+    const lines = cleanText.split('\n').filter(line => line.trim());
     const elements = [];
     
-    for (let i = 0; i < sections.length; i++) {
-      const section = sections[i];
-      if (!section.trim()) continue;
+    lines.forEach((line, idx) => {
+      const trimmedLine = line.trim();
+      if (!trimmedLine) return;
       
-      if (i % 2 === 1) {
-        // This is a bold header
+      // Check if it's a bullet point
+      const bulletMatch = trimmedLine.match(/^[•·]\s*(.+)$/);
+      if (bulletMatch) {
         elements.push(
-          <h4 key={i} className="text-sm font-medium text-foreground mt-3 first:mt-0 mb-1.5">
-            {section}
+          <div key={idx} className="flex gap-2 mb-1.5 ml-1">
+            <span className="text-primary mt-0.5 flex-shrink-0">•</span>
+            <p className="text-sm text-foreground/80 font-light leading-relaxed">
+              {bulletMatch[1]}
+            </p>
+          </div>
+        );
+      } 
+      // Check if it's a header (title case or ends with specific patterns)
+      else if (
+        trimmedLine.match(/^(Analysis|What Your Gut Is Saying|Actionable Tips|Today's Guidance|What to Notice|Try This Today)/i)
+      ) {
+        elements.push(
+          <h4 key={idx} className="text-sm font-medium text-foreground mt-3 first:mt-0 mb-1.5">
+            {trimmedLine}
           </h4>
         );
-      } else {
-        // This is regular text, parse bullet points
-        const lines = section.split('\n').filter(line => line.trim());
-        lines.forEach((line, idx) => {
-          const bulletMatch = line.match(/^[•·]\s*(.+)$/);
-          if (bulletMatch) {
-            elements.push(
-              <div key={`${i}-${idx}`} className="flex gap-2 mb-1.5 ml-1">
-                <span className="text-primary mt-0.5 flex-shrink-0">•</span>
-                <p className="text-sm text-foreground/80 font-light leading-relaxed">
-                  {bulletMatch[1]}
-                </p>
-              </div>
-            );
-          } else if (line.trim()) {
-            elements.push(
-              <p key={`${i}-${idx}`} className="text-sm text-foreground/80 font-light leading-relaxed mb-2">
-                {line.trim()}
-              </p>
-            );
-          }
-        });
+      } 
+      // Regular text
+      else {
+        elements.push(
+          <p key={idx} className="text-sm text-foreground/80 font-light leading-relaxed mb-2">
+            {trimmedLine}
+          </p>
+        );
       }
-    }
+    });
     
     return <div className="space-y-1">{elements}</div>;
   };
