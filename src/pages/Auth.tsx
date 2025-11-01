@@ -172,7 +172,10 @@ const Auth = () => {
         {/* Footer text */}
         {!isLogin && (
           <p className="text-center text-xs text-muted-foreground/60 mt-6 animate-in fade-in duration-700" style={{ animationDelay: '600ms' }}>
-            By continuing, you agree to Hara's Terms of Service and Privacy Policy
+            By continuing, you agree to Hara's{' '}
+            <a href="/terms" className="text-primary hover:underline">Terms of Service</a>
+            {' '}and{' '}
+            <a href="/privacy" className="text-primary hover:underline">Privacy Policy</a>
           </p>
         )}
       </div>
