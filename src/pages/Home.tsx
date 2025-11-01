@@ -292,24 +292,62 @@ const Home = () => {
         <h2 className="text-xs uppercase tracking-wider text-muted-foreground mb-3 font-light">
           today's focus
         </h2>
-        <Card className="bg-card border-border p-5 rounded-[1.25rem] flex items-start justify-between gap-4">
+        <Card className="bg-card border-border p-5 rounded-[1.25rem]">
           {loadingFocus ? (
             <div className="flex items-center gap-2 text-muted-foreground w-full">
               <Loader2 className="w-4 h-4 animate-spin" />
               <p className="text-sm font-light">Loading your focus...</p>
             </div>
           ) : (
-            <>
-              <p className="text-base font-light text-foreground leading-relaxed">
-                {dailyFocus}
-              </p>
-              <button 
-                onClick={() => navigate("/map")}
-                className="flex-shrink-0 w-8 h-8 rounded-full bg-foreground/10 flex items-center justify-center hover:bg-foreground/20 transition-colors"
-              >
-                <ArrowRight className="w-4 h-4 text-foreground" />
-              </button>
-            </>
+            <div className="space-y-4">
+              {/* Focus text with arrow */}
+              <div className="flex items-start justify-between gap-4">
+                <p className="text-base font-light text-foreground leading-relaxed">
+                  {dailyFocus}
+                </p>
+                <button 
+                  onClick={() => navigate("/map")}
+                  className="flex-shrink-0 w-8 h-8 rounded-full bg-foreground/10 flex items-center justify-center hover:bg-foreground/20 transition-colors"
+                >
+                  <ArrowRight className="w-4 h-4 text-foreground" />
+                </button>
+              </div>
+
+              {/* Weekly calendar */}
+              <div className="flex justify-between items-center gap-1 pt-2 border-t border-border/50">
+                {(() => {
+                  const today = new Date();
+                  const currentDay = today.getDay();
+                  const startOfWeek = new Date(today);
+                  startOfWeek.setDate(today.getDate() - currentDay);
+                  
+                  const days = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+                  const weekDays = Array.from({ length: 7 }, (_, i) => {
+                    const date = new Date(startOfWeek);
+                    date.setDate(startOfWeek.getDate() + i);
+                    return { date, isToday: date.toDateString() === today.toDateString() };
+                  });
+
+                  return weekDays.map((day, idx) => (
+                    <div 
+                      key={idx}
+                      className="flex flex-col items-center gap-1 flex-1"
+                    >
+                      <span className="text-[10px] text-muted-foreground font-light">
+                        {days[idx]}
+                      </span>
+                      <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-light transition-colors ${
+                        day.isToday 
+                          ? 'bg-primary text-primary-foreground' 
+                          : 'text-muted-foreground hover:bg-secondary/50'
+                      }`}>
+                        {day.date.getDate()}
+                      </div>
+                    </div>
+                  ));
+                })()}
+              </div>
+            </div>
           )}
         </Card>
       </div>
