@@ -168,19 +168,22 @@ const Auth = () => {
         {/* Auth form card */}
         <div className="backdrop-blur-xl bg-card/40 border border-border/30 rounded-[1.5rem] p-6 shadow-2xl animate-in fade-in slide-in-from-bottom-8 duration-700" style={{ animationDelay: '400ms' }}>
           {/* Rating display */}
-          <div className="flex items-center justify-center gap-1.5 mb-4 animate-in fade-in duration-700" style={{ animationDelay: '500ms' }}>
-            <div className="flex gap-0.5">
-              {[1, 2, 3, 4].map((star) => (
-                <Star key={star} className="w-4 h-4 fill-primary text-primary" />
-              ))}
-              <div className="relative">
-                <Star className="w-4 h-4 text-muted-foreground/20" />
-                <div className="absolute inset-0 overflow-hidden" style={{ width: '80%' }}>
-                  <Star className="w-4 h-4 fill-primary text-primary" />
+          <div className="text-center mb-4 animate-in fade-in duration-700" style={{ animationDelay: '500ms' }}>
+            <p className="text-xs text-muted-foreground/70 mb-1.5">Our customers rated us</p>
+            <div className="flex items-center justify-center gap-1.5">
+              <div className="flex gap-0.5">
+                {[1, 2, 3, 4].map((star) => (
+                  <Star key={star} className="w-4 h-4 fill-primary text-primary" />
+                ))}
+                <div className="relative">
+                  <Star className="w-4 h-4 text-muted-foreground/20" />
+                  <div className="absolute inset-0 overflow-hidden" style={{ width: '80%' }}>
+                    <Star className="w-4 h-4 fill-primary text-primary" />
+                  </div>
                 </div>
               </div>
+              <span className="text-xs font-medium text-foreground">4.8 out of 5</span>
             </div>
-            <span className="text-xs font-medium text-muted-foreground/70 ml-1">4.8</span>
           </div>
           
           <form onSubmit={handleAuth} className="space-y-3">
