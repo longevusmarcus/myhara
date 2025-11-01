@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { ArrowLeft, Mic, Zap, Waves, Sun, Circle, Droplet, Sparkles, Cloud, CheckCircle, XCircle, Pause, Plus } from "lucide-react";
+import { ArrowLeft, Mic, Zap, Waves, Sun, Circle, Droplet, Sparkles, Cloud, CheckCircle, XCircle, Pause, Plus, Activity } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -8,7 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
 type TapStep = "context" | "describe" | "body" | "gut" | "ignore" | "decision";
-type VoiceStep = "recording" | "processing" | "label" | "response";
+type VoiceStep = "recording" | "processing" | "label" | "response" | "analyzing" | "insights";
 
 interface SpeechRecognition extends EventTarget {
   continuous: boolean;
@@ -81,6 +81,7 @@ const CheckIn = () => {
   const [transcript, setTranscript] = useState("");
   const [selectedLabel, setSelectedLabel] = useState("");
   const [wantsResponse, setWantsResponse] = useState<boolean | null>(null);
+  const [aiInsights, setAiInsights] = useState("");
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
 
@@ -222,12 +223,80 @@ const CheckIn = () => {
     navigate("/map");
   };
 
+  const analyzeVoiceWithAI = async () => {
+    setVoiceStep("analyzing");
+    
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/gut-coach`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          },
+          body: JSON.stringify({
+            messages: [
+              {
+                role: "user",
+                content: `Please analyze this voice recording transcript and provide insights about my gut feeling:\n\n"${transcript}"\n\nLabel: ${selectedLabel}\nWants to track response: ${wantsResponse ? "Yes" : "No"}`
+              }
+            ],
+            type: "voice_analysis"
+          }),
+        }
+      );
+
+      if (!response.ok) throw new Error("Failed to analyze");
+
+      const reader = response.body?.getReader();
+      const decoder = new TextDecoder();
+      let analysis = "";
+
+      if (reader) {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          const chunk = decoder.decode(value);
+          const lines = chunk.split("\n");
+
+          for (const line of lines) {
+            if (line.startsWith("data: ") && line !== "data: [DONE]") {
+              try {
+                const data = JSON.parse(line.slice(6));
+                const content = data.choices?.[0]?.delta?.content;
+                if (content) {
+                  analysis += content;
+                  setAiInsights(analysis);
+                }
+              } catch (e) {
+                console.error("Parse error:", e);
+              }
+            }
+          }
+        }
+      }
+
+      setVoiceStep("insights");
+    } catch (error) {
+      console.error("Analysis error:", error);
+      toast({
+        title: "Analysis Failed",
+        description: "Continuing without AI insights.",
+        variant: "destructive",
+      });
+      handleVoiceComplete();
+    }
+  };
+
   const handleVoiceComplete = async () => {
     const entry = {
       mode: "voice",
       transcript,
       label: selectedLabel,
       wantsResponse,
+      aiInsights,
       timestamp: new Date().toISOString(),
       xp: 10
     };
@@ -457,7 +526,7 @@ const CheckIn = () => {
               <Card
                 onClick={() => {
                   setWantsResponse(true);
-                  setTimeout(() => handleVoiceComplete(), 2000);
+                  analyzeVoiceWithAI();
                 }}
                 className="bg-card border-border p-6 cursor-pointer hover:bg-card/80 transition-colors rounded-[1.25rem]"
               >
@@ -470,13 +539,69 @@ const CheckIn = () => {
               <Card
                 onClick={() => {
                   setWantsResponse(false);
-                  handleVoiceComplete();
+                  analyzeVoiceWithAI();
                 }}
                 className="bg-card border-border p-6 cursor-pointer hover:bg-card/80 transition-colors rounded-[1.25rem]"
               >
                 <p className="text-base text-foreground font-light">Just record the signal</p>
               </Card>
             </div>
+          </div>
+        </div>
+      );
+    }
+
+    if (voiceStep === "analyzing") {
+      return (
+        <div className="min-h-screen bg-background flex flex-col p-6">
+          <div className="flex-1 flex flex-col justify-center items-center text-center space-y-8">
+            <div className="relative flex items-center justify-center">
+              <div className="absolute w-32 h-32 rounded-full bg-gradient-to-br from-primary/20 via-accent/15 to-primary/20 blur-2xl animate-pulse" />
+              <Activity className="w-16 h-16 text-primary animate-pulse relative z-10" />
+            </div>
+            <div className="space-y-2">
+              <p className="text-xl text-foreground font-medium">Analyzing your voice...</p>
+              <p className="text-sm text-muted-foreground">Looking at tone, words, and emotional patterns</p>
+            </div>
+            {aiInsights && (
+              <div className="max-w-md text-left space-y-2 px-4">
+                <p className="text-sm text-muted-foreground whitespace-pre-wrap">{aiInsights}</p>
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    if (voiceStep === "insights") {
+      return (
+        <div className="min-h-screen bg-background flex flex-col p-6">
+          <button onClick={() => navigate("/home")} className="self-start mb-8">
+            <ArrowLeft className="w-6 h-6 text-foreground" />
+          </button>
+
+          <div className="flex-1 flex flex-col justify-start max-w-md mx-auto w-full space-y-6 pt-8">
+            <div className="space-y-2">
+              <h2 className="text-2xl text-foreground font-light">Your Gut Analysis</h2>
+              <p className="text-sm text-muted-foreground italic">"{transcript}"</p>
+            </div>
+
+            <Card className="bg-card border-border p-6 rounded-[1.25rem]">
+              <div className="space-y-4">
+                <div className="prose prose-sm max-w-none">
+                  <div className="text-foreground/90 font-light whitespace-pre-wrap leading-relaxed">
+                    {aiInsights}
+                  </div>
+                </div>
+              </div>
+            </Card>
+
+            <button
+              onClick={handleVoiceComplete}
+              className="w-full py-4 px-6 bg-primary hover:bg-primary/90 text-primary-foreground rounded-[1.25rem] font-light transition-colors"
+            >
+              Continue
+            </button>
           </div>
         </div>
       );
