@@ -8,8 +8,8 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import VoiceBubbleLogo from "@/components/VoiceBubbleLogo";
 
-type TapStep = "context" | "describe" | "body" | "gut" | "ignore" | "gentle-reminder" | "decision";
-type VoiceStep = "recording" | "processing" | "label" | "response" | "analyzing" | "insights" | "gut" | "ignore" | "gentle-reminder";
+type TapStep = "context" | "describe" | "body" | "gut" | "ignore" | "gentle-reminder" | "congratulations" | "decision";
+type VoiceStep = "recording" | "processing" | "label" | "response" | "analyzing" | "insights" | "gut" | "ignore" | "gentle-reminder" | "congratulations";
 
 interface SpeechRecognition extends EventTarget {
   continuous: boolean;
@@ -83,10 +83,28 @@ const CheckIn = () => {
   const [selectedLabel, setSelectedLabel] = useState("");
   const [wantsResponse, setWantsResponse] = useState<boolean | null>(null);
   const [aiInsights, setAiInsights] = useState("");
+  const [userName, setUserName] = useState("");
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
 
   useEffect(() => {
+    const fetchUserName = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('nickname, first_name')
+          .eq('id', user.id)
+          .single();
+        
+        if (profile) {
+          setUserName(profile.nickname || profile.first_name || 'Friend');
+        }
+      }
+    };
+    
+    fetchUserName();
+    
     if (mode === "voice") {
       startVoiceRecording();
     }
@@ -718,15 +736,15 @@ const CheckIn = () => {
                 <p className="text-base text-foreground font-light">Yes, I'll ignore it</p>
               </Card>
 
-              <Card
-                onClick={() => {
-                  setWillIgnore("no");
-                  handleVoiceComplete();
-                }}
-                className="bg-card border-border p-6 cursor-pointer hover:bg-card/80 transition-colors rounded-[1.25rem]"
-              >
-                <p className="text-base text-foreground font-light">No, I'll honor my gut</p>
-              </Card>
+            <Card
+              onClick={() => {
+                setWillIgnore("no");
+                setVoiceStep("congratulations");
+              }}
+              className="bg-card border-border p-6 cursor-pointer hover:bg-card/80 transition-colors rounded-[1.25rem]"
+            >
+              <p className="text-base text-foreground font-light">No, I'll honor my gut</p>
+            </Card>
             </div>
           </div>
         </div>
@@ -774,6 +792,39 @@ const CheckIn = () => {
               <button
                 onClick={handleVoiceComplete}
                 className="w-full py-4 px-6 bg-primary/10 hover:bg-primary/20 text-primary rounded-xl font-light transition-all border border-primary/20"
+              >
+                Continue
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+    
+    if (voiceStep === "congratulations") {
+      return (
+        <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6">
+          <div className="max-w-md w-full space-y-12 text-center">
+            {/* Bubble Logo */}
+            <div className="flex justify-center animate-in fade-in slide-in-from-bottom-4 duration-700">
+              <VoiceBubbleLogo size="md" animated={true} />
+            </div>
+
+            {/* Congratulations Text */}
+            <div className="space-y-6 animate-in fade-in slide-in-from-bottom-6 duration-700" style={{ animationDelay: '200ms' }}>
+              <p className="text-xl text-foreground/90 font-light leading-relaxed">
+                Congrats, {userName}!
+              </p>
+              <p className="text-lg text-foreground/70 font-light leading-relaxed">
+                You're brave enough to trust your gut, and that courage is guiding you toward more positive outcomes.
+              </p>
+            </div>
+
+            {/* Continue Button */}
+            <div className="pt-8 animate-in fade-in slide-in-from-bottom-8 duration-700" style={{ animationDelay: '400ms' }}>
+              <button
+                onClick={handleVoiceComplete}
+                className="w-full py-4 px-6 bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl font-light transition-all shadow-lg"
               >
                 Continue
               </button>
@@ -994,7 +1045,7 @@ const CheckIn = () => {
             <Card
               onClick={() => {
                 setWillIgnore("no");
-                setTapStep("decision");
+                setTapStep("congratulations");
               }}
               className="bg-card border-border p-6 cursor-pointer hover:bg-card/80 transition-colors rounded-[1.25rem]"
             >
@@ -1047,6 +1098,39 @@ const CheckIn = () => {
             <button
               onClick={handleTapComplete}
               className="w-full py-4 px-6 bg-primary/10 hover:bg-primary/20 text-primary rounded-xl font-light transition-all border border-primary/20"
+            >
+              Continue
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+  
+  if (tapStep === "congratulations") {
+    return (
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6">
+        <div className="max-w-md w-full space-y-12 text-center">
+          {/* Bubble Logo */}
+          <div className="flex justify-center animate-in fade-in slide-in-from-bottom-4 duration-700">
+            <VoiceBubbleLogo size="md" animated={true} />
+          </div>
+
+          {/* Congratulations Text */}
+          <div className="space-y-6 animate-in fade-in slide-in-from-bottom-6 duration-700" style={{ animationDelay: '200ms' }}>
+            <p className="text-xl text-foreground/90 font-light leading-relaxed">
+              Congrats, {userName}!
+            </p>
+            <p className="text-lg text-foreground/70 font-light leading-relaxed">
+              You're brave enough to trust your gut, and that courage is guiding you toward more positive outcomes.
+            </p>
+          </div>
+
+          {/* Continue Button */}
+          <div className="pt-8 animate-in fade-in slide-in-from-bottom-8 duration-700" style={{ animationDelay: '400ms' }}>
+            <button
+              onClick={() => setTapStep("decision")}
+              className="w-full py-4 px-6 bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl font-light transition-all shadow-lg"
             >
               Continue
             </button>
