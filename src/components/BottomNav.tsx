@@ -21,15 +21,18 @@ const BottomNav = () => {
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = location.pathname === item.path;
+              const isCheckIn = item.path === "/check-in";
               
               return (
                 <button
                   key={item.path}
                   onClick={() => navigate(item.path)}
                   className={`relative flex flex-col items-center justify-center gap-0.5 px-3 py-2 rounded-full transition-all duration-300 min-w-[60px] ${
-                    isActive 
-                      ? "bg-foreground text-background" 
-                      : "text-muted-foreground hover:text-foreground hover:scale-105"
+                    isCheckIn
+                      ? "bg-foreground text-background"
+                      : isActive 
+                        ? "text-background" 
+                        : "text-muted-foreground hover:text-foreground hover:scale-105"
                   }`}
                 >
                   <Icon className="w-5 h-5" />
