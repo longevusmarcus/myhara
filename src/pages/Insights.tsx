@@ -1,18 +1,20 @@
 import BottomNav from "@/components/BottomNav";
 import { Card } from "@/components/ui/card";
-import { TrendingUp, Clock, Target, Zap, Heart } from "lucide-react";
-import { AICoach } from "@/components/AICoach";
+import { TrendingUp, Clock, Target, Zap, Heart, Loader2 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { getGamificationData } from "@/utils/gamification";
+import { supabase } from "@/integrations/supabase/client";
 
 const Insights = () => {
   const [entries, setEntries] = useState<any[]>([]);
   const [showDailyGuidance, setShowDailyGuidance] = useState(false);
   const [hasSeenToday, setHasSeenToday] = useState(false);
+  const [dailyGuidance, setDailyGuidance] = useState("");
+  const [loadingGuidance, setLoadingGuidance] = useState(false);
+  const [patterns, setPatterns] = useState("");
+  const [loadingPatterns, setLoadingPatterns] = useState(false);
   const [trustScore, setTrustScore] = useState(0);
   const [weekStats, setWeekStats] = useState({ checkins: 0, honored: 0, decisions: 0 });
-  const [timePattern, setTimePattern] = useState<{ time: string; count: number } | null>(null);
-  const [sensationPattern, setSensationPattern] = useState<{ sensation: string; accuracy: number } | null>(null);
 
   useEffect(() => {
     const storedEntries = JSON.parse(localStorage.getItem("gutEntries") || "[]");
@@ -38,64 +40,155 @@ const Insights = () => {
       decisions: thisWeekEntries.filter((e: any) => e.decision && e.decision.trim().length > 0).length
     });
 
-    // Find time of day pattern
-    const timeOfDayMap: { [key: string]: number } = {};
-    storedEntries.forEach((e: any) => {
-      const hour = new Date(e.timestamp).getHours();
-      let timeOfDay = "morning";
-      if (hour >= 6 && hour < 12) timeOfDay = "morning";
-      else if (hour >= 12 && hour < 17) timeOfDay = "afternoon";
-      else if (hour >= 17 && hour < 21) timeOfDay = "evening";
-      else timeOfDay = "night";
-      
-      timeOfDayMap[timeOfDay] = (timeOfDayMap[timeOfDay] || 0) + 1;
-    });
-    
-    const topTime = Object.entries(timeOfDayMap).sort((a, b) => b[1] - a[1])[0];
-    if (topTime) {
-      setTimePattern({ time: topTime[0], count: topTime[1] });
-    }
-
-    // Find body sensation accuracy pattern
-    const sensationMap: { [key: string]: { total: number; positive: number } } = {};
-    storedEntries.forEach((e: any) => {
-      if (e.bodySensation && e.consequence) {
-        const sensation = e.bodySensation;
-        if (!sensationMap[sensation]) {
-          sensationMap[sensation] = { total: 0, positive: 0 };
-        }
-        sensationMap[sensation].total++;
-        
-        // Check if outcome was positive (simplified check)
-        const outcomeText = e.consequence.toLowerCase();
-        const isPositive = outcomeText.includes("worked") || 
-                          outcomeText.includes("right") || 
-                          outcomeText.includes("good") ||
-                          outcomeText.includes("better") ||
-                          e.willIgnore === "no";
-        if (isPositive) {
-          sensationMap[sensation].positive++;
-        }
-      }
-    });
-
-    const topSensation = Object.entries(sensationMap)
-      .filter(([_, data]) => data.total >= 2)
-      .map(([sensation, data]) => ({
-        sensation,
-        accuracy: Math.round((data.positive / data.total) * 100)
-      }))
-      .sort((a, b) => b.accuracy - a.accuracy)[0];
-    
-    if (topSensation) {
-      setSensationPattern(topSensation);
+    // Load patterns if we have enough data
+    if (storedEntries.length >= 3) {
+      loadPatternAnalysis(storedEntries);
     }
   }, []);
 
-  const handleStartGuidance = () => {
+  const loadPatternAnalysis = async (allEntries: any[]) => {
+    setLoadingPatterns(true);
+    
+    try {
+      const entriesSummary = allEntries.slice(-10).map((e: any) => ({
+        timestamp: e.timestamp,
+        mode: e.mode,
+        label: e.label || e.gutFeeling,
+        transcript: e.transcript || e.description,
+        bodySensation: e.bodySensation,
+        honored: e.willIgnore === "no",
+        aiInsights: e.aiInsights
+      }));
+
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/gut-coach`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          },
+          body: JSON.stringify({
+            messages: [
+              {
+                role: "user",
+                content: `Analyze these check-in entries and identify patterns:\n\n${JSON.stringify(entriesSummary, null, 2)}`
+              }
+            ],
+            type: "pattern_analysis"
+          }),
+        }
+      );
+
+      if (!response.ok) throw new Error("Failed to load patterns");
+
+      const reader = response.body?.getReader();
+      const decoder = new TextDecoder();
+      let patternText = "";
+
+      if (reader) {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          const chunk = decoder.decode(value);
+          const lines = chunk.split("\n");
+
+          for (const line of lines) {
+            if (line.startsWith("data: ") && line !== "data: [DONE]") {
+              try {
+                const data = JSON.parse(line.slice(6));
+                const content = data.choices?.[0]?.delta?.content;
+                if (content) {
+                  patternText += content;
+                  setPatterns(patternText);
+                }
+              } catch (e) {
+                console.error("Parse error:", e);
+              }
+            }
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Pattern analysis error:", error);
+    } finally {
+      setLoadingPatterns(false);
+    }
+  };
+
+  const handleStartGuidance = async () => {
     setShowDailyGuidance(true);
+    setLoadingGuidance(true);
     localStorage.setItem("lastDailyGuidance", new Date().toDateString());
     setHasSeenToday(true);
+
+    try {
+      const recentEntries = entries.slice(-7).map((e: any) => ({
+        timestamp: e.timestamp,
+        mode: e.mode,
+        label: e.label || e.gutFeeling,
+        transcript: e.transcript || e.description,
+        honored: e.willIgnore === "no",
+        aiInsights: e.aiInsights
+      }));
+
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/gut-coach`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          },
+          body: JSON.stringify({
+            messages: [
+              {
+                role: "user",
+                content: `Based on my recent check-ins, provide daily guidance:\n\n${JSON.stringify(recentEntries, null, 2)}`
+              }
+            ],
+            type: "daily_guidance"
+          }),
+        }
+      );
+
+      if (!response.ok) throw new Error("Failed to load guidance");
+
+      const reader = response.body?.getReader();
+      const decoder = new TextDecoder();
+      let guidanceText = "";
+
+      if (reader) {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          const chunk = decoder.decode(value);
+          const lines = chunk.split("\n");
+
+          for (const line of lines) {
+            if (line.startsWith("data: ") && line !== "data: [DONE]") {
+              try {
+                const data = JSON.parse(line.slice(6));
+                const content = data.choices?.[0]?.delta?.content;
+                if (content) {
+                  guidanceText += content;
+                  setDailyGuidance(guidanceText);
+                }
+              } catch (e) {
+                console.error("Parse error:", e);
+              }
+            }
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Guidance error:", error);
+      setDailyGuidance("Unable to load guidance right now. Try again later.");
+    } finally {
+      setLoadingGuidance(false);
+    }
   };
 
   return (
@@ -112,23 +205,54 @@ const Insights = () => {
         <Card className={`${hasSeenToday && !showDailyGuidance ? 'bg-card/50' : 'bg-card'} border-border p-6 rounded-3xl`}>
           {!showDailyGuidance ? (
             <div className="space-y-4">
-              <p className="text-base font-light text-foreground">
+              <div className="flex items-center gap-3">
+                <Target className="w-5 h-5 text-primary" />
+                <p className="text-lg font-medium text-foreground">Daily Guidance</p>
+              </div>
+              <p className="text-base font-light text-muted-foreground">
                 {hasSeenToday 
-                  ? "Come back tomorrow for new guidance"
-                  : "Ready for your daily check-in?"
+                  ? "Come back tomorrow for new personalized guidance"
+                  : "Get AI-powered insights based on your recent check-ins"
                 }
               </p>
               {!hasSeenToday && (
                 <button
                   onClick={handleStartGuidance}
-                  className="px-6 py-2 bg-foreground text-background rounded-full text-sm font-light hover:opacity-90 transition-opacity"
+                  className="px-6 py-3 bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl text-sm font-light transition-colors"
                 >
-                  Start
+                  Get Today's Guidance
                 </button>
               )}
             </div>
           ) : (
-            <AICoach initialPrompt="I'm ready for today's check-in. What should I reflect on?" />
+            <div className="space-y-4">
+              {loadingGuidance && !dailyGuidance && (
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <p className="text-sm">Analyzing your patterns...</p>
+                </div>
+              )}
+              {dailyGuidance && (
+                <div className="space-y-4 prose prose-sm max-w-none">
+                  {dailyGuidance.split('\n').map((line, idx) => {
+                    if (line.startsWith('**') && line.endsWith('**')) {
+                      return (
+                        <h3 key={idx} className="text-lg font-medium text-foreground mt-4 first:mt-0">
+                          {line.replace(/\*\*/g, '')}
+                        </h3>
+                      );
+                    } else if (line.trim()) {
+                      return (
+                        <p key={idx} className="text-base text-foreground/80 font-light leading-relaxed">
+                          {line}
+                        </p>
+                      );
+                    }
+                    return null;
+                  })}
+                </div>
+              )}
+            </div>
           )}
         </Card>
 
@@ -175,52 +299,47 @@ const Insights = () => {
 
         {/* Patterns */}
         {entries.length >= 3 && (
-          <div className="space-y-3">
-            <h2 className="text-lg font-medium text-foreground">Patterns</h2>
+          <div className="space-y-4">
+            <div className="flex items-center gap-3">
+              <Zap className="w-5 h-5 text-primary" />
+              <h2 className="text-lg font-medium text-foreground">Your Patterns</h2>
+            </div>
             
-            {timePattern && (
-              <Card className="bg-card border-border p-6 rounded-3xl">
-                <div className="flex items-start gap-4">
-                  <Clock className="w-5 h-5 text-accent mt-1" strokeWidth={1.5} />
-                  <div className="space-y-1">
-                    <p className="text-base text-foreground font-light">
-                      You check in most often in the <span className="font-medium">{timePattern.time}</span>
-                    </p>
-                    <p className="text-sm text-muted-foreground font-light">
-                      Based on {timePattern.count} {timePattern.count === 1 ? 'check-in' : 'check-ins'}
-                    </p>
-                  </div>
+            <Card className="bg-card border-border p-6 rounded-3xl">
+              {loadingPatterns && !patterns && (
+                <div className="flex items-center gap-2 text-muted-foreground py-4">
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <p className="text-sm">Discovering your patterns...</p>
                 </div>
-              </Card>
-            )}
-
-            {sensationPattern && (
-              <Card className="bg-card border-border p-6 rounded-3xl">
-                <div className="flex items-start gap-4">
-                  <Zap className="w-5 h-5 text-primary mt-1" strokeWidth={1.5} />
-                  <div className="space-y-1">
-                    <p className="text-base text-foreground font-light">
-                      When you feel <span className="font-medium lowercase">{sensationPattern.sensation}</span>, it's <span className="font-medium">{sensationPattern.accuracy}% accurate</span>
-                    </p>
-                    <p className="text-sm text-muted-foreground font-light">
-                      {sensationPattern.accuracy >= 70 
-                        ? "This signal is highly reliable for you"
-                        : "Keep tracking to understand this signal better"}
-                    </p>
-                  </div>
+              )}
+              {patterns && (
+                <div className="space-y-4 prose prose-sm max-w-none">
+                  {patterns.split('\n').map((line, idx) => {
+                    if (line.startsWith('**') && line.endsWith('**')) {
+                      return (
+                        <h3 key={idx} className="text-base font-medium text-foreground mt-4 first:mt-0">
+                          {line.replace(/\*\*/g, '')}
+                        </h3>
+                      );
+                    } else if (line.trim()) {
+                      return (
+                        <p key={idx} className="text-sm text-foreground/80 font-light leading-relaxed">
+                          {line}
+                        </p>
+                      );
+                    }
+                    return null;
+                  })}
                 </div>
-              </Card>
-            )}
-
-            {!timePattern && !sensationPattern && entries.length < 5 && (
-              <Card className="bg-card border-border p-6 rounded-3xl">
+              )}
+              {!loadingPatterns && !patterns && (
                 <div className="text-center py-4">
                   <p className="text-sm text-muted-foreground font-light">
                     Keep checking in to discover your patterns
                   </p>
                 </div>
-              </Card>
-            )}
+              )}
+            </Card>
           </div>
         )}
 
