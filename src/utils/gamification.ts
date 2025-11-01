@@ -109,27 +109,89 @@ export const addCheckIn = (xp: number): GamificationData => {
 };
 
 const checkAchievements = (data: GamificationData) => {
+  // Get entries to check gut-following stats
+  const entries = JSON.parse(localStorage.getItem("gutEntries") || "[]");
+  const honoredCount = entries.filter((e: any) => e.willIgnore === "no").length;
+  const decisionsTracked = entries.filter((e: any) => e.decision).length;
+  const consequencesLogged = entries.filter((e: any) => e.consequence).length;
+  
   const achievements: { id: string; name: string; description: string; xp: number; condition: () => boolean; icon: string }[] = [
     {
-      id: "first_check",
-      name: "First Steps",
+      id: "first_listen",
+      name: "First Listen",
       description: "Completed your first check-in",
       xp: 10,
       condition: () => data.totalCheckins === 1,
-      icon: "Sparkles"
+      icon: "Ear"
     },
     {
-      id: "five_checks",
-      name: "Getting Started",
-      description: "Completed 5 check-ins",
+      id: "gut_honor",
+      name: "Gut Honor",
+      description: "Honored your gut feeling for the first time",
       xp: 25,
-      condition: () => data.totalCheckins === 5,
+      condition: () => honoredCount === 1,
+      icon: "Heart"
+    },
+    {
+      id: "trust_builder",
+      name: "Trust Builder",
+      description: "Honored your gut 5 times",
+      xp: 50,
+      condition: () => honoredCount === 5,
+      icon: "Shield"
+    },
+    {
+      id: "intuition_keeper",
+      name: "Intuition Keeper",
+      description: "Honored your gut 10 times",
+      xp: 100,
+      condition: () => honoredCount === 10,
+      icon: "Award"
+    },
+    {
+      id: "gut_master",
+      name: "Gut Master",
+      description: "Honored your gut 25 times",
+      xp: 200,
+      condition: () => honoredCount === 25,
+      icon: "Crown"
+    },
+    {
+      id: "decision_tracker",
+      name: "Decision Tracker",
+      description: "Tracked your first decision",
+      xp: 30,
+      condition: () => decisionsTracked === 1,
       icon: "Target"
     },
     {
+      id: "follow_through",
+      name: "Follow Through",
+      description: "Tracked 5 decisions",
+      xp: 75,
+      condition: () => decisionsTracked === 5,
+      icon: "TrendingUp"
+    },
+    {
+      id: "consequence_seeker",
+      name: "Consequence Seeker",
+      description: "Logged outcomes for 3 decisions",
+      xp: 100,
+      condition: () => consequencesLogged === 3,
+      icon: "Eye"
+    },
+    {
+      id: "pattern_master",
+      name: "Pattern Master",
+      description: "Logged outcomes for 10 decisions",
+      xp: 200,
+      condition: () => consequencesLogged === 10,
+      icon: "Star"
+    },
+    {
       id: "streak_3",
-      name: "3-Day Warrior",
-      description: "Maintained a 3-day streak",
+      name: "Consistent Listener",
+      description: "Maintained a 3-day check-in streak",
       xp: 30,
       condition: () => data.currentStreak === 3,
       icon: "Flame"
@@ -138,49 +200,17 @@ const checkAchievements = (data: GamificationData) => {
       id: "streak_7",
       name: "Week Warrior",
       description: "Maintained a 7-day streak",
-      xp: 50,
+      xp: 75,
       condition: () => data.currentStreak === 7,
-      icon: "Award"
-    },
-    {
-      id: "streak_14",
-      name: "Two Week Champion",
-      description: "Maintained a 14-day streak",
-      xp: 100,
-      condition: () => data.currentStreak === 14,
-      icon: "Trophy"
+      icon: "Zap"
     },
     {
       id: "streak_30",
-      name: "Month Master",
+      name: "Month Champion",
       description: "Maintained a 30-day streak",
-      xp: 200,
+      xp: 300,
       condition: () => data.currentStreak === 30,
-      icon: "Crown"
-    },
-    {
-      id: "twenty_checks",
-      name: "Pattern Spotter",
-      description: "Completed 20 check-ins",
-      xp: 50,
-      condition: () => data.totalCheckins === 20,
-      icon: "Eye"
-    },
-    {
-      id: "fifty_checks",
-      name: "Gut Guardian",
-      description: "Completed 50 check-ins",
-      xp: 100,
-      condition: () => data.totalCheckins === 50,
-      icon: "Shield"
-    },
-    {
-      id: "hundred_checks",
-      name: "Intuition Master",
-      description: "Completed 100 check-ins",
-      xp: 250,
-      condition: () => data.totalCheckins === 100,
-      icon: "Star"
+      icon: "Trophy"
     }
   ];
   
