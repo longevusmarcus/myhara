@@ -133,6 +133,22 @@ const checkAchievements = (data: GamificationData) => {
       icon: "Flame"
     },
     {
+      id: "decision_tracker",
+      name: "Decision Tracker",
+      description: "Tracked your first decision",
+      xp: 30,
+      condition: () => decisionsTracked === 1,
+      icon: "Target"
+    },
+    {
+      id: "pattern_master",
+      name: "Pattern Master",
+      description: "Logged outcomes for 5 decisions",
+      xp: 100,
+      condition: () => consequencesLogged === 5,
+      icon: "Star"
+    },
+    {
       id: "gut_honor",
       name: "Gut Honor",
       description: "Honored your gut feeling for the first time",
@@ -155,22 +171,6 @@ const checkAchievements = (data: GamificationData) => {
       xp: 150,
       condition: () => honoredCount === 15,
       icon: "Crown"
-    },
-    {
-      id: "decision_tracker",
-      name: "Decision Tracker",
-      description: "Tracked your first decision",
-      xp: 30,
-      condition: () => decisionsTracked === 1,
-      icon: "Target"
-    },
-    {
-      id: "pattern_master",
-      name: "Pattern Master",
-      description: "Logged outcomes for 5 decisions",
-      xp: 100,
-      condition: () => consequencesLogged === 5,
-      icon: "Star"
     }
   ];
   

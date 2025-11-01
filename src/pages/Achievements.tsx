@@ -41,6 +41,26 @@ const Achievements = () => {
       color: "text-orange-500"
     },
     {
+      id: "decision_tracker",
+      name: "Decision Tracker",
+      description: "Track your first decision",
+      xp: 30,
+      icon: Target,
+      condition: { type: "decisions", value: 1 },
+      progress: decisionsTracked,
+      color: "text-blue-500"
+    },
+    {
+      id: "pattern_master",
+      name: "Pattern Master",
+      description: "Log outcomes for 5 decisions",
+      xp: 100,
+      icon: Star,
+      condition: { type: "consequences", value: 5 },
+      progress: consequencesLogged,
+      color: "text-amber-500"
+    },
+    {
       id: "gut_honor",
       name: "Gut Honor",
       description: "Honor your gut feeling for the first time",
@@ -69,26 +89,6 @@ const Achievements = () => {
       condition: { type: "honored", value: 15 },
       progress: honoredCount,
       color: "text-yellow-500"
-    },
-    {
-      id: "decision_tracker",
-      name: "Decision Tracker",
-      description: "Track your first decision",
-      xp: 30,
-      icon: Target,
-      condition: { type: "decisions", value: 1 },
-      progress: decisionsTracked,
-      color: "text-blue-500"
-    },
-    {
-      id: "pattern_master",
-      name: "Pattern Master",
-      description: "Log outcomes for 5 decisions",
-      xp: 100,
-      icon: Star,
-      condition: { type: "consequences", value: 5 },
-      progress: consequencesLogged,
-      color: "text-amber-500"
     }
   ];
 
