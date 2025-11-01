@@ -83,6 +83,14 @@ const Insights = () => {
 
       if (!response.ok) throw new Error("Failed to load patterns");
 
+      const contentType = response.headers.get("Content-Type") || "";
+      if (contentType.includes("application/json")) {
+        const json = await response.json();
+        setPatterns(JSON.stringify(json));
+        setLoadingPatterns(false);
+        return;
+      }
+
       const reader = response.body?.getReader();
       const decoder = new TextDecoder();
       let patternText = "";

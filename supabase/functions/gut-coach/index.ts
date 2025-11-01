@@ -69,24 +69,12 @@ Be warm, specific, and reference their actual data. Help them trust their intuit
       systemPrompt = `You are an expert intuition pattern analyst. Analyze the user's gut feeling check-ins and identify 2-3 meaningful patterns.
 
 For each pattern, provide:
-- **title**: A clear, concise name for the pattern (3-6 words)
-- **observation**: What you notice in their behavior (2-3 sentences)
-- **intuitionGuide**: Specific, actionable advice on what to do about it (2-3 sentences)
-- **relatedEntries**: Array of 1-3 relevant entry excerpts that show this pattern
-- **questions**: Array of 2-3 thought-provoking reflection questions
-
-Return ONLY valid JSON in this EXACT format (no markdown, no extra text):
-
-[{"title":"Pattern Name","observation":"What you notice in their gut feelings and decisions.","intuitionGuide":"Specific actionable guidance on how to work with this pattern.","relatedEntries":["Entry excerpt 1","Entry excerpt 2"],"questions":["Question 1?","Question 2?"]}]
-
-CRITICAL RULES:
-- Return ONLY the JSON array, nothing else
-- Each pattern must be a complete object with ALL fields
-- Use double quotes for all strings
-- NO line breaks within string values
-- NO trailing commas
-- Keep strings concise and valuable
-- Return 2-3 patterns maximum`;
+- title: Clear, concise name (3-6 words)
+- observation: What you notice in their behavior (2-3 sentences)
+- intuitionGuide: Specific, actionable advice on what to do about it (2-3 sentences)
+- relatedEntries: 1-3 short entry excerpts that show this pattern
+- questions: 2-3 reflection questions
+`;
     } else if (type === "voice_analysis") {
       systemPrompt = `You are an expert at analyzing voice recordings for gut instinct signals. Analyze the user's spoken words, tone indicators, and emotional state to provide insights about their gut feeling.
 
@@ -114,6 +102,113 @@ Keep it warm, direct, and practical. Help them distinguish gut feeling from rati
       systemPrompt = `You are a supportive gut instinct guide. Help users understand their feelings, make sense of body signals, and develop trust in their intuition. Be warm, curious, and empowering.`;
     }
 
+    // Special handling for pattern_analysis: use function calling (tools) and return structured JSON
+    if (type === "pattern_analysis") {
+      const body: any = {
+        model: "google/gemini-2.5-flash",
+        messages: [
+          { role: "system", content: systemPrompt },
+          ...messages,
+        ],
+        stream: false,
+        tools: [
+          {
+            type: "function",
+            function: {
+              name: "return_patterns",
+              description: "Return 2-3 pattern cards with observation, actionable guidance, related entry excerpts, and reflection questions.",
+              parameters: {
+                type: "object",
+                properties: {
+                  patterns: {
+                    type: "array",
+                    minItems: 2,
+                    maxItems: 3,
+                    items: {
+                      type: "object",
+                      properties: {
+                        title: { type: "string" },
+                        observation: { type: "string" },
+                        intuitionGuide: { type: "string" },
+                        relatedEntries: { type: "array", items: { type: "string" } },
+                        questions: { type: "array", items: { type: "string" } }
+                      },
+                      required: ["title", "observation", "intuitionGuide", "relatedEntries", "questions"],
+                      additionalProperties: false
+                    }
+                  }
+                },
+                required: ["patterns"],
+                additionalProperties: false
+              }
+            }
+          }
+        ],
+        tool_choice: { type: "function", function: { name: "return_patterns" } }
+      };
+
+      const aiResp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${LOVABLE_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+      });
+
+      if (!aiResp.ok) {
+        if (aiResp.status === 429) {
+          return new Response(JSON.stringify({ error: "Rate limit exceeded. Please try again later." }), {
+            status: 429,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+        if (aiResp.status === 402) {
+          return new Response(JSON.stringify({ error: "AI credits exhausted. Please add funds in Settings > Usage." }), {
+            status: 402,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+        const t = await aiResp.text();
+        console.error("AI gateway error (pattern_analysis):", aiResp.status, t);
+        return new Response(JSON.stringify({ error: "AI service error" }), {
+          status: 500,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      const aiData = await aiResp.json();
+
+      let patterns: unknown = null;
+      try {
+        const toolCalls = aiData?.choices?.[0]?.message?.tool_calls;
+        if (toolCalls && toolCalls.length > 0) {
+          const argsStr = toolCalls[0]?.function?.arguments;
+          const args = JSON.parse(argsStr);
+          patterns = args.patterns;
+        } else {
+          const content = aiData?.choices?.[0]?.message?.content;
+          if (typeof content === "string") {
+            patterns = JSON.parse(content);
+          }
+        }
+      } catch (e) {
+        console.error("Pattern parse error:", e);
+      }
+
+      if (!Array.isArray(patterns)) {
+        return new Response(JSON.stringify({ error: "Could not extract patterns" }), {
+          status: 500,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      return new Response(JSON.stringify(patterns), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Default: stream responses (daily, insight, daily_guidance, voice_analysis, etc.)
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
