@@ -167,7 +167,7 @@ const Onboarding = ({ onComplete }: OnboardingProps) => {
             onClick={() => setStep(3)}
             className="w-full rounded-[1rem] h-12 bg-primary hover:bg-primary/90 text-primary-foreground"
           >
-            trust your gut
+            Learn to trust your gut
           </Button>
         </div>
       </div>
