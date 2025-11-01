@@ -8,7 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
 type TapStep = "context" | "describe" | "body" | "gut" | "ignore" | "decision";
-type VoiceStep = "recording" | "processing" | "label" | "response" | "analyzing" | "insights";
+type VoiceStep = "recording" | "processing" | "label" | "response" | "analyzing" | "insights" | "gut" | "ignore";
 
 interface SpeechRecognition extends EventTarget {
   continuous: boolean;
@@ -298,14 +298,18 @@ const CheckIn = () => {
   };
 
   const handleVoiceComplete = async () => {
+    const xpAmount = willIgnore === "no" ? 10 : 5;
     const entry = {
       mode: "voice",
       transcript,
       label: selectedLabel,
+      gutFeeling,
+      willIgnore,
+      bodySensation: bodySensation || "",
       wantsResponse,
       aiInsights,
       timestamp: new Date().toISOString(),
-      xp: 10
+      xp: xpAmount
     };
     
     // Save to localStorage
@@ -318,8 +322,8 @@ const CheckIn = () => {
     const gamData = addCheckIn(entry.xp);
     
     toast({
-      title: "+10 XP",
-      description: "Honest Voice Check.",
+      title: `+${xpAmount} XP`,
+      description: willIgnore === "no" ? "Great choice honoring your gut!" : "You checked in.",
     });
     navigate("/map");
   };
@@ -634,11 +638,87 @@ const CheckIn = () => {
 
             <div className="pt-4">
               <button
-                onClick={handleVoiceComplete}
+                onClick={() => setVoiceStep("gut")}
                 className="w-full py-4 px-6 bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl font-light transition-all shadow-lg hover:shadow-xl"
               >
                 Save & Continue
               </button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    if (voiceStep === "gut") {
+      return (
+        <div className="min-h-screen bg-background flex flex-col p-6">
+          <button onClick={() => setVoiceStep("insights")} className="self-start mb-8">
+            <ArrowLeft className="w-6 h-6 text-foreground" />
+          </button>
+
+          <div className="flex-1 flex flex-col justify-center max-w-md mx-auto w-full space-y-8">
+            <h2 className="text-2xl font-medium text-foreground">
+              What's your gut saying?
+            </h2>
+
+            <div className="space-y-3">
+              {[
+                { Icon: CheckCircle, label: "Yes (feels right)", value: "yes" },
+                { Icon: XCircle, label: "No (something's off)", value: "no" },
+                { Icon: Pause, label: "Pause (not sure yet)", value: "pause" },
+              ].map((option) => (
+                <Card
+                  key={option.value}
+                  onClick={() => {
+                    setGutFeeling(option.value);
+                    setVoiceStep("ignore");
+                  }}
+                  className="bg-card border-border p-6 cursor-pointer hover:bg-card/80 transition-colors rounded-[1.25rem]"
+                >
+                  <div className="flex items-center gap-4">
+                    <option.Icon className="w-6 h-6 text-foreground/70" strokeWidth={1.5} />
+                    <span className="text-base text-foreground font-light">{option.label}</span>
+                  </div>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    if (voiceStep === "ignore") {
+      return (
+        <div className="min-h-screen bg-background flex flex-col p-6">
+          <button onClick={() => setVoiceStep("gut")} className="self-start mb-8">
+            <ArrowLeft className="w-6 h-6 text-foreground" />
+          </button>
+
+          <div className="flex-1 flex flex-col justify-center max-w-md mx-auto w-full space-y-8">
+            <h2 className="text-2xl font-medium text-foreground">
+              Are you about to ignore it?
+            </h2>
+
+            <div className="space-y-3">
+              <Card
+                onClick={() => {
+                  setWillIgnore("yes");
+                  handleVoiceComplete();
+                }}
+                className="bg-card border-border p-6 cursor-pointer hover:bg-card/80 transition-colors rounded-[1.25rem]"
+              >
+                <p className="text-base text-foreground font-light">Yes, I'll ignore it</p>
+              </Card>
+
+              <Card
+                onClick={() => {
+                  setWillIgnore("no");
+                  handleVoiceComplete();
+                }}
+                className="bg-card border-border p-6 cursor-pointer hover:bg-card/80 transition-colors rounded-[1.25rem]"
+              >
+                <p className="text-base text-foreground font-light">No, I'll honor my gut</p>
+              </Card>
             </div>
           </div>
         </div>
