@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 
-type TapStep = "context" | "body" | "gut" | "ignore";
+type TapStep = "context" | "describe" | "body" | "gut" | "ignore";
 type VoiceStep = "recording" | "processing" | "label" | "response";
 
 const CheckIn = () => {
@@ -18,6 +18,7 @@ const CheckIn = () => {
   const [tapStep, setTapStep] = useState<TapStep>("context");
   const [context, setContext] = useState("");
   const [customNote, setCustomNote] = useState("");
+  const [description, setDescription] = useState("");
   const [bodySensation, setBodySensation] = useState("");
   const [customSensation, setCustomSensation] = useState("");
   const [gutFeeling, setGutFeeling] = useState("");
@@ -56,6 +57,7 @@ const CheckIn = () => {
       mode: "tap",
       context,
       customNote,
+      description,
       bodySensation: bodySensation || customSensation,
       gutFeeling,
       willIgnore,
@@ -294,7 +296,7 @@ const CheckIn = () => {
 
         <div className="flex-1 flex flex-col justify-center max-w-md mx-auto w-full space-y-8">
           <h2 className="text-2xl font-medium text-foreground">
-            What's happening?
+            Choose category
           </h2>
 
           <div className="space-y-3">
@@ -303,7 +305,7 @@ const CheckIn = () => {
                 key={option}
                 onClick={() => {
                   setContext(option);
-                  setTapStep("body");
+                  setTapStep("describe");
                 }}
                 className="bg-card border-border p-6 cursor-pointer hover:bg-card/80 transition-colors rounded-[1.25rem]"
               >
@@ -320,7 +322,7 @@ const CheckIn = () => {
               onKeyPress={(e) => {
                 if (e.key === "Enter" && customNote.trim()) {
                   setContext("Custom");
-                  setTapStep("body");
+                  setTapStep("describe");
                 }
               }}
               placeholder="Type here..."
@@ -332,10 +334,48 @@ const CheckIn = () => {
     );
   }
 
-  if (tapStep === "body") {
+  if (tapStep === "describe") {
     return (
       <div className="min-h-screen bg-background flex flex-col p-6">
         <button onClick={() => setTapStep("context")} className="self-start mb-8">
+          <ArrowLeft className="w-6 h-6 text-foreground" />
+        </button>
+
+        <div className="flex-1 flex flex-col justify-center max-w-md mx-auto w-full space-y-8">
+          <h2 className="text-2xl font-medium text-foreground">
+            What is happening?
+          </h2>
+
+          <div className="space-y-2">
+            <Input
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              onKeyPress={(e) => {
+                if (e.key === "Enter" && description.trim()) {
+                  setTapStep("body");
+                }
+              }}
+              placeholder="Describe what's happening..."
+              className="bg-card border-border rounded-[1.25rem]"
+            />
+            {description.trim() && (
+              <button
+                onClick={() => setTapStep("body")}
+                className="w-full bg-primary text-primary-foreground py-3 rounded-[1.25rem] font-light hover:bg-primary/90 transition-colors"
+              >
+                Continue
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (tapStep === "body") {
+    return (
+      <div className="min-h-screen bg-background flex flex-col p-6">
+        <button onClick={() => setTapStep("describe")} className="self-start mb-8">
           <ArrowLeft className="w-6 h-6 text-foreground" />
         </button>
 
