@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import BottomNav from "@/components/BottomNav";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Calendar, Circle, Droplet, Sparkles, CheckCircle2, AlertTriangle, Plus, FileText } from "lucide-react";
+import { Calendar, Circle, Droplet, Sparkles, CheckCircle2, AlertTriangle, Plus, FileText, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
@@ -37,6 +37,21 @@ const GutMap = () => {
     toast({
       title: "Outcome logged",
       description: "Your pattern is learning from this",
+    });
+  };
+
+  const removeConsequence = (index: number) => {
+    const updatedEntries = [...entries];
+    updatedEntries[index] = {
+      ...updatedEntries[index],
+      consequence: null,
+      consequenceDate: null
+    };
+    localStorage.setItem("gutEntries", JSON.stringify(updatedEntries));
+    setEntries(updatedEntries);
+    toast({
+      title: "Outcome removed",
+      description: "You can log it again anytime",
     });
   };
 
@@ -157,13 +172,24 @@ const GutMap = () => {
                                   </div>
                                 </div>
                               ) : entry.consequence ? (
-                                <div className="p-4 bg-primary/5 rounded-2xl border border-primary/10 animate-in fade-in duration-300">
-                                  <p className="text-xs text-primary/70 font-medium mb-2 uppercase tracking-wide">
-                                    Outcome
-                                  </p>
-                                  <p className="text-sm text-foreground/90 font-light leading-relaxed">
-                                    {entry.consequence}
-                                  </p>
+                                <div className="p-4 bg-primary/5 rounded-2xl border border-primary/10 animate-in fade-in duration-300 group">
+                                  <div className="flex items-start justify-between gap-3">
+                                    <div className="flex-1">
+                                      <p className="text-xs text-primary/70 font-medium mb-2 uppercase tracking-wide">
+                                        Outcome
+                                      </p>
+                                      <p className="text-sm text-foreground/90 font-light leading-relaxed">
+                                        {entry.consequence}
+                                      </p>
+                                    </div>
+                                    <button
+                                      onClick={() => removeConsequence(index)}
+                                      className="opacity-0 group-hover:opacity-100 transition-opacity p-1.5 hover:bg-destructive/10 rounded-lg"
+                                      title="Remove outcome"
+                                    >
+                                      <X className="w-4 h-4 text-muted-foreground hover:text-destructive transition-colors" />
+                                    </button>
+                                  </div>
                                 </div>
                               ) : (
                                 <button
