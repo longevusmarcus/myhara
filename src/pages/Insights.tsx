@@ -16,10 +16,31 @@ const Insights = () => {
   const [loadingPatterns, setLoadingPatterns] = useState(false);
   const [trustScore, setTrustScore] = useState(0);
   const [weekStats, setWeekStats] = useState({ checkins: 0, honored: 0, decisions: 0 });
+  const [userName, setUserName] = useState("");
 
   useEffect(() => {
     const storedEntries = JSON.parse(localStorage.getItem("gutEntries") || "[]");
     setEntries(storedEntries);
+    
+    // Fetch user profile
+    const fetchProfile = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+        
+        const { data }: any = await (supabase.from("profiles") as any)
+          .select("nickname")
+          .eq("user_id", user.id)
+          .maybeSingle();
+        
+        if (data?.nickname) {
+          setUserName(String(data.nickname));
+        }
+      } catch (error) {
+        console.error("Error fetching profile:", error);
+      }
+    };
+    fetchProfile();
     
     const lastSeen = localStorage.getItem("lastDailyGuidance");
     const today = new Date().toDateString();
@@ -65,10 +86,19 @@ const Insights = () => {
     }
   }, []);
 
+  // Store userName in a way that can be accessed by functions
+  useEffect(() => {
+    if (userName) {
+      sessionStorage.setItem("currentUserName", userName);
+    }
+  }, [userName]);
+
   const loadPatternAnalysis = async (allEntries: any[]) => {
     setLoadingPatterns(true);
     
     try {
+      const currentUserName = sessionStorage.getItem("currentUserName") || userName || "the user";
+      
       const entriesSummary = allEntries.slice(-10).map((e: any) => ({
         timestamp: e.timestamp,
         mode: e.mode,
@@ -91,10 +121,11 @@ const Insights = () => {
             messages: [
               {
                 role: "user",
-                content: `Analyze these entries and return 2-3 patterns. Return ONLY the JSON array, nothing else:\n\n${JSON.stringify(entriesSummary, null, 2)}`
+                content: `Analyze ${currentUserName}'s entries and return 2-3 patterns. Return ONLY the JSON array, nothing else:\n\n${JSON.stringify(entriesSummary, null, 2)}`
               }
             ],
-            type: "pattern_analysis"
+            type: "pattern_analysis",
+            userName: currentUserName
           }),
         }
       );
@@ -182,6 +213,8 @@ const Insights = () => {
     setHasSeenToday(true);
 
     try {
+      const currentUserName = sessionStorage.getItem("currentUserName") || userName || "the user";
+      
       const recentEntries = entries.slice(-7).map((e: any) => ({
         timestamp: e.timestamp,
         mode: e.mode,
@@ -203,10 +236,11 @@ const Insights = () => {
             messages: [
               {
                 role: "user",
-                content: `Based on my recent check-ins, provide daily guidance:\n\n${JSON.stringify(recentEntries, null, 2)}`
+                content: `Based on ${currentUserName}'s recent check-ins, provide daily guidance:\n\n${JSON.stringify(recentEntries, null, 2)}`
               }
             ],
-            type: "daily_guidance"
+            type: "daily_guidance",
+            userName: currentUserName
           }),
         }
       );

@@ -4,6 +4,7 @@ import BottomNav from "@/components/BottomNav";
 import { Card } from "@/components/ui/card";
 import { useState, useEffect } from "react";
 import { getGamificationData, calculateLevel, getLevelName } from "@/utils/gamification";
+import { supabase } from "@/integrations/supabase/client";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -11,11 +12,32 @@ const Home = () => {
   const [missions, setMissions] = useState<any[]>([]);
   const [insights, setInsights] = useState<string[]>([]);
   const [gamData, setGamData] = useState(getGamificationData());
+  const [userName, setUserName] = useState("there");
 
   useEffect(() => {
     const storedEntries = JSON.parse(localStorage.getItem("gutEntries") || "[]");
     setEntries(storedEntries);
     setGamData(getGamificationData());
+    
+    // Fetch user profile
+    const fetchProfile = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+        
+        const { data }: any = await (supabase.from("profiles") as any)
+          .select("nickname")
+          .eq("user_id", user.id)
+          .maybeSingle();
+        
+        if (data?.nickname) {
+          setUserName(String(data.nickname));
+        }
+      } catch (error) {
+        console.error("Error fetching profile:", error);
+      }
+    };
+    fetchProfile();
     
     // Generate personalized missions based on user data
     const generatedMissions = generateMissions(storedEntries);
@@ -138,7 +160,7 @@ const Home = () => {
     <div className="min-h-screen bg-background pb-24">
       {/* Header */}
       <div className="p-6 flex justify-between items-center">
-        <h1 className="text-4xl font-cursive text-foreground tracking-tight">Hara</h1>
+        <h1 className="text-4xl font-cursive text-foreground tracking-tight">Hey, {userName}</h1>
         <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-card border border-border">
           <Flame className="w-4 h-4 text-orange-500" />
           <span className="text-sm font-medium">{gamData.currentStreak}</span>

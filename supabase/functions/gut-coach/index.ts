@@ -11,7 +11,7 @@ serve(async (req) => {
   }
 
   try {
-    const { messages, type } = await req.json();
+    const { messages, type = "general", userName = "the user" } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     
     if (!LOVABLE_API_KEY) {
@@ -45,7 +45,7 @@ When analyzing entries:
 
 Your goal is to help them develop trust in their own intuition through pattern recognition.`;
     } else if (type === "daily_guidance") {
-      systemPrompt = `You are a wise gut instinct coach analyzing a user's check-in history. Based on their recent entries, provide personalized daily guidance.
+      systemPrompt = `You are a wise gut instinct coach analyzing ${userName}'s check-in history. Based on their recent entries, provide personalized daily guidance.
 
 Analyze their patterns:
 - Recent gut feelings (aligned, unease, unclear)
@@ -56,22 +56,22 @@ Analyze their patterns:
 Provide your response in this format:
 
 **Today's Guidance**
-[2-3 sentences of warm, actionable guidance based on their recent patterns]
+[2-3 sentences of warm, actionable guidance based on ${userName}'s recent patterns]
 
 **What I'm Noticing**
-[1-2 observations about patterns in their gut feelings and decisions]
+[1-2 observations about patterns in ${userName}'s gut feelings and decisions]
 
 **Try This Today**
-[One specific, practical exercise they can do today to strengthen their gut connection]
+[One specific, practical exercise ${userName} can do today to strengthen their gut connection]
 
-Be warm, specific, and reference their actual data. Help them trust their intuition more.`;
+Be warm, specific, and reference ${userName}'s actual data. Help ${userName} trust their intuition more.`;
     } else if (type === "pattern_analysis") {
-      systemPrompt = `You are an expert intuition pattern analyst. Analyze the user's gut feeling check-ins and identify 2-3 meaningful patterns.
+      systemPrompt = `You are an expert intuition pattern analyst. Analyze ${userName}'s gut feeling check-ins and identify 2-3 meaningful patterns.
 
 For each pattern, provide:
 - title: Clear, concise name (3-6 words)
-- observation: What you notice in their behavior (2-3 sentences)
-- intuitionGuide: Specific, actionable advice on what to do about it (2-3 sentences)
+- observation: What you notice in ${userName}'s behavior (2-3 sentences, refer to ${userName} by name)
+- intuitionGuide: Specific, actionable advice on what ${userName} should do about it (2-3 sentences, speak to ${userName} directly)
 - relatedEntries: 1-3 short entry excerpts that show this pattern
 - questions: 2-3 reflection questions
 `;
@@ -99,42 +99,42 @@ Provide your response in this EXACT format with markdown:
 
 Keep it warm, direct, and practical. Help them distinguish gut feeling from rational thought, and give them clear next steps.`;
     } else if (type === "signals_analysis") {
-      systemPrompt = `You are analyzing body sensations to identify the most reliable gut feeling indicators.
+      systemPrompt = `You are analyzing ${userName}'s body sensations to identify the most reliable gut feeling indicators.
 
 Analyze the data and return ONLY valid JSON (no markdown, no extra text):
 
 {
   "signals": [
-    {"signal": "Body sensation name", "accuracy": 75, "insight": "Brief insight about reliability"},
-    {"signal": "Another sensation", "accuracy": 82, "insight": "Another insight"}
+    {"signal": "Body sensation name", "accuracy": 75, "insight": "Brief insight about ${userName}'s reliability with this signal"},
+    {"signal": "Another sensation", "accuracy": 82, "insight": "Another insight about ${userName}"}
   ]
 }
 
-Return 3-5 signals. Base accuracy on outcomes and consistency.`;
+Return 3-5 signals. Base accuracy on ${userName}'s outcomes and consistency.`;
     } else if (type === "trust_analysis") {
-      systemPrompt = `Analyze trust patterns - when they honor vs ignore gut feelings.
+      systemPrompt = `Analyze ${userName}'s trust patterns - when they honor vs ignore gut feelings.
 
 Return ONLY valid JSON (no markdown, no extra text):
 
 {
   "honoredPercentage": 45,
   "ignoredPercentage": 55,
-  "honoredOutcome": "Description of what typically happens when honoring gut",
-  "ignoredOutcome": "Description of what typically happens when ignoring gut",
-  "recommendation": "Personalized recommendation based on their pattern"
+  "honoredOutcome": "Description of what typically happens when ${userName} honors their gut",
+  "ignoredOutcome": "Description of what typically happens when ${userName} ignores their gut",
+  "recommendation": "Personalized recommendation based on ${userName}'s pattern"
 }
 
 Keep descriptions to 1-2 sentences.`;
     } else if (type === "tone_analysis") {
-      systemPrompt = `Analyze voice tone patterns from check-ins.
+      systemPrompt = `Analyze ${userName}'s voice tone patterns from check-ins.
 
 Return ONLY valid JSON (no markdown, no extra text):
 
 {
-  "honoredTone": "Description of voice when honoring gut",
-  "ignoredTone": "Description of voice when ignoring gut",
+  "honoredTone": "Description of ${userName}'s voice when honoring gut",
+  "ignoredTone": "Description of ${userName}'s voice when ignoring gut",
   "keyIndicators": ["Indicator 1", "Indicator 2", "Indicator 3"],
-  "guidance": "Practical guidance on what to listen for",
+  "guidance": "Practical guidance on what ${userName} should listen for",
   "insufficientData": false
 }
 
