@@ -201,7 +201,7 @@ const Auth = () => {
                   value={nickname}
                   onChange={(e) => setNickname(e.target.value)}
                   required
-                  className="bg-background/60 border-border/40 rounded-[1rem] h-10 text-sm placeholder:text-muted-foreground/60 focus:border-primary/50 transition-all"
+                  className="bg-background/60 border-border/40 rounded-[1rem] h-10 text-sm placeholder:text-muted-foreground/60"
                 />
               </div>
             )}
@@ -213,7 +213,7 @@ const Auth = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="bg-background/60 border-border/40 rounded-[1rem] h-10 text-sm placeholder:text-muted-foreground/60 focus:border-primary/50 transition-all"
+                  className="bg-background/60 border-border/40 rounded-[1rem] h-10 text-sm placeholder:text-muted-foreground/60"
                 />
               </div>
             )}
@@ -226,7 +226,7 @@ const Auth = () => {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   minLength={6}
-                  className="bg-background/60 border-border/40 rounded-[1rem] h-10 text-sm placeholder:text-muted-foreground/60 focus:border-primary/50 transition-all"
+                  className="bg-background/60 border-border/40 rounded-[1rem] h-10 text-sm placeholder:text-muted-foreground/60"
                 />
                 {(!isLogin || isResettingPassword) && (
                   <p className="text-xs text-muted-foreground/70 mt-1 ml-1">
