@@ -895,17 +895,28 @@ const CheckIn = () => {
             What is happening?
           </h2>
 
-          <Input
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            onKeyPress={(e) => {
-              if (e.key === "Enter" && description.trim()) {
-                setTapStep("body");
-              }
-            }}
-            placeholder="Describe what's happening..."
-            className="bg-card border-border rounded-[1.25rem]"
-          />
+          <div className="space-y-4">
+            <Input
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              onKeyPress={(e) => {
+                if (e.key === "Enter" && description.trim()) {
+                  setTapStep("body");
+                }
+              }}
+              placeholder="Describe what's happening..."
+              className="bg-card border-border rounded-[1.25rem]"
+            />
+            
+            {description.trim() && (
+              <button
+                onClick={() => setTapStep("body")}
+                className="w-full py-3 text-sm text-muted-foreground hover:text-foreground transition-colors font-light"
+              >
+                continue
+              </button>
+            )}
+          </div>
         </div>
       </div>
     );
