@@ -1187,11 +1187,20 @@ const CheckIn = () => {
             />
 
             <div className="space-y-2">
+              {decision.trim() && (
+                <button
+                  onClick={handleTapComplete}
+                  className="w-full bg-primary text-primary-foreground py-3 rounded-[1.25rem] font-light hover:bg-primary/90 transition-colors"
+                >
+                  Track this decision
+                </button>
+              )}
+              
               <button
                 onClick={handleTapComplete}
-                className="w-full bg-primary text-primary-foreground py-3 rounded-[1.25rem] font-light hover:bg-primary/90 transition-colors"
+                className="w-full py-3 text-sm text-muted-foreground hover:text-foreground transition-colors font-light"
               >
-                {decision.trim() ? "Track this decision" : "Skip for now"}
+                skip for now
               </button>
             </div>
           </div>
