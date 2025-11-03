@@ -745,6 +745,16 @@ const CheckIn = () => {
             >
               <p className="text-base text-foreground font-light">No, I'll honor my gut</p>
             </Card>
+
+            <Card
+              onClick={() => {
+                setWillIgnore("not-sure");
+                setVoiceStep("congratulations");
+              }}
+              className="bg-card border-border p-6 cursor-pointer hover:bg-card/80 transition-colors rounded-[1.25rem]"
+            >
+              <p className="text-base text-foreground font-light">Not sure</p>
+            </Card>
             </div>
           </div>
         </div>
@@ -1051,6 +1061,16 @@ const CheckIn = () => {
               className="bg-card border-border p-6 cursor-pointer hover:bg-card/80 transition-colors rounded-[1.25rem]"
             >
               <span className="text-base text-foreground font-light">No, I'll honor it</span>
+            </Card>
+
+            <Card
+              onClick={() => {
+                setWillIgnore("not-sure");
+                setTapStep("congratulations");
+              }}
+              className="bg-card border-border p-6 cursor-pointer hover:bg-card/80 transition-colors rounded-[1.25rem]"
+            >
+              <span className="text-base text-foreground font-light">Not sure</span>
             </Card>
           </div>
         </div>
