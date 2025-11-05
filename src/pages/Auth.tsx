@@ -353,10 +353,14 @@ const Auth = () => {
             By continuing, you agree to Hara's{" "}
             <a href="/terms" className="text-primary hover:underline">
               Terms of Service
-            </a>{" "}
-            and{" "}
+            </a>
+            ,{" "}
             <a href="/privacy" className="text-primary hover:underline">
               Privacy Policy
+            </a>{" "}
+            and{" "}
+            <a href="/cookie" className="text-primary hover:underline">
+              Cookie Policy
             </a>
           </p>
         )}
