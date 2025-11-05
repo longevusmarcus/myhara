@@ -76,7 +76,10 @@ const Terms = () => {
           <section>
             <h2 className="text-xl font-medium text-foreground mb-3">7. Contact</h2>
             <p>
-              For questions about these Terms of Service, please contact us through the app's support channels.
+              For questions about these Terms of Service, please contact us at{" "}
+              <a href="mailto:hello@rocketminds.io" className="text-primary hover:underline">
+                hello@rocketminds.io
+              </a>
             </p>
           </section>
 

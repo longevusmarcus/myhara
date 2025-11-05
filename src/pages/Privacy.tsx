@@ -97,7 +97,10 @@ const Privacy = () => {
             <h2 className="text-xl font-medium text-foreground mb-3">8. Contact Us</h2>
             <p>
               If you have questions about this Privacy Policy or our data practices, please contact 
-              us through the app's support channels.
+              us at{" "}
+              <a href="mailto:hello@rocketminds.io" className="text-primary hover:underline">
+                hello@rocketminds.io
+              </a>
             </p>
           </section>
 
