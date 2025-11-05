@@ -28,7 +28,30 @@ export const getGamificationData = (): GamificationData => {
       achievements: [],
     };
   }
-  return JSON.parse(data);
+  
+  const parsedData = JSON.parse(data);
+  
+  // Calculate current active streak based on last check-in date
+  if (parsedData.lastCheckInDate) {
+    const lastDate = new Date(parsedData.lastCheckInDate);
+    const today = new Date();
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    
+    // If last check-in was today or yesterday, streak is still active
+    if (lastDate.toDateString() === today.toDateString() || 
+        lastDate.toDateString() === yesterday.toDateString()) {
+      return parsedData;
+    } else {
+      // Streak broken - reset to 0
+      return {
+        ...parsedData,
+        currentStreak: 0
+      };
+    }
+  }
+  
+  return parsedData;
 };
 
 const saveGamificationData = (data: GamificationData) => {
