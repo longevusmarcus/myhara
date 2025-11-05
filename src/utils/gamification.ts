@@ -31,24 +31,32 @@ export const getGamificationData = (): GamificationData => {
   
   const parsedData = JSON.parse(data);
   
-  // Calculate current active streak based on last check-in date
+  // Only check for expired streaks if user has a streak
   if (parsedData.lastCheckInDate && parsedData.currentStreak > 0) {
     const lastDate = new Date(parsedData.lastCheckInDate);
     const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    
+    // Reset normalized dates to midnight for accurate comparison
     lastDate.setHours(0, 0, 0, 0);
+    today.setHours(0, 0, 0, 0);
+    yesterday.setHours(0, 0, 0, 0);
     
-    const diffTime = today.getTime() - lastDate.getTime();
-    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    const lastDateStr = lastDate.toDateString();
+    const todayStr = today.toDateString();
+    const yesterdayStr = yesterday.toDateString();
     
-    // If last check-in was today (0 days ago) or yesterday (1 day ago), streak is active
-    // If 2+ days ago, streak is broken
-    if (diffDays >= 2) {
-      return {
-        ...parsedData,
-        currentStreak: 0
-      };
+    // Streak is still active if checked in today or yesterday
+    if (lastDateStr === todayStr || lastDateStr === yesterdayStr) {
+      return parsedData;
     }
+    
+    // Streak broken - reset to 0
+    return {
+      ...parsedData,
+      currentStreak: 0
+    };
   }
   
   return parsedData;
