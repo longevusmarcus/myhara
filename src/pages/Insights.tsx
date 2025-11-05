@@ -397,18 +397,35 @@ const Insights = () => {
         </Card>
 
         {/* Patterns */}
-        {entries.length >= 3 && (
-          <div className="space-y-4">
-            <h2 className="text-lg font-light text-foreground">Your Patterns</h2>
-            
-            {loadingPatterns && !patterns && (
-              <Card className="bg-card border-border p-8 rounded-[1.25rem]">
-                <div className="flex flex-col items-center gap-4 text-muted-foreground">
-                  <Loader2 className="w-8 h-8 animate-spin text-primary" />
-                  <p className="text-sm font-light">Discovering your intuition patterns...</p>
+        <div className="space-y-4">
+          <h2 className="text-lg font-light text-foreground">Your Patterns</h2>
+          
+          {entries.length < 3 ? (
+            <Card className="bg-card border-border p-6 rounded-[1.25rem]">
+              <div className="text-center py-8 space-y-3">
+                <div className="w-12 h-12 rounded-full border-2 border-border/50 flex items-center justify-center mx-auto">
+                  <Sparkles className="w-6 h-6 text-muted-foreground" strokeWidth={1.5} />
                 </div>
-              </Card>
-            )}
+                <p className="text-base text-muted-foreground font-light">
+                  Check in at least 3 times to discover your patterns
+                </p>
+                <p className="text-sm text-muted-foreground/70 font-light">
+                  {entries.length > 0 
+                    ? `${entries.length} of 3 check-ins completed` 
+                    : "Start your journey to unlock personalized insights"}
+                </p>
+              </div>
+            </Card>
+          ) : (
+            <>
+              {loadingPatterns && !patterns && (
+                <Card className="bg-card border-border p-8 rounded-[1.25rem]">
+                  <div className="flex flex-col items-center gap-4 text-muted-foreground">
+                    <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                    <p className="text-sm font-light">Discovering your intuition patterns...</p>
+                  </div>
+                </Card>
+              )}
             
             {patterns && patterns !== "ERROR: Could not parse patterns" && patterns !== "ERROR: Failed to load patterns" && (() => {
               try {
@@ -510,8 +527,9 @@ const Insights = () => {
                 </div>
               </Card>
             )}
-          </div>
-        )}
+          </>
+          )}
+        </div>
 
         {/* Weekly Summary */}
         <div className="space-y-3">
