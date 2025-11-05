@@ -1,6 +1,6 @@
 import BottomNav from "@/components/BottomNav";
 import { Card } from "@/components/ui/card";
-import { TrendingUp, Compass, Heart, Loader2, Waves, Moon, Wind, Leaf, Plus, Circle } from "lucide-react";
+import { TrendingUp, Compass, Heart, Loader2, Waves, Moon, Wind, Leaf, Plus, Circle, Sun } from "lucide-react";
 import { useState, useEffect } from "react";
 import { getGamificationData } from "@/utils/gamification";
 import { supabase } from "@/integrations/supabase/client";
@@ -557,10 +557,10 @@ const Insights = () => {
               </div>
               <div className="flex items-center gap-4">
                 <div className="w-10 h-10 rounded-full border-2 border-border/50 flex items-center justify-center flex-shrink-0">
-                  <Compass className="w-5 h-5 text-muted-foreground" strokeWidth={1} />
+                  <Sun className="w-5 h-5 text-muted-foreground" strokeWidth={1} />
                 </div>
                 <div className="flex-1 flex items-center justify-between">
-                  <p className="text-base font-light text-foreground">Decisions made</p>
+                  <p className="text-base font-light text-foreground">Positive outcomes</p>
                   <p className="text-xl font-light text-foreground">{weekStats.decisions}</p>
                 </div>
               </div>
