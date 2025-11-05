@@ -139,6 +139,19 @@ export const addCheckIn = (xp: number): GamificationData => {
   return data;
 };
 
+export const adjustXP = (xpChange: number): GamificationData => {
+  const data = getGamificationData();
+  
+  // Update XP (can be positive or negative)
+  data.totalXP = Math.max(0, data.totalXP + xpChange); // Never go below 0
+  
+  // Check for new achievements
+  checkAchievements(data);
+  
+  saveGamificationData(data);
+  return data;
+};
+
 const checkAchievements = (data: GamificationData) => {
   // Get entries to check gut-following stats
   const entries = JSON.parse(localStorage.getItem("gutEntries") || "[]");

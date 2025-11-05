@@ -218,6 +218,7 @@ const GutMap = () => {
   };
 
   const updateConsequence = async (index: number) => {
+    const entry = entries[index];
     const updatedEntries = [...entries];
     updatedEntries[index] = {
       ...updatedEntries[index],
@@ -227,15 +228,44 @@ const GutMap = () => {
     localStorage.setItem("gutEntries", JSON.stringify(updatedEntries));
     setEntries(updatedEntries);
     setSelectedEntry(null);
+    
+    // Analyze outcome and adjust XP if needed
+    const ignoredGut = entry.willIgnore === "yes";
+    const consequenceLower = consequence.toLowerCase();
+    
+    // Keywords indicating bad outcomes
+    const badOutcomeKeywords = [
+      'regret', 'wrong', 'mistake', 'bad', 'worse', 'failed', 'should have',
+      'wish i', 'disappointed', 'upset', 'stressed', 'anxious', 'uncomfortable',
+      'wasn\'t right', 'didn\'t work', 'backfired', 'poor choice', 'went wrong'
+    ];
+    
+    const isBadOutcome = badOutcomeKeywords.some(keyword => 
+      consequenceLower.includes(keyword)
+    );
+    
+    let xpChange = 0;
+    let feedbackMsg = "Outcome logged";
+    
+    if (ignoredGut && isBadOutcome) {
+      // Deduct 5 XP for ignoring gut and having a bad outcome
+      xpChange = -5;
+      feedbackMsg = "Lesson learned: -5 XP";
+      const { adjustXP } = await import("@/utils/gamification");
+      adjustXP(xpChange);
+    } else {
+      // Just trigger achievement check without XP change
+      const { addCheckIn } = await import("@/utils/gamification");
+      addCheckIn(0);
+    }
+    
     setConsequence("");
     
-    // Update gamification for consequence tracking
-    const { addCheckIn } = await import("@/utils/gamification");
-    addCheckIn(0); // Trigger achievement check without adding XP
-    
     toast({
-      title: "Outcome logged",
-      description: "Your pattern is learning from this",
+      title: feedbackMsg,
+      description: xpChange < 0 
+        ? "Your gut was trying to protect you" 
+        : "Your pattern is learning from this",
     });
   };
 
