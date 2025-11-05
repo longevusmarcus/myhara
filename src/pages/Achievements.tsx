@@ -30,6 +30,15 @@ const Achievements = () => {
       progress: gamData.totalCheckins
     },
     {
+      id: "gut_honor",
+      name: "Gut Honor",
+      description: "Honor your gut feeling for the first time",
+      xp: 25,
+      icon: Heart,
+      condition: { type: "honored", value: 1 },
+      progress: honoredCount
+    },
+    {
       id: "streak_3",
       name: "Consistent Listener",
       description: "Maintain a 3-day check-in streak",
@@ -55,15 +64,6 @@ const Achievements = () => {
       icon: Star,
       condition: { type: "consequences", value: 5 },
       progress: consequencesLogged
-    },
-    {
-      id: "gut_honor",
-      name: "Gut Honor",
-      description: "Honor your gut feeling for the first time",
-      xp: 25,
-      icon: Heart,
-      condition: { type: "honored", value: 1 },
-      progress: honoredCount
     },
     {
       id: "trust_builder",
