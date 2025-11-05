@@ -15,6 +15,7 @@ const Home = () => {
   const [gamData, setGamData] = useState(getGamificationData());
   const [userName, setUserName] = useState("there");
   const [loadingMissions, setLoadingMissions] = useState(false);
+  const [loadingInsights, setLoadingInsights] = useState(false);
   const [dailyFocus, setDailyFocus] = useState("return to your center — where gut-driven decisions are born");
   const [loadingFocus, setLoadingFocus] = useState(false);
 
@@ -46,9 +47,8 @@ const Home = () => {
     const loadData = async () => {
       await fetchProfile();
       
-      // Generate insights
-      const generatedInsights = generateInsights(storedEntries);
-      setInsights(generatedInsights);
+      // Load AI-powered insights
+      await loadInsights(storedEntries);
 
       // Load or generate missions
       await loadMissions(storedEntries);
@@ -238,39 +238,82 @@ const Home = () => {
     }
   };
 
-  const generateInsights = (entries: any[]) => {
-    if (entries.length === 0) {
-      return ["Start checking in to see personalized insights"];
+  const loadInsights = async (allEntries: any[]) => {
+    // Check for cached insights from today
+    const cachedInsights = localStorage.getItem("cachedInsights");
+    const cachedInsightsDate = localStorage.getItem("cachedInsightsDate");
+    const today = new Date().toDateString();
+
+    if (cachedInsights && cachedInsightsDate === today) {
+      setInsights(JSON.parse(cachedInsights));
+      return;
     }
 
-    const insights = [];
-    const recentEntries = entries.slice(-7);
-    
-    // Insight about check-in frequency
-    if (recentEntries.length >= 5) {
-      insights.push(`You've checked in ${recentEntries.length} times this week`);
+    // If less than 3 entries, use default insights
+    if (allEntries.length < 3) {
+      const defaultInsights = ["Start checking in to see personalized insights"];
+      setInsights(defaultInsights);
+      return;
     }
 
-    // Insight about honoring gut
-    const honored = recentEntries.filter(e => e.willIgnore === "no").length;
-    if (honored > recentEntries.length / 2) {
-      insights.push("You're honoring your gut more often lately");
-    } else if (honored < recentEntries.length / 3) {
-      insights.push("Try honoring your gut feelings more this week");
-    }
+    // Generate AI-powered insights
+    setLoadingInsights(true);
+    try {
+      const currentUserName = sessionStorage.getItem("currentUserName") || userName || "the user";
+      
+      // Get last 15 entries for more context
+      const entriesSummary = allEntries.slice(-15).map((e: any) => ({
+        timestamp: e.timestamp,
+        mode: e.mode,
+        context: e.context,
+        label: e.label || e.gutFeeling,
+        bodySensation: e.bodySensation,
+        honored: e.willIgnore === "no",
+        decision: e.decision,
+        consequence: e.consequence,
+        description: e.description
+      }));
 
-    // Insight about body sensations
-    const sensations = recentEntries.map(e => e.bodySensation).filter(Boolean);
-    if (sensations.length > 0) {
-      const mostCommon = sensations.sort((a, b) =>
-        sensations.filter(v => v === a).length - sensations.filter(v => v === b).length
-      ).pop();
-      if (mostCommon) {
-        insights.push(`"${mostCommon}" is your most common signal`);
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/gut-coach`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          },
+          body: JSON.stringify({
+            messages: [
+              {
+                role: "user",
+                content: `Generate 3 practical, actionable insights for ${currentUserName} based on their check-in data:\n\n${JSON.stringify(entriesSummary, null, 2)}`
+              }
+            ],
+            type: "insights_generation",
+            userName: currentUserName
+          }),
+        }
+      );
+
+      if (!response.ok) throw new Error("Failed to generate insights");
+
+      const data = await response.json();
+      
+      if (data.insights && Array.isArray(data.insights)) {
+        setInsights(data.insights);
+        
+        // Cache insights for today
+        localStorage.setItem("cachedInsights", JSON.stringify(data.insights));
+        localStorage.setItem("cachedInsightsDate", today);
       }
+    } catch (error) {
+      console.error("Insights generation error:", error);
+      // Fall back to simple insights
+      const fallbackInsights = ["Continue checking in to track your patterns"];
+      setInsights(fallbackInsights);
+    } finally {
+      setLoadingInsights(false);
     }
-
-    return insights.slice(0, 3);
   };
 
   return (
@@ -436,13 +479,20 @@ const Home = () => {
         <h2 className="text-xs uppercase tracking-wider text-muted-foreground mb-3 font-light">
           recent insights
         </h2>
-        <div className="space-y-2">
-          {insights.map((insight, idx) => (
-            <Card key={idx} className="bg-card border-border p-4 rounded-[1.25rem]">
-              <p className="text-sm text-foreground font-light">{insight}</p>
-            </Card>
-          ))}
-        </div>
+        {loadingInsights ? (
+          <Card className="bg-card border-border p-8 rounded-[1.25rem] flex flex-col items-center justify-center gap-3">
+            <Loader2 className="w-6 h-6 animate-spin text-secondary" />
+            <p className="text-sm text-muted-foreground">Generating insights...</p>
+          </Card>
+        ) : (
+          <div className="space-y-2">
+            {insights.map((insight, idx) => (
+              <Card key={idx} className="bg-card border-border p-4 rounded-[1.25rem]">
+                <p className="text-sm text-foreground font-light">{insight}</p>
+              </Card>
+            ))}
+          </div>
+        )}
       </div>
 
       <BottomNav />

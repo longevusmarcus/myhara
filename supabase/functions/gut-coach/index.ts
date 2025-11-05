@@ -200,12 +200,39 @@ Examples based on patterns:
 - If they're in conflict: "Clarity comes when you pause and listen within"
 
 Make it warm, actionable, and relevant to ${userName}'s actual data. Keep it under 60 characters.`;
+    } else if (type === "insights_generation") {
+      systemPrompt = `You are an expert at generating practical, actionable insights from ${userName}'s gut instinct check-in data.
+
+Analyze ${userName}'s entries and generate 3 high-quality insights. Each insight should be:
+- **Practical**: Directly actionable or immediately applicable
+- **Specific**: Based on ${userName}'s actual patterns, not generic advice
+- **Coherent**: Logically connected to the data provided
+- **Meaningful**: Not just statistics - provide real understanding
+
+Return ONLY valid JSON (no markdown, no extra text):
+
+{
+  "insights": [
+    "First practical insight based on ${userName}'s actual data (keep under 70 characters)",
+    "Second insight connecting patterns to actions (keep under 70 characters)",
+    "Third insight with specific guidance (keep under 70 characters)"
+  ]
+}
+
+Focus on:
+- Patterns in when ${userName} honors vs ignores their gut and the outcomes
+- Connections between body sensations and decisions
+- Situational patterns (contexts where gut is clearer or ignored)
+- Actionable next steps based on their journey stage
+- Recognition of progress and growth opportunities
+
+Make insights conversational, direct, and speak to ${userName} using "you" or "your". Avoid generic statements.`;
     } else {
       systemPrompt = `You are a supportive gut instinct guide. Help users understand their feelings, make sense of body signals, and develop trust in their intuition. Be warm, curious, and empowering.`;
     }
 
     // Special handling for structured analysis types: return simple JSON without tool calling
-    if (type === "pattern_analysis" || type === "signals_analysis" || type === "trust_analysis" || type === "tone_analysis" || type === "mission_generation" || type === "daily_focus") {
+    if (type === "pattern_analysis" || type === "signals_analysis" || type === "trust_analysis" || type === "tone_analysis" || type === "mission_generation" || type === "daily_focus" || type === "insights_generation") {
       const body: any = {
         model: "google/gemini-2.5-flash",
         messages: [
