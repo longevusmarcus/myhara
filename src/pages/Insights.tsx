@@ -539,7 +539,7 @@ const Insights = () => {
             <div className="space-y-4">
               <div className="flex items-center gap-4">
                 <div className="w-10 h-10 rounded-full border-2 border-border/50 flex items-center justify-center flex-shrink-0">
-                  <Circle className="w-5 h-5 text-muted-foreground" strokeWidth={1} />
+                  <Plus className="w-5 h-5 text-muted-foreground" strokeWidth={1} />
                 </div>
                 <div className="flex-1 flex items-center justify-between">
                   <p className="text-base font-light text-foreground">Check-ins</p>
