@@ -1,6 +1,6 @@
 import BottomNav from "@/components/BottomNav";
 import { Card } from "@/components/ui/card";
-import { TrendingUp, Compass, Heart, Loader2, Waves, Activity, Moon, Wind, Leaf, Sparkles, Target } from "lucide-react";
+import { TrendingUp, Compass, Heart, Loader2, Waves, Moon, Wind, Leaf, Plus, Circle } from "lucide-react";
 import { useState, useEffect } from "react";
 import { getGamificationData } from "@/utils/gamification";
 import { supabase } from "@/integrations/supabase/client";
@@ -403,8 +403,8 @@ const Insights = () => {
           {entries.length < 3 ? (
             <Card className="bg-card border-border p-6 rounded-[1.25rem]">
               <div className="text-center py-8 space-y-3">
-                <div className="w-12 h-12 rounded-full border-2 border-border/50 flex items-center justify-center mx-auto">
-                  <Target className="w-6 h-6 text-muted-foreground" strokeWidth={1.5} />
+                <div className="w-12 h-12 rounded-full border border-border/50 flex items-center justify-center mx-auto">
+                  <Plus className="w-5 h-5 text-muted-foreground" strokeWidth={1.5} />
                 </div>
                 <p className="text-base text-muted-foreground font-light">
                   Check in at least 3 times to discover your patterns
@@ -539,7 +539,7 @@ const Insights = () => {
             <div className="space-y-4">
               <div className="flex items-center gap-4">
                 <div className="w-10 h-10 rounded-full border-2 border-border/50 flex items-center justify-center flex-shrink-0">
-                  <Sparkles className="w-5 h-5 text-muted-foreground" strokeWidth={1} />
+                  <Circle className="w-5 h-5 text-muted-foreground" strokeWidth={1} />
                 </div>
                 <div className="flex-1 flex items-center justify-between">
                   <p className="text-base font-light text-foreground">Check-ins</p>
@@ -557,7 +557,7 @@ const Insights = () => {
               </div>
               <div className="flex items-center gap-4">
                 <div className="w-10 h-10 rounded-full border-2 border-border/50 flex items-center justify-center flex-shrink-0">
-                  <Target className="w-5 h-5 text-muted-foreground" strokeWidth={1} />
+                  <Compass className="w-5 h-5 text-muted-foreground" strokeWidth={1} />
                 </div>
                 <div className="flex-1 flex items-center justify-between">
                   <p className="text-base font-light text-foreground">Decisions made</p>
