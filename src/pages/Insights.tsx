@@ -404,7 +404,7 @@ const Insights = () => {
             <Card className="bg-card border-border p-6 rounded-[1.25rem]">
               <div className="text-center py-8 space-y-3">
                 <div className="w-12 h-12 rounded-full border-2 border-border/50 flex items-center justify-center mx-auto">
-                  <Sparkles className="w-6 h-6 text-muted-foreground" strokeWidth={1.5} />
+                  <Target className="w-6 h-6 text-muted-foreground" strokeWidth={1.5} />
                 </div>
                 <p className="text-base text-muted-foreground font-light">
                   Check in at least 3 times to discover your patterns
@@ -453,7 +453,7 @@ const Insights = () => {
                   const patternData = JSON.parse(jsonStr);
                   
                   if (Array.isArray(patternData) && patternData.length > 0) {
-                    const icons = [Compass, Waves, Activity, Moon, Wind, Leaf];
+                    const icons = [Compass, Waves, Moon, Wind, Leaf, Heart];
                     const colors = ["primary", "accent", "primary", "accent", "primary", "accent"];
                     
                     return (
