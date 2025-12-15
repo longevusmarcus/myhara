@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Smartphone } from "lucide-react";
 import VoiceBubbleLogo from "./VoiceBubbleLogo";
+import haraQr from "@/assets/hara-qr.png";
 
 const MobileOnly = ({ children }: { children: React.ReactNode }) => {
   const [isMobile, setIsMobile] = useState(true);
@@ -44,9 +45,17 @@ const MobileOnly = ({ children }: { children: React.ReactNode }) => {
               Mobile experience only
             </p>
             
-            <p className="text-sm text-muted-foreground font-light leading-relaxed">
-              Hara is designed for your mobile device. Please visit this app on your smartphone for the best mindful experience.
+            <p className="text-sm text-muted-foreground font-light leading-relaxed mb-6">
+              Hara is designed for your mobile device. Scan the QR code below to open on your phone.
             </p>
+            
+            <div className="flex justify-center">
+              <img 
+                src={haraQr} 
+                alt="Scan to open Hara on mobile" 
+                className="w-32 h-32 rounded-lg"
+              />
+            </div>
           </div>
         </div>
       </div>
