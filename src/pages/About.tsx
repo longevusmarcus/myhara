@@ -43,7 +43,7 @@ const ManifestoText = () => {
       highlights: ["inner wisdom", "what's right"],
     },
     {
-      text: "Hara isn't just an app—it's your journey back to trusting yourself.",
+      text: "Hara isn't just an app, it's your journey back to trusting yourself.",
       highlights: ["trusting yourself"],
       hasCircle: "trusting yourself",
     },
@@ -61,7 +61,7 @@ const ManifestoText = () => {
     const words = para.text.split(" ");
     words.forEach((word) => {
       const isHighlight = para.highlights.some(
-        (h) => para.text.indexOf(h) !== -1 && h.split(" ").includes(word.replace(/[.,!?—]/g, ""))
+        (h) => para.text.indexOf(h) !== -1 && h.split(" ").includes(word.replace(/[.,!?—]/g, "")),
       );
       const hasCircle = para.hasCircle && para.hasCircle.split(" ").includes(word.replace(/[.,!?—]/g, ""));
       allElements.push({
@@ -80,10 +80,7 @@ const ManifestoText = () => {
   let wordIndex = 0;
 
   return (
-    <div
-      ref={ref}
-      className="text-2xl md:text-3xl lg:text-4xl font-light leading-relaxed text-center space-y-8"
-    >
+    <div ref={ref} className="text-2xl md:text-3xl lg:text-4xl font-light leading-relaxed text-center space-y-8">
       {paragraphs.map((para, pIndex) => {
         const words = para.text.split(" ");
         const startIdx = wordIndex;
@@ -141,7 +138,7 @@ const ManifestoWord = ({
       ? ["hsl(45 50% 40%)", "hsl(45 80% 65%)"]
       : isHighlight
         ? ["hsl(0 0% 50%)", "hsl(237 45% 70%)"]
-        : ["hsl(0 0% 50%)", "hsl(35 25% 90%)"]
+        : ["hsl(0 0% 50%)", "hsl(35 25% 90%)"],
   );
 
   return (
@@ -180,24 +177,21 @@ const About = () => {
       icon: Heart,
       title: "Outcome Tracking",
       subtitle: "Learn from results",
-      description:
-        "Log what happened after you followed (or ignored) your gut. Build evidence for your inner wisdom.",
+      description: "Log what happened after you followed (or ignored) your gut. Build evidence for your inner wisdom.",
       gradient: "from-accent/20 to-accent/10",
     },
     {
       icon: LineChart,
       title: "Pattern Insights",
       subtitle: "Discover your wisdom",
-      description:
-        "AI-powered analysis reveals when your gut is most accurate and what triggers your best decisions.",
+      description: "AI-powered analysis reveals when your gut is most accurate and what triggers your best decisions.",
       gradient: "from-secondary/20 to-secondary/10",
     },
     {
       icon: Sparkles,
       title: "AI Coach",
       subtitle: "Personalized guidance",
-      description:
-        "Get thoughtful reflections and actionable insights from your personal gut-instinct coach.",
+      description: "Get thoughtful reflections and actionable insights from your personal gut-instinct coach.",
       gradient: "from-success/20 to-success/10",
     },
   ];
@@ -282,7 +276,10 @@ const About = () => {
       <nav className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-5xl">
         <div className="bg-card/40 backdrop-blur-xl border border-border/50 rounded-full px-6 py-3 flex items-center justify-between shadow-lg shadow-background/20">
           <div className="flex items-center gap-8">
-            <Link to="/auth" className="text-xl font-light tracking-wide bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+            <Link
+              to="/auth"
+              className="text-xl font-light tracking-wide bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent"
+            >
               Hara
             </Link>
             <div className="hidden md:flex items-center gap-6 text-sm text-muted-foreground">
@@ -356,9 +353,7 @@ const About = () => {
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between gap-1 md:gap-2 mb-0 md:mb-0.5 lg:mb-1">
-                      <span className="text-[9px] md:text-xs lg:text-sm font-medium text-foreground">
-                        {card.title}
-                      </span>
+                      <span className="text-[9px] md:text-xs lg:text-sm font-medium text-foreground">{card.title}</span>
                       <span className="text-[7px] md:text-[10px] lg:text-xs text-muted-foreground shrink-0 hidden md:inline">
                         {card.time}
                       </span>
@@ -463,7 +458,8 @@ const About = () => {
                 <span className="italic font-light text-4xl md:text-6xl text-accent">intuition OS</span>
               </h2>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                A complete system for understanding, tracking, and trusting your gut instincts—backed by AI and your own evidence.
+                A complete system for understanding, tracking, and trusting your gut instincts—backed by AI and your own
+                evidence.
               </p>
             </div>
 
@@ -575,11 +571,7 @@ const About = () => {
               transition={{ duration: 0.8, delay: 0.2 }}
               className="mt-16 flex justify-center"
             >
-              <img 
-                src={haraMascot} 
-                alt="Hara mascot" 
-                className="w-48 h-48 md:w-64 md:h-64 object-contain opacity-80" 
-              />
+              <img src={haraMascot} alt="Hara mascot" className="w-48 h-48 md:w-64 md:h-64 object-contain opacity-80" />
             </motion.div>
           </motion.div>
         </div>
@@ -813,9 +805,12 @@ const About = () => {
         <div className="max-w-6xl mx-auto">
           <div className="grid md:grid-cols-4 gap-10 mb-12">
             <div className="md:col-span-2">
-              <div className="text-2xl font-light tracking-wide bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent mb-4">Hara</div>
+              <div className="text-2xl font-light tracking-wide bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent mb-4">
+                Hara
+              </div>
               <p className="text-sm text-muted-foreground leading-relaxed max-w-sm mb-6">
-                Learn to trust your gut and make decisions that feel right. Track your intuition, discover patterns, and build unshakeable confidence in yourself.
+                Learn to trust your gut and make decisions that feel right. Track your intuition, discover patterns, and
+                build unshakeable confidence in yourself.
               </p>
               <Button asChild variant="outline" size="sm" className="rounded-full">
                 <Link to="/auth">
