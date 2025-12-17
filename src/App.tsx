@@ -68,40 +68,47 @@ const App = () => {
       <TooltipProvider>
         <Toaster />
         <Sonner />
-        <MobileOnly>
-          <BrowserRouter>
+        <BrowserRouter>
           <ScrollToTop />
-          {loading ? (
-            <div className="min-h-screen bg-background flex items-center justify-center">
-              <p className="text-muted-foreground font-light">Loading...</p>
-            </div>
-          ) : !session ? (
-            <Routes>
-              <Route path="/auth" element={<Auth />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/terms" element={<Terms />} />
-              <Route path="/privacy" element={<Privacy />} />
-              <Route path="/cookie" element={<Cookie />} />
-              <Route path="*" element={<Auth />} />
-            </Routes>
-          ) : !hasCompletedOnboarding ? (
-            <Onboarding onComplete={handleOnboardingComplete} />
-          ) : (
-            <Routes>
-              <Route path="/" element={<Navigate to="/home" replace />} />
-              <Route path="/home" element={<Home />} />
-              <Route path="/check-in" element={<CheckIn />} />
-              <Route path="/insights" element={<Insights />} />
-              <Route path="/map" element={<GutMap />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/settings" element={<Settings />} />
-              <Route path="/help" element={<Help />} />
-              <Route path="/achievements" element={<Achievements />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          )}
+          <Routes>
+            {/* About page - accessible on all devices */}
+            <Route path="/about" element={<About />} />
+            
+            {/* All other routes wrapped in MobileOnly */}
+            <Route path="/*" element={
+              <MobileOnly>
+                {loading ? (
+                  <div className="min-h-screen bg-background flex items-center justify-center">
+                    <p className="text-muted-foreground font-light">Loading...</p>
+                  </div>
+                ) : !session ? (
+                  <Routes>
+                    <Route path="/auth" element={<Auth />} />
+                    <Route path="/terms" element={<Terms />} />
+                    <Route path="/privacy" element={<Privacy />} />
+                    <Route path="/cookie" element={<Cookie />} />
+                    <Route path="*" element={<Auth />} />
+                  </Routes>
+                ) : !hasCompletedOnboarding ? (
+                  <Onboarding onComplete={handleOnboardingComplete} />
+                ) : (
+                  <Routes>
+                    <Route path="/" element={<Navigate to="/home" replace />} />
+                    <Route path="/home" element={<Home />} />
+                    <Route path="/check-in" element={<CheckIn />} />
+                    <Route path="/insights" element={<Insights />} />
+                    <Route path="/map" element={<GutMap />} />
+                    <Route path="/profile" element={<Profile />} />
+                    <Route path="/settings" element={<Settings />} />
+                    <Route path="/help" element={<Help />} />
+                    <Route path="/achievements" element={<Achievements />} />
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                )}
+              </MobileOnly>
+            } />
+          </Routes>
         </BrowserRouter>
-        </MobileOnly>
       </TooltipProvider>
     </QueryClientProvider>
   );
