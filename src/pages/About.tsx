@@ -458,8 +458,8 @@ const About = () => {
                 <span className="italic font-light text-4xl md:text-6xl text-accent">intuition OS</span>
               </h2>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                A complete system for understanding, tracking, and trusting your gut instincts—backed by AI and your own
-                evidence.
+                A complete system for understanding, tracking, and trusting your gut instincts, backed by AI and your
+                own evidence.
               </p>
             </div>
 
