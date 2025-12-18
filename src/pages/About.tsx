@@ -399,10 +399,10 @@ const About = () => {
             transition={{ delay: 0.1, duration: 0.6 }}
             className="text-3xl md:text-6xl lg:text-7xl text-foreground mb-6 md:mb-8 leading-tight"
           >
-            <span className="font-light block md:inline">Learn to Trust</span>
+            <span className="font-light block md:inline">Build trust in your gut</span>
             <br className="hidden md:block" />
-            <span className="italic font-light text-4xl md:text-7xl lg:text-8xl block md:inline text-accent">
-              Your Gut
+            <span className="font-cormorant italic font-light text-4xl md:text-7xl lg:text-8xl block md:inline">
+              to make faster, better decisions.
             </span>
           </motion.h1>
 
