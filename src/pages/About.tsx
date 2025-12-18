@@ -816,7 +816,7 @@ const About = () => {
               {
                 quote:
                   "The pattern insights changed how I run my company. I discovered my intuition peaks in the morning—so I make all critical decisions before noon. Game changer.",
-                name: "Sarah Okonkwo",
+                name: "Halina S",
                 role: "Founder, Seed HealthTech",
                 image: testimonial2,
               },
