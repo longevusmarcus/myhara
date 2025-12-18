@@ -87,7 +87,7 @@ const ManifestoText = () => {
   let wordIndex = 0;
 
   return (
-    <div ref={ref} className="text-2xl md:text-3xl lg:text-4xl font-light leading-relaxed text-center space-y-8">
+    <div ref={ref} className="text-2xl md:text-3xl lg:text-4xl font-cormorant italic font-light leading-relaxed text-center space-y-8">
       {paragraphs.map((para, pIndex) => {
         const words = para.text.split(" ");
         const startIdx = wordIndex;
@@ -595,13 +595,13 @@ const About = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8, delay: 0.2 }}
-              className="mt-16 flex justify-center items-end gap-4 md:gap-8"
+              className="mt-16 flex flex-col md:flex-row justify-center items-center md:items-end gap-6 md:gap-8"
             >
               <motion.div
-                initial={{ rotate: -6 }}
+                initial={{ rotate: 0 }}
                 whileHover={{ rotate: 0, scale: 1.05 }}
                 transition={{ type: "spring", stiffness: 300 }}
-                className="relative w-24 md:w-40 lg:w-48 -mb-4"
+                className="relative w-48 md:w-40 lg:w-48 md:-mb-4"
               >
                 <img
                   src={showcaseIntrusive}
@@ -613,7 +613,7 @@ const About = () => {
                 initial={{ y: 0 }}
                 whileHover={{ y: -10, scale: 1.02 }}
                 transition={{ type: "spring", stiffness: 300 }}
-                className="relative w-32 md:w-52 lg:w-64 z-10"
+                className="relative w-56 md:w-52 lg:w-64 z-10"
               >
                 <img
                   src={showcaseHome}
@@ -622,10 +622,10 @@ const About = () => {
                 />
               </motion.div>
               <motion.div
-                initial={{ rotate: 6 }}
+                initial={{ rotate: 0 }}
                 whileHover={{ rotate: 0, scale: 1.05 }}
                 transition={{ type: "spring", stiffness: 300 }}
-                className="relative w-24 md:w-40 lg:w-48 -mb-4"
+                className="relative w-48 md:w-40 lg:w-48 md:-mb-4"
               >
                 <img
                   src={showcaseScience}
