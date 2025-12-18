@@ -75,6 +75,9 @@ const App = () => {
             {/* About page - accessible on all devices */}
             <Route path="/about" element={<About />} />
             
+            {/* Root redirects to about on all devices */}
+            <Route path="/" element={<Navigate to="/about" replace />} />
+            
             {/* All other routes wrapped in MobileOnly */}
             <Route path="/*" element={
               <MobileOnly>
