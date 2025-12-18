@@ -723,21 +723,21 @@ const About = () => {
             {[
               {
                 quote:
-                  "I always second-guessed myself. Hara helped me see that my gut was right 80% of the time on career decisions. Now I trust myself.",
-                initials: "A.M.",
-                role: "Product Designer",
+                  "As a founder, I used to overthink every decision until I was paralyzed. Hara showed me my gut was right 85% of the time on hiring. Now I move fast and trust myself.",
+                name: "Marcus Chen",
+                role: "Founder & CEO, Stealth Startup",
               },
               {
                 quote:
-                  "The pattern insights blew my mind. I discovered my intuition is strongest in the morning and weakest when I'm stressed.",
-                initials: "J.K.",
-                role: "Entrepreneur",
+                  "The pattern insights changed how I run my company. I discovered my intuition peaks in the morning—so I make all critical decisions before noon. Game changer.",
+                name: "Sarah Okonkwo",
+                role: "Founder, Series A Fintech",
               },
               {
                 quote:
-                  "Voice check-ins made it so easy to capture those fleeting gut feelings. I've built real evidence for my inner wisdom.",
-                initials: "S.L.",
-                role: "Therapist",
+                  "I recommend Hara to my patients dealing with decision anxiety. The data-driven approach helps them build evidence for their intuition instead of dismissing it.",
+                name: "Dr. James Wright",
+                role: "Clinical Psychologist",
               },
             ].map((testimonial, index) => (
               <motion.div
@@ -756,10 +756,10 @@ const About = () => {
                 <p className="text-foreground/90 mb-8 flex-grow leading-relaxed">"{testimonial.quote}"</p>
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 rounded-full bg-primary/20 border border-border/50 flex items-center justify-center">
-                    <span className="text-sm font-medium text-primary">{testimonial.initials}</span>
+                    <span className="text-sm font-medium text-primary">{testimonial.name.split(' ').map(n => n[0]).join('')}</span>
                   </div>
                   <div>
-                    <p className="font-medium text-foreground">{testimonial.initials}</p>
+                    <p className="font-medium text-foreground">{testimonial.name}</p>
                     <p className="text-sm text-muted-foreground">{testimonial.role}</p>
                   </div>
                 </div>
