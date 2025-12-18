@@ -19,6 +19,13 @@ import {
 import { Button } from "@/components/ui/button";
 import { useRef } from "react";
 import haraMascot from "@/assets/hara-mascot.png";
+import screenshotHome from "@/assets/screenshot-home.png";
+import screenshotTimeline from "@/assets/screenshot-timeline.png";
+import screenshotInsights from "@/assets/screenshot-insights.png";
+import screenshotCoach from "@/assets/screenshot-coach.png";
+import showcaseIntrusive from "@/assets/showcase-intrusive.png";
+import showcaseHome from "@/assets/showcase-home.png";
+import showcaseScience from "@/assets/showcase-science.png";
 
 // Component for manifesto text that highlights as one whole unit on scroll
 const ManifestoText = () => {
@@ -463,6 +470,37 @@ const About = () => {
               </p>
             </div>
 
+            {/* Feature Screenshots Grid */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-16">
+              {[
+                { img: screenshotHome, label: "Voice Check-ins" },
+                { img: screenshotTimeline, label: "Outcome Tracking" },
+                { img: screenshotInsights, label: "Pattern Insights" },
+                { img: screenshotCoach, label: "AI Coach" },
+              ].map((item, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.1, duration: 0.6 }}
+                  className="relative group"
+                >
+                  <div className="relative rounded-2xl overflow-hidden border border-border/40 bg-card/50 shadow-lg">
+                    <img
+                      src={item.img}
+                      alt={item.label}
+                      className="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent" />
+                    <div className="absolute bottom-3 left-3 right-3">
+                      <span className="text-xs md:text-sm font-medium text-foreground">{item.label}</span>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
               {features.map((feature, index) => (
                 <motion.div
@@ -563,15 +601,50 @@ const About = () => {
               ))}
             </div>
 
-            {/* Mascot */}
+            {/* Showcase Images */}
             <motion.div
               initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8, delay: 0.2 }}
-              className="mt-16 flex justify-center"
+              className="mt-16 flex justify-center items-end gap-4 md:gap-8"
             >
-              <img src={haraMascot} alt="Hara mascot" className="w-48 h-48 md:w-64 md:h-64 object-contain opacity-80" />
+              <motion.div
+                initial={{ rotate: -6 }}
+                whileHover={{ rotate: 0, scale: 1.05 }}
+                transition={{ type: "spring", stiffness: 300 }}
+                className="relative w-24 md:w-40 lg:w-48 -mb-4"
+              >
+                <img
+                  src={showcaseIntrusive}
+                  alt="Intrusive thoughts vs gut feelings"
+                  className="w-full h-auto rounded-xl md:rounded-2xl shadow-xl border border-border/40"
+                />
+              </motion.div>
+              <motion.div
+                initial={{ y: 0 }}
+                whileHover={{ y: -10, scale: 1.02 }}
+                transition={{ type: "spring", stiffness: 300 }}
+                className="relative w-32 md:w-52 lg:w-64 z-10"
+              >
+                <img
+                  src={showcaseHome}
+                  alt="Hara home screen"
+                  className="w-full h-auto rounded-xl md:rounded-2xl shadow-2xl border border-border/40"
+                />
+              </motion.div>
+              <motion.div
+                initial={{ rotate: 6 }}
+                whileHover={{ rotate: 0, scale: 1.05 }}
+                transition={{ type: "spring", stiffness: 300 }}
+                className="relative w-24 md:w-40 lg:w-48 -mb-4"
+              >
+                <img
+                  src={showcaseScience}
+                  alt="Science of intuition"
+                  className="w-full h-auto rounded-xl md:rounded-2xl shadow-xl border border-border/40"
+                />
+              </motion.div>
             </motion.div>
           </motion.div>
         </div>
