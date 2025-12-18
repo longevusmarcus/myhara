@@ -402,7 +402,7 @@ const About = () => {
             <span className="font-light block md:inline">Build trust in your gut</span>
             <br className="hidden md:block" />
             <span className="font-cormorant italic font-light text-3xl md:text-6xl lg:text-7xl block md:inline whitespace-nowrap">
-              to make faster, better decisions.
+              to make faster, better decisions
             </span>
           </motion.h1>
 
@@ -817,10 +817,20 @@ const About = () => {
                 <p className="text-foreground/90 mb-8 flex-grow leading-relaxed">"{testimonial.quote}"</p>
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 rounded-full bg-primary/20 border border-border/50 flex items-center justify-center">
-                    <span className="text-sm font-medium text-primary">{testimonial.name.split(' ').map(n => n[0]).join('')}</span>
+                    <span className="text-sm font-medium text-primary">
+                      {testimonial.name
+                        .split(" ")
+                        .map((n) => n[0])
+                        .join("")}
+                    </span>
                   </div>
                   <div>
-                    <p className="font-medium text-foreground">{testimonial.name.split(' ').map(n => n[0]).join('.')}</p>
+                    <p className="font-medium text-foreground">
+                      {testimonial.name
+                        .split(" ")
+                        .map((n) => n[0])
+                        .join(".")}
+                    </p>
                     <p className="text-sm text-muted-foreground">{testimonial.role}</p>
                   </div>
                 </div>
