@@ -668,15 +668,21 @@ const About = () => {
 
               {/* Comparison Table */}
               <div className="grid grid-cols-4 border-t border-b border-border/50">
-                <div className="p-4 md:p-6" />
-                <div className="p-4 md:p-6 text-center">
-                  <span className="text-sm md:text-base font-medium text-foreground">Hara</span>
+                <div className="p-2 md:p-6" />
+                <div className="p-2 md:p-6 text-center">
+                  <span className="text-xs md:text-base font-medium text-foreground">Hara</span>
                 </div>
-                <div className="p-4 md:p-6 text-center">
-                  <span className="text-sm md:text-base font-medium text-muted-foreground">Other Journaling Apps</span>
+                <div className="p-2 md:p-6 text-center">
+                  <span className="text-xs md:text-base font-medium text-muted-foreground leading-tight block">
+                    <span className="hidden md:inline">Other Journaling Apps</span>
+                    <span className="md:hidden">Journaling</span>
+                  </span>
                 </div>
-                <div className="p-4 md:p-6 text-center">
-                  <span className="text-sm md:text-base font-medium text-muted-foreground">Other Meditation Apps</span>
+                <div className="p-2 md:p-6 text-center">
+                  <span className="text-xs md:text-base font-medium text-muted-foreground leading-tight block">
+                    <span className="hidden md:inline">Other Meditation Apps</span>
+                    <span className="md:hidden">Meditation</span>
+                  </span>
                 </div>
               </div>
 
@@ -689,32 +695,32 @@ const About = () => {
                   transition={{ delay: index * 0.05, duration: 0.4 }}
                   className={`grid grid-cols-4 ${index !== comparisonFeatures.length - 1 ? "border-b border-border/30" : ""}`}
                 >
-                  <div className="p-4 md:p-6 flex items-center">
-                    <span className="text-sm md:text-base text-foreground">{row.feature}</span>
+                  <div className="p-2 md:p-6 flex items-center">
+                    <span className="text-xs md:text-base text-foreground leading-tight">{row.feature}</span>
                   </div>
-                  <div className="p-4 md:p-6 flex items-center justify-center">
+                  <div className="p-2 md:p-6 flex items-center justify-center">
                     {row.hara === "check" ? (
-                      <Check className="h-5 w-5 text-success" strokeWidth={2.5} />
+                      <Check className="h-4 w-4 md:h-5 md:w-5 text-success" strokeWidth={2.5} />
                     ) : (
-                      <span className="text-sm text-muted-foreground">{row.hara}</span>
+                      <span className="text-xs md:text-sm text-muted-foreground">{row.hara}</span>
                     )}
                   </div>
-                  <div className="p-4 md:p-6 flex items-center justify-center">
+                  <div className="p-2 md:p-6 flex items-center justify-center">
                     {row.journal === "check" ? (
-                      <Check className="h-5 w-5 text-success" strokeWidth={2.5} />
+                      <Check className="h-4 w-4 md:h-5 md:w-5 text-success" strokeWidth={2.5} />
                     ) : row.journal === "partial" ? (
-                      <span className="text-muted-foreground">△</span>
+                      <span className="text-muted-foreground text-xs md:text-base">△</span>
                     ) : (
-                      <span className="text-muted-foreground/50">–</span>
+                      <span className="text-muted-foreground/50 text-xs md:text-base">–</span>
                     )}
                   </div>
-                  <div className="p-4 md:p-6 flex items-center justify-center">
+                  <div className="p-2 md:p-6 flex items-center justify-center">
                     {row.meditation === "check" ? (
-                      <Check className="h-5 w-5 text-success" strokeWidth={2.5} />
+                      <Check className="h-4 w-4 md:h-5 md:w-5 text-success" strokeWidth={2.5} />
                     ) : row.meditation === "partial" ? (
-                      <span className="text-muted-foreground">△</span>
+                      <span className="text-muted-foreground text-xs md:text-base">△</span>
                     ) : (
-                      <span className="text-muted-foreground/50">–</span>
+                      <span className="text-muted-foreground/50 text-xs md:text-base">–</span>
                     )}
                   </div>
                 </motion.div>
