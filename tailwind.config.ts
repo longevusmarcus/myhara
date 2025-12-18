@@ -16,6 +16,7 @@ export default {
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
         cursive: ['Dancing Script', 'cursive'],
+        cormorant: ['Cormorant Garamond', 'serif'],
       },
       colors: {
         border: "hsl(var(--border))",
