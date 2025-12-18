@@ -179,20 +179,20 @@ const About = () => {
       screenshot: screenshotHome,
     },
     {
-      icon: Heart,
-      title: "Outcome Tracking",
-      subtitle: "Learn from results",
-      description: "Log what happened after you followed (or ignored) your gut. Build evidence for your inner wisdom.",
-      gradient: "from-accent/20 to-accent/10",
-      screenshot: screenshotTimeline,
-    },
-    {
       icon: LineChart,
       title: "Pattern Insights",
       subtitle: "Discover your wisdom",
       description: "AI-powered analysis reveals when your gut is most accurate and what triggers your best decisions.",
       gradient: "from-secondary/20 to-secondary/10",
       screenshot: screenshotInsights,
+    },
+    {
+      icon: Heart,
+      title: "Outcome Tracking",
+      subtitle: "Learn from results",
+      description: "Log what happened after you followed (or ignored) your gut. Build evidence for your inner wisdom.",
+      gradient: "from-accent/20 to-accent/10",
+      screenshot: screenshotTimeline,
     },
     {
       icon: Sparkles,
