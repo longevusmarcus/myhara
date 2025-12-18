@@ -26,6 +26,9 @@ import screenshotCoach from "@/assets/screenshot-coach.png";
 import showcaseIntrusive from "@/assets/showcase-intrusive.png";
 import showcaseHome from "@/assets/showcase-home.png";
 import showcaseScience from "@/assets/showcase-science.png";
+import testimonial1 from "@/assets/testimonial-1.png";
+import testimonial2 from "@/assets/testimonial-2.jpeg";
+import testimonial3 from "@/assets/testimonial-3.jpeg";
 
 // Component for manifesto text that highlights as one whole unit on scroll
 const ManifestoText = () => {
@@ -780,18 +783,21 @@ const About = () => {
                   "As a founder, I used to overthink every decision until I was paralyzed. Hara showed me my gut was right 85% of the time on hiring. Now I move fast and trust myself.",
                 name: "Marcus Chen",
                 role: "Founder & CEO, Stealth Startup",
+                image: testimonial1,
               },
               {
                 quote:
                   "The pattern insights changed how I run my company. I discovered my intuition peaks in the morning—so I make all critical decisions before noon. Game changer.",
                 name: "Sarah Okonkwo",
                 role: "Founder, Series A Fintech",
+                image: testimonial2,
               },
               {
                 quote:
                   "I recommend Hara to my patients dealing with decision anxiety. The data-driven approach helps them build evidence for their intuition instead of dismissing it.",
                 name: "Dr. James Wright",
                 role: "Clinical Psychologist",
+                image: testimonial3,
               },
             ].map((testimonial, index) => (
               <motion.div
@@ -809,14 +815,11 @@ const About = () => {
                 </div>
                 <p className="text-foreground/90 mb-8 flex-grow leading-relaxed">"{testimonial.quote}"</p>
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-full bg-primary/20 border border-border/50 flex items-center justify-center">
-                    <span className="text-sm font-medium text-primary">
-                      {testimonial.name
-                        .split(" ")
-                        .map((n) => n[0])
-                        .join("")}
-                    </span>
-                  </div>
+                  <img 
+                    src={testimonial.image} 
+                    alt={testimonial.name}
+                    className="w-12 h-12 rounded-full object-cover border border-border/50"
+                  />
                   <div>
                     <p className="font-medium text-foreground">
                       {testimonial.name
