@@ -450,7 +450,7 @@ const About = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="bg-secondary/30 backdrop-blur-sm border border-border/30 rounded-[2.5rem] p-8 md:p-12 lg:p-16"
+            className="bg-gradient-to-br from-primary/10 via-secondary/20 to-accent/10 backdrop-blur-sm border border-border/30 rounded-[2.5rem] p-8 md:p-12 lg:p-16"
           >
             <div className="text-center mb-16">
               <h2 className="text-3xl md:text-5xl text-foreground mb-6">
