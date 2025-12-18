@@ -85,8 +85,8 @@ const Cookie = () => {
             <h2 className="text-xl font-medium text-foreground mb-3">7. Contact</h2>
             <p>
               For questions about this Cookie Policy, please contact us at{" "}
-              <a href="mailto:hello@rocketminds.io" className="text-primary hover:underline">
-                hello@rocketminds.io
+              <a href="mailto:privacy@rocketminds.co" className="text-primary hover:underline">
+                privacy@rocketminds.co
               </a>
             </p>
           </section>
