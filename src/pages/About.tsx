@@ -87,7 +87,10 @@ const ManifestoText = () => {
   let wordIndex = 0;
 
   return (
-    <div ref={ref} className="text-2xl md:text-3xl lg:text-4xl font-cormorant italic font-light leading-relaxed text-center space-y-8">
+    <div
+      ref={ref}
+      className="text-2xl md:text-3xl lg:text-4xl font-cormorant italic font-light leading-relaxed text-center space-y-8"
+    >
       {paragraphs.map((para, pIndex) => {
         const words = para.text.split(" ");
         const startIdx = wordIndex;
@@ -603,7 +606,11 @@ const About = () => {
                   className="relative w-full max-w-[320px] sm:max-w-[360px] md:w-56 md:max-w-none lg:w-64 shrink-0"
                 >
                   <div className="relative rounded-2xl overflow-hidden shadow-2xl shadow-background/50 border border-border/30">
-                    <img src={showcaseIntrusive} alt="Intrusive thoughts vs gut feelings" className="block w-full h-auto" />
+                    <img
+                      src={showcaseIntrusive}
+                      alt="Intrusive thoughts vs gut feelings"
+                      className="block w-full h-auto"
+                    />
                     <div className="absolute inset-0 bg-gradient-to-t from-background/20 to-transparent pointer-events-none" />
                   </div>
                 </motion.div>
@@ -675,13 +682,13 @@ const About = () => {
                 <div className="p-2 md:p-6 text-center">
                   <span className="text-xs md:text-base font-medium text-muted-foreground leading-tight block">
                     <span className="hidden md:inline">Other Journaling Apps</span>
-                    <span className="md:hidden">Journaling</span>
+                    <span className="md:hidden">Other Journaling Apps</span>
                   </span>
                 </div>
                 <div className="p-2 md:p-6 text-center">
                   <span className="text-xs md:text-base font-medium text-muted-foreground leading-tight block">
                     <span className="hidden md:inline">Other Meditation Apps</span>
-                    <span className="md:hidden">Meditation</span>
+                    <span className="md:hidden">Other Meditation Apps</span>
                   </span>
                 </div>
               </div>
