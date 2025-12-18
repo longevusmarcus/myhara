@@ -87,7 +87,7 @@ const App = () => {
                     <Route path="/terms" element={<Terms />} />
                     <Route path="/privacy" element={<Privacy />} />
                     <Route path="/cookie" element={<Cookie />} />
-                    <Route path="*" element={<Auth />} />
+                    <Route path="*" element={<Navigate to="/about" replace />} />
                   </Routes>
                 ) : !hasCompletedOnboarding ? (
                   <Onboarding onComplete={handleOnboardingComplete} />
