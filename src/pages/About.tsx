@@ -30,8 +30,8 @@ const ManifestoText = () => {
 
   const paragraphs = [
     {
-      text: "For too long, we've been taught to ignore our gut feelings—dismissing them as irrational, unreliable, or just noise.",
-      highlights: ["ignore", "gut feelings"],
+      text: "For too long, we've struggled to trust our gut when it matters most, unsure whether to follow instinct or override it, unable to tell if a signal comes from intuition, fear, conditioning, or exhaustion.",
+      highlights: ["trust our gut", "intuition"],
     },
     {
       text: "Hara changes that.",
