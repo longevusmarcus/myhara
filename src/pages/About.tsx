@@ -418,7 +418,7 @@ const About = () => {
             transition={{ delay: 0.2, duration: 0.6 }}
             className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-12"
           >
-            Hara helps you listen to your intuition, notice the patterns shaping your life, and trust—deeply—the wisdom
+            Hara helps you listen to your intuition, notice the patterns shaping your life, and deeply trust the wisdom
             you already have.
           </motion.p>
 
