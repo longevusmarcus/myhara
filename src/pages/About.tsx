@@ -424,10 +424,10 @@ const About = () => {
             <Button
               asChild
               size="lg"
-              className="rounded-full text-base px-8 py-6 shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-shadow"
+              className="rounded-full text-base px-8 py-6 bg-primary hover:bg-primary/90 shadow-[0_0_30px_hsl(var(--primary)/0.5),0_0_60px_hsl(var(--primary)/0.3)] hover:shadow-[0_0_40px_hsl(var(--primary)/0.6),0_0_80px_hsl(var(--primary)/0.4)] transition-all duration-300 animate-pulse"
             >
               <Link to="/auth">
-                Start Your Journey <ArrowRight className="ml-2 h-5 w-5" />
+                Join 300+ Early Members <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
             </Button>
           </motion.div>
