@@ -401,7 +401,7 @@ const About = () => {
           >
             <span className="font-light block md:inline">Build trust in your gut</span>
             <br className="hidden md:block" />
-            <span className="font-cormorant italic font-light text-4xl md:text-7xl lg:text-8xl block md:inline">
+            <span className="font-cormorant italic font-light text-3xl md:text-6xl lg:text-7xl block md:inline whitespace-nowrap">
               to make faster, better decisions.
             </span>
           </motion.h1>
