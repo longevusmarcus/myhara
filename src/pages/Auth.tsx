@@ -345,25 +345,32 @@ const Auth = () => {
         </div>
 
         {/* Footer text */}
-        {!isLogin && (
-          <p
-            className="text-center text-xs text-muted-foreground/60 mt-4 animate-in fade-in duration-700"
-            style={{ animationDelay: "600ms" }}
-          >
-            By continuing, you agree to Hara's{" "}
-            <a href="/terms" className="text-primary hover:underline">
-              Terms of Service
-            </a>
-            ,{" "}
-            <a href="/privacy" className="text-primary hover:underline">
-              Privacy Policy
-            </a>{" "}
-            and{" "}
-            <a href="/cookie" className="text-primary hover:underline">
-              Cookie Policy
-            </a>
-          </p>
-        )}
+        <p
+          className="text-center text-xs text-muted-foreground/60 mt-4 animate-in fade-in duration-700"
+          style={{ animationDelay: "600ms" }}
+        >
+          Check our{" "}
+          <a href="/about" className="text-primary hover:underline">
+            About
+          </a>{" "}
+          and{" "}
+          <a href="/faq" className="text-primary hover:underline">
+            FAQs
+          </a>
+          . By continuing, you agree to Hara's{" "}
+          <a href="/terms" className="text-primary hover:underline">
+            Terms of Service
+          </a>
+          ,{" "}
+          <a href="/privacy" className="text-primary hover:underline">
+            Privacy Policy
+          </a>{" "}
+          and{" "}
+          <a href="/cookie" className="text-primary hover:underline">
+            Cookie Policy
+          </a>
+          .
+        </p>
       </div>
     </div>
   );
