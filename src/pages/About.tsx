@@ -809,7 +809,7 @@ const About = () => {
               {
                 quote:
                   "As a founder, I used to overthink every decision until I was paralyzed. Hara showed me my gut was right 85% of the time on hiring. Now I move fast and trust myself.",
-                name: "Marcus Chen",
+                name: "M B",
                 role: "Founder & CEO, Stealth Startup",
                 image: testimonial1,
               },
@@ -817,7 +817,7 @@ const About = () => {
                 quote:
                   "The pattern insights changed how I run my company. I discovered my intuition peaks in the morning—so I make all critical decisions before noon. Game changer.",
                 name: "Sarah Okonkwo",
-                role: "Founder, Series A Fintech",
+                role: "Founder, Seed HealthTech",
                 image: testimonial2,
               },
               {
