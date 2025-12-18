@@ -179,6 +179,7 @@ const About = () => {
       description:
         "Record your gut feelings through simple voice notes. Capture the moment when intuition speaks to you.",
       gradient: "from-primary/20 to-primary/10",
+      image: screenshotHome,
     },
     {
       icon: Heart,
@@ -186,6 +187,7 @@ const About = () => {
       subtitle: "Learn from results",
       description: "Log what happened after you followed (or ignored) your gut. Build evidence for your inner wisdom.",
       gradient: "from-accent/20 to-accent/10",
+      image: screenshotTimeline,
     },
     {
       icon: LineChart,
@@ -193,6 +195,7 @@ const About = () => {
       subtitle: "Discover your wisdom",
       description: "AI-powered analysis reveals when your gut is most accurate and what triggers your best decisions.",
       gradient: "from-secondary/20 to-secondary/10",
+      image: screenshotInsights,
     },
     {
       icon: Sparkles,
@@ -200,6 +203,7 @@ const About = () => {
       subtitle: "Personalized guidance",
       description: "Get thoughtful reflections and actionable insights from your personal gut-instinct coach.",
       gradient: "from-success/20 to-success/10",
+      image: screenshotCoach,
     },
   ];
 
@@ -470,37 +474,6 @@ const About = () => {
               </p>
             </div>
 
-            {/* Feature Screenshots Grid */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-16">
-              {[
-                { img: screenshotHome, label: "Voice Check-ins" },
-                { img: screenshotTimeline, label: "Outcome Tracking" },
-                { img: screenshotInsights, label: "Pattern Insights" },
-                { img: screenshotCoach, label: "AI Coach" },
-              ].map((item, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.1, duration: 0.6 }}
-                  className="relative group"
-                >
-                  <div className="relative rounded-2xl overflow-hidden border border-border/40 bg-card/50 shadow-lg">
-                    <img
-                      src={item.img}
-                      alt={item.label}
-                      className="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent" />
-                    <div className="absolute bottom-3 left-3 right-3">
-                      <span className="text-xs md:text-sm font-medium text-foreground">{item.label}</span>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
               {features.map((feature, index) => (
                 <motion.div
@@ -511,17 +484,32 @@ const About = () => {
                   transition={{ delay: index * 0.1, duration: 0.6 }}
                   className="group relative"
                 >
-                  <div className="relative bg-card/80 border border-border/40 rounded-2xl overflow-hidden hover:border-border/80 transition-all duration-500 hover:shadow-xl hover:shadow-background/30 h-full flex flex-col p-6">
+                  <div className="relative bg-card/80 border border-border/40 rounded-2xl overflow-hidden hover:border-border/80 transition-all duration-500 hover:shadow-xl hover:shadow-background/30 h-full flex flex-col">
+                    {/* Gradient overlay on hover */}
                     <div
                       className={`absolute inset-0 bg-gradient-to-br ${feature.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl`}
                     />
 
-                    <div className="relative z-10">
-                      <div className="w-12 h-12 rounded-xl bg-card border border-border/50 flex items-center justify-center mb-4 shadow-lg">
-                        <feature.icon
-                          className="h-5 w-5 text-foreground group-hover:scale-110 transition-transform duration-300"
-                          strokeWidth={1.5}
-                        />
+                    {/* Image section */}
+                    <div className="relative z-10 aspect-[4/5] md:aspect-[9/16] max-h-64 overflow-hidden bg-muted/30 rounded-t-xl flex items-center justify-center">
+                      <img
+                        src={feature.image}
+                        alt={feature.title}
+                        className="w-full h-full object-cover object-center md:object-top opacity-90 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-card via-card/20 to-transparent" />
+                    </div>
+
+                    <div className="relative z-10 p-6 flex-1">
+                      {/* Icon */}
+                      <div className="relative w-10 h-10 mb-4 -mt-10">
+                        <div className="absolute inset-0 rounded-xl bg-card border border-border/50 shadow-lg" />
+                        <div className="absolute inset-[2px] rounded-[10px] bg-card flex items-center justify-center">
+                          <feature.icon
+                            className="h-4 w-4 text-foreground group-hover:scale-110 transition-transform duration-300"
+                            strokeWidth={1.5}
+                          />
+                        </div>
                       </div>
 
                       <h3 className="text-lg font-medium text-foreground mb-1">{feature.title}</h3>
