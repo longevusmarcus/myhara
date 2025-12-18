@@ -843,8 +843,8 @@ const About = () => {
                 </div>
                 <p className="text-foreground/90 mb-8 flex-grow leading-relaxed">"{testimonial.quote}"</p>
                 <div className="flex items-center gap-4">
-                  <img 
-                    src={testimonial.image} 
+                  <img
+                    src={testimonial.image}
                     alt={testimonial.name}
                     className="w-12 h-12 rounded-full object-cover border border-border/50"
                   />
@@ -948,7 +948,7 @@ const About = () => {
           <div className="pt-8 border-t border-border/30 flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-sm text-muted-foreground">© 2025 Hara. All rights reserved.</p>
             <div className="flex items-center gap-4 text-xs text-muted-foreground/70">
-              <span>Built for those who want to trust themselves again</span>
+              <span>Built for those who want to trust their gut more often</span>
             </div>
           </div>
         </div>
