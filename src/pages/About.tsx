@@ -389,7 +389,7 @@ const About = () => {
           >
             <Brain className="h-3 w-3 md:h-4 md:w-4 text-foreground" />
             <span className="text-[10px] md:text-sm text-muted-foreground whitespace-nowrap">
-              The science of intuition, made personal
+              Trusted by leading entrepreneurs and top-tier professionals
             </span>
           </motion.div>
 
@@ -820,7 +820,7 @@ const About = () => {
                     <span className="text-sm font-medium text-primary">{testimonial.name.split(' ').map(n => n[0]).join('')}</span>
                   </div>
                   <div>
-                    <p className="font-medium text-foreground">{testimonial.name}</p>
+                    <p className="font-medium text-foreground">{testimonial.name.split(' ').map(n => n[0]).join('.')}</p>
                     <p className="text-sm text-muted-foreground">{testimonial.role}</p>
                   </div>
                 </div>
