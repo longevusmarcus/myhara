@@ -538,8 +538,36 @@ const About = () => {
               </p>
             </div>
 
-            {/* Journey Steps */}
-            <div className="grid grid-cols-1 gap-4">
+            {/* Desktop Journey Steps - Arrow flow */}
+            <div className="hidden lg:flex flex-row items-stretch gap-0">
+              {journeySteps.map((step, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.1, duration: 0.5 }}
+                  className="flex-1 relative"
+                >
+                  <div
+                    className="relative bg-muted/40 h-full min-h-[130px] flex flex-col justify-start p-5 pr-8"
+                    style={{
+                      clipPath:
+                        index === journeySteps.length - 1
+                          ? "polygon(0 0, 100% 0, 100% 100%, 0 100%, 8% 50%)"
+                          : "polygon(0 0, 92% 0, 100% 50%, 92% 100%, 0 100%, 8% 50%)",
+                      marginLeft: index === 0 ? "0" : "-12px",
+                    }}
+                  >
+                    <h4 className="text-sm font-medium text-foreground mb-2 pl-2">{step.title}</h4>
+                    <p className="text-xs text-muted-foreground leading-relaxed pl-2">{step.description}</p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+
+            {/* Mobile Journey Steps - Stacked cards */}
+            <div className="lg:hidden grid grid-cols-1 gap-4">
               {journeySteps.map((step, index) => (
                 <motion.div
                   key={index}
