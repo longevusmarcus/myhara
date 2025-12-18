@@ -19,6 +19,10 @@ import {
 import { Button } from "@/components/ui/button";
 import { useRef } from "react";
 import haraMascot from "@/assets/hara-mascot.png";
+import screenshotHome from "@/assets/screenshot-home.png";
+import screenshotTimeline from "@/assets/screenshot-timeline.png";
+import screenshotInsights from "@/assets/screenshot-insights.png";
+import screenshotCoach from "@/assets/screenshot-coach.png";
 
 // Component for manifesto text that highlights as one whole unit on scroll
 const ManifestoText = () => {
@@ -172,6 +176,7 @@ const About = () => {
       description:
         "Record your gut feelings through simple voice notes. Capture the moment when intuition speaks to you.",
       gradient: "from-primary/20 to-primary/10",
+      screenshot: screenshotHome,
     },
     {
       icon: Heart,
@@ -179,6 +184,7 @@ const About = () => {
       subtitle: "Learn from results",
       description: "Log what happened after you followed (or ignored) your gut. Build evidence for your inner wisdom.",
       gradient: "from-accent/20 to-accent/10",
+      screenshot: screenshotTimeline,
     },
     {
       icon: LineChart,
@@ -186,6 +192,7 @@ const About = () => {
       subtitle: "Discover your wisdom",
       description: "AI-powered analysis reveals when your gut is most accurate and what triggers your best decisions.",
       gradient: "from-secondary/20 to-secondary/10",
+      screenshot: screenshotInsights,
     },
     {
       icon: Sparkles,
@@ -193,6 +200,7 @@ const About = () => {
       subtitle: "Personalized guidance",
       description: "Get thoughtful reflections and actionable insights from your personal gut-instinct coach.",
       gradient: "from-success/20 to-success/10",
+      screenshot: screenshotCoach,
     },
   ];
 
@@ -473,12 +481,22 @@ const About = () => {
                   transition={{ delay: index * 0.1, duration: 0.6 }}
                   className="group relative"
                 >
-                  <div className="relative bg-card/80 border border-border/40 rounded-2xl overflow-hidden hover:border-border/80 transition-all duration-500 hover:shadow-xl hover:shadow-background/30 h-full flex flex-col p-6">
+                  <div className="relative bg-card/80 border border-border/40 rounded-2xl overflow-hidden hover:border-border/80 transition-all duration-500 hover:shadow-xl hover:shadow-background/30 h-full flex flex-col">
                     <div
                       className={`absolute inset-0 bg-gradient-to-br ${feature.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl`}
                     />
 
-                    <div className="relative z-10">
+                    {/* Screenshot */}
+                    <div className="relative w-full aspect-[9/16] overflow-hidden bg-background/50">
+                      <img 
+                        src={feature.screenshot} 
+                        alt={`${feature.title} screenshot`}
+                        className="w-full h-full object-cover object-top"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-card/90 via-card/20 to-transparent" />
+                    </div>
+
+                    <div className="relative z-10 p-6 -mt-8">
                       <div className="w-12 h-12 rounded-xl bg-card border border-border/50 flex items-center justify-center mb-4 shadow-lg">
                         <feature.icon
                           className="h-5 w-5 text-foreground group-hover:scale-110 transition-transform duration-300"
