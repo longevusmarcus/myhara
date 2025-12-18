@@ -23,6 +23,9 @@ import screenshotHome from "@/assets/screenshot-home.png";
 import screenshotTimeline from "@/assets/screenshot-timeline.png";
 import screenshotInsights from "@/assets/screenshot-insights.png";
 import screenshotCoach from "@/assets/screenshot-coach.png";
+import showcaseIntrusive from "@/assets/showcase-intrusive.png";
+import showcaseScience from "@/assets/showcase-science.png";
+import showcaseHome from "@/assets/showcase-home.png";
 
 // Component for manifesto text that highlights as one whole unit on scroll
 const ManifestoText = () => {
@@ -581,16 +584,58 @@ const About = () => {
               ))}
             </div>
 
-            {/* Mascot */}
-            <motion.div
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="mt-16 flex justify-center"
-            >
-              <img src={haraMascot} alt="Hara mascot" className="w-48 h-48 md:w-64 md:h-64 object-contain opacity-80" />
-            </motion.div>
+            {/* App Showcase - Modern floating images */}
+            <div className="mt-20 relative">
+              <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-8">
+                {/* Left image - tilted */}
+                <motion.div
+                  initial={{ opacity: 0, x: -40, rotate: -8 }}
+                  whileInView={{ opacity: 1, x: 0, rotate: -6 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.8, ease: "easeOut" }}
+                  whileHover={{ rotate: 0, scale: 1.02, y: -8 }}
+                  className="relative w-full max-w-[320px] sm:max-w-[360px] md:w-56 md:max-w-none lg:w-64 shrink-0"
+                >
+                  <div className="relative rounded-2xl overflow-hidden shadow-2xl shadow-background/50 border border-border/30">
+                    <img src={showcaseIntrusive} alt="Intrusive thoughts vs gut feelings" className="block w-full h-auto" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-background/20 to-transparent pointer-events-none" />
+                  </div>
+                </motion.div>
+
+                {/* Center image - larger, straight */}
+                <motion.div
+                  initial={{ opacity: 0, y: 40 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.8, delay: 0.1, ease: "easeOut" }}
+                  whileHover={{ scale: 1.03, y: -10 }}
+                  className="relative w-full max-w-[360px] sm:max-w-[420px] md:w-72 md:max-w-none lg:w-80 shrink-0 z-10"
+                >
+                  <div className="relative rounded-2xl overflow-hidden shadow-2xl shadow-background/60 border border-border/40">
+                    <img src={showcaseHome} alt="Hara home dashboard" className="block w-full h-auto" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-background/20 to-transparent pointer-events-none" />
+                  </div>
+                </motion.div>
+
+                {/* Right image - tilted opposite */}
+                <motion.div
+                  initial={{ opacity: 0, x: 40, rotate: 8 }}
+                  whileInView={{ opacity: 1, x: 0, rotate: 6 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
+                  whileHover={{ rotate: 0, scale: 1.02, y: -8 }}
+                  className="relative w-full max-w-[320px] sm:max-w-[360px] md:w-56 md:max-w-none lg:w-64 shrink-0"
+                >
+                  <div className="relative rounded-2xl overflow-hidden shadow-2xl shadow-background/50 border border-border/30">
+                    <img src={showcaseScience} alt="Science-based approach" className="block w-full h-auto" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-background/20 to-transparent pointer-events-none" />
+                  </div>
+                </motion.div>
+              </div>
+
+              {/* Subtle glow behind center */}
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-primary/5 rounded-full blur-3xl -z-10" />
+            </div>
           </motion.div>
         </div>
       </section>
