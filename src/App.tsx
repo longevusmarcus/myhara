@@ -87,11 +87,11 @@ const App = () => {
                   </div>
                 ) : !session ? (
                   <Routes>
-                    <Route path="/auth" element={<Auth />} />
-                    <Route path="/terms" element={<Terms />} />
-                    <Route path="/privacy" element={<Privacy />} />
-                    <Route path="/cookie" element={<Cookie />} />
-                    <Route path="/faq" element={<FAQ />} />
+                    <Route path="auth" element={<Auth />} />
+                    <Route path="terms" element={<Terms />} />
+                    <Route path="privacy" element={<Privacy />} />
+                    <Route path="cookie" element={<Cookie />} />
+                    <Route path="faq" element={<FAQ />} />
                     <Route path="*" element={<Navigate to="/about" replace />} />
                   </Routes>
                 ) : !hasCompletedOnboarding ? (
@@ -99,14 +99,14 @@ const App = () => {
                 ) : (
                   <Routes>
                     <Route path="/" element={<Navigate to="/home" replace />} />
-                    <Route path="/home" element={<Home />} />
-                    <Route path="/check-in" element={<CheckIn />} />
-                    <Route path="/insights" element={<Insights />} />
-                    <Route path="/map" element={<GutMap />} />
-                    <Route path="/profile" element={<Profile />} />
-                    <Route path="/settings" element={<Settings />} />
-                    <Route path="/help" element={<Help />} />
-                    <Route path="/achievements" element={<Achievements />} />
+                    <Route path="home" element={<Home />} />
+                    <Route path="check-in" element={<CheckIn />} />
+                    <Route path="insights" element={<Insights />} />
+                    <Route path="map" element={<GutMap />} />
+                    <Route path="profile" element={<Profile />} />
+                    <Route path="settings" element={<Settings />} />
+                    <Route path="help" element={<Help />} />
+                    <Route path="achievements" element={<Achievements />} />
                     <Route path="*" element={<NotFound />} />
                   </Routes>
                 )}
