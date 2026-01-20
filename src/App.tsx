@@ -103,6 +103,7 @@ const App = () => {
                     <Route path="check-in" element={<CheckIn />} />
                     <Route path="insights" element={<Insights />} />
                     <Route path="map" element={<GutMap />} />
+                    <Route path="gut" element={<GutMap />} />
                     <Route path="profile" element={<Profile />} />
                     <Route path="settings" element={<Settings />} />
                     <Route path="help" element={<Help />} />
