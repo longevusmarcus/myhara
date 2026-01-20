@@ -8,8 +8,8 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import VoiceBubbleLogo from "@/components/VoiceBubbleLogo";
 
-type TapStep = "context" | "describe" | "body" | "gut" | "ignore" | "gentle-reminder" | "congratulations" | "decision";
-type VoiceStep = "recording" | "processing" | "label" | "response" | "analyzing" | "insights" | "gut" | "ignore" | "gentle-reminder" | "congratulations";
+type TapStep = "context" | "describe" | "body" | "overthinking" | "breathe" | "gut" | "ignore" | "gentle-reminder" | "congratulations" | "decision";
+type VoiceStep = "recording" | "processing" | "label" | "response" | "analyzing" | "insights" | "overthinking" | "breathe" | "gut" | "ignore" | "gentle-reminder" | "congratulations";
 
 interface SpeechRecognition extends EventTarget {
   continuous: boolean;
@@ -75,6 +75,11 @@ const CheckIn = () => {
   const [gutFeeling, setGutFeeling] = useState("");
   const [willIgnore, setWillIgnore] = useState("");
   const [decision, setDecision] = useState("");
+  
+  // Breathing exercise state
+  const [breatheSeconds, setBreatheSeconds] = useState(10);
+  const [breatheActive, setBreatheActive] = useState(false);
+  const [breatheComplete, setBreatheComplete] = useState(false);
 
   // Voice Flow State
   const [voiceStep, setVoiceStep] = useState<VoiceStep>("recording");
@@ -115,6 +120,26 @@ const CheckIn = () => {
       }
     };
   }, [mode]);
+
+  // Breathing timer effect
+  useEffect(() => {
+    if (breatheActive && breatheSeconds > 0) {
+      const timer = setTimeout(() => setBreatheSeconds(breatheSeconds - 1), 1000);
+      return () => clearTimeout(timer);
+    } else if (breatheActive && breatheSeconds === 0) {
+      setBreatheComplete(true);
+      setBreatheActive(false);
+    }
+  }, [breatheActive, breatheSeconds]);
+
+  // Reset breathing state when entering breathe step
+  useEffect(() => {
+    if (tapStep === "breathe" || voiceStep === "breathe") {
+      setBreatheSeconds(10);
+      setBreatheActive(false);
+      setBreatheComplete(false);
+    }
+  }, [tapStep, voiceStep]);
 
   const startVoiceRecording = async () => {
     try {
@@ -664,7 +689,7 @@ const CheckIn = () => {
 
             <div className="pt-4">
               <button
-                onClick={() => setVoiceStep("gut")}
+                onClick={() => setVoiceStep("overthinking")}
                 className="w-full py-4 px-6 bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl font-light transition-all shadow-lg hover:shadow-xl"
               >
                 Save & Continue
@@ -675,10 +700,152 @@ const CheckIn = () => {
       );
     }
 
-    if (voiceStep === "gut") {
+    // Voice flow: Overthinking step
+    if (voiceStep === "overthinking") {
       return (
         <div className="min-h-screen bg-background flex flex-col p-6">
           <button onClick={() => setVoiceStep("insights")} className="self-start mb-8">
+            <ArrowLeft className="w-6 h-6 text-foreground" />
+          </button>
+
+          <div className="flex-1 flex flex-col justify-center max-w-md mx-auto w-full space-y-8">
+            <div className="space-y-4">
+              <h2 className="text-2xl font-medium text-foreground">
+                Do you believe you're overthinking?
+              </h2>
+              <p className="text-base text-muted-foreground font-light">
+                Sometimes our mind races with thoughts. Let's pause and check in.
+              </p>
+            </div>
+
+            <div className="space-y-3">
+              <Card
+                onClick={() => setVoiceStep("breathe")}
+                className="bg-card border-border p-6 cursor-pointer hover:bg-card/80 transition-colors rounded-[1.25rem]"
+              >
+                <span className="text-base text-foreground font-light">Yes, I might be overthinking</span>
+              </Card>
+
+              <Card
+                onClick={() => setVoiceStep("breathe")}
+                className="bg-card border-border p-6 cursor-pointer hover:bg-card/80 transition-colors rounded-[1.25rem]"
+              >
+                <span className="text-base text-foreground font-light">No, this feels clear</span>
+              </Card>
+
+              <Card
+                onClick={() => setVoiceStep("breathe")}
+                className="bg-card border-border p-6 cursor-pointer hover:bg-card/80 transition-colors rounded-[1.25rem]"
+              >
+                <span className="text-base text-foreground font-light">I'm not sure</span>
+              </Card>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // Voice flow: Breathing exercise step
+    if (voiceStep === "breathe") {
+      return (
+        <div className="min-h-screen bg-background flex flex-col p-6">
+          <button onClick={() => setVoiceStep("overthinking")} className="self-start mb-8">
+            <ArrowLeft className="w-6 h-6 text-foreground" />
+          </button>
+
+          <div className="flex-1 flex flex-col justify-center items-center max-w-md mx-auto w-full space-y-8 text-center">
+            <div className="space-y-4">
+              <h2 className="text-2xl font-medium text-foreground">
+                Take a breath
+              </h2>
+              <p className="text-base text-muted-foreground font-light">
+                Close your eyes, breathe slowly, and listen to your gut.
+              </p>
+            </div>
+
+            {/* Breathing circle */}
+            <div className="relative flex items-center justify-center my-8">
+              {/* Outer glow */}
+              <div 
+                className={`absolute w-48 h-48 rounded-full blur-3xl transition-all duration-1000 ${
+                  breatheActive 
+                    ? 'bg-gradient-to-br from-primary/30 via-accent/20 to-primary/30 opacity-100' 
+                    : 'bg-gradient-to-br from-primary/10 via-accent/5 to-primary/10 opacity-50'
+                }`}
+                style={{
+                  animation: breatheActive ? 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite' : 'none'
+                }}
+              />
+              
+              {/* Main circle */}
+              <div 
+                className={`relative w-40 h-40 rounded-full backdrop-blur-xl border flex items-center justify-center transition-all duration-1000 ${
+                  breatheActive
+                    ? 'bg-gradient-to-br from-primary/20 via-accent/15 to-primary/25 border-primary/30 shadow-[0_0_40px_rgba(var(--primary-rgb),0.3)]'
+                    : breatheComplete
+                      ? 'bg-gradient-to-br from-green-500/20 via-green-400/15 to-green-500/25 border-green-500/30 shadow-[0_0_40px_rgba(34,197,94,0.3)]'
+                      : 'bg-gradient-to-br from-primary/10 via-accent/5 to-primary/15 border-primary/20'
+                }`}
+                style={{
+                  animation: breatheActive ? 'breathe 4s ease-in-out infinite' : 'none'
+                }}
+              >
+                <span className={`text-4xl font-light transition-all duration-300 ${
+                  breatheComplete ? 'text-green-500' : 'text-foreground'
+                }`}>
+                  {breatheComplete ? '✓' : breatheSeconds}
+                </span>
+              </div>
+            </div>
+
+            {!breatheActive && !breatheComplete && (
+              <button
+                onClick={() => setBreatheActive(true)}
+                className="w-full py-4 px-6 bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl font-light transition-all shadow-lg"
+              >
+                Start breathing
+              </button>
+            )}
+
+            {breatheActive && (
+              <p className="text-sm text-muted-foreground font-light animate-pulse">
+                Breathe in... breathe out...
+              </p>
+            )}
+
+            {breatheComplete && (
+              <div className="space-y-4 w-full">
+                <p className="text-base text-foreground/80 font-light">
+                  Now, what is your gut telling you?
+                </p>
+                <button
+                  onClick={() => setVoiceStep("gut")}
+                  className="w-full py-4 px-6 bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl font-light transition-all shadow-lg"
+                >
+                  Continue
+                </button>
+              </div>
+            )}
+          </div>
+
+          <style>{`
+            @keyframes breathe {
+              0%, 100% {
+                transform: scale(1);
+              }
+              50% {
+                transform: scale(1.15);
+              }
+            }
+          `}</style>
+        </div>
+      );
+    }
+
+    if (voiceStep === "gut") {
+      return (
+        <div className="min-h-screen bg-background flex flex-col p-6">
+          <button onClick={() => setVoiceStep("breathe")} className="self-start mb-8">
             <ArrowLeft className="w-6 h-6 text-foreground" />
           </button>
 
@@ -955,7 +1122,7 @@ const CheckIn = () => {
                 key={option.label}
                 onClick={() => {
                   setBodySensation(option.label);
-                  setTapStep("gut");
+                  setTapStep("overthinking");
                 }}
                 className="bg-card border-border p-6 cursor-pointer hover:bg-card/80 transition-colors rounded-[1.25rem]"
               >
@@ -979,7 +1146,7 @@ const CheckIn = () => {
                 onKeyPress={(e) => {
                   if (e.key === "Enter" && customSensation.trim()) {
                     setBodySensation("");
-                    setTapStep("gut");
+                    setTapStep("overthinking");
                   }
                 }}
                 placeholder="Describe what you feel..."
@@ -992,10 +1159,153 @@ const CheckIn = () => {
     );
   }
 
-  if (tapStep === "gut") {
+  // Overthinking step
+  if (tapStep === "overthinking") {
     return (
       <div className="min-h-screen bg-background flex flex-col p-6">
         <button onClick={() => setTapStep("body")} className="self-start mb-8">
+          <ArrowLeft className="w-6 h-6 text-foreground" />
+        </button>
+
+        <div className="flex-1 flex flex-col justify-center max-w-md mx-auto w-full space-y-8">
+          <div className="space-y-4">
+            <h2 className="text-2xl font-medium text-foreground">
+              Do you believe you're overthinking?
+            </h2>
+            <p className="text-base text-muted-foreground font-light">
+              Sometimes our mind races with thoughts. Let's pause and check in.
+            </p>
+          </div>
+
+          <div className="space-y-3">
+            <Card
+              onClick={() => setTapStep("breathe")}
+              className="bg-card border-border p-6 cursor-pointer hover:bg-card/80 transition-colors rounded-[1.25rem]"
+            >
+              <span className="text-base text-foreground font-light">Yes, I might be overthinking</span>
+            </Card>
+
+            <Card
+              onClick={() => setTapStep("breathe")}
+              className="bg-card border-border p-6 cursor-pointer hover:bg-card/80 transition-colors rounded-[1.25rem]"
+            >
+              <span className="text-base text-foreground font-light">No, this feels clear</span>
+            </Card>
+
+            <Card
+              onClick={() => setTapStep("breathe")}
+              className="bg-card border-border p-6 cursor-pointer hover:bg-card/80 transition-colors rounded-[1.25rem]"
+            >
+              <span className="text-base text-foreground font-light">I'm not sure</span>
+            </Card>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Breathing exercise step
+  if (tapStep === "breathe") {
+
+    return (
+      <div className="min-h-screen bg-background flex flex-col p-6">
+        <button onClick={() => setTapStep("overthinking")} className="self-start mb-8">
+          <ArrowLeft className="w-6 h-6 text-foreground" />
+        </button>
+
+        <div className="flex-1 flex flex-col justify-center items-center max-w-md mx-auto w-full space-y-8 text-center">
+          <div className="space-y-4">
+            <h2 className="text-2xl font-medium text-foreground">
+              Take a breath
+            </h2>
+            <p className="text-base text-muted-foreground font-light">
+              Close your eyes, breathe slowly, and listen to your gut.
+            </p>
+          </div>
+
+          {/* Breathing circle */}
+          <div className="relative flex items-center justify-center my-8">
+            {/* Outer glow */}
+            <div 
+              className={`absolute w-48 h-48 rounded-full blur-3xl transition-all duration-1000 ${
+                breatheActive 
+                  ? 'bg-gradient-to-br from-primary/30 via-accent/20 to-primary/30 opacity-100' 
+                  : 'bg-gradient-to-br from-primary/10 via-accent/5 to-primary/10 opacity-50'
+              }`}
+              style={{
+                animation: breatheActive ? 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite' : 'none'
+              }}
+            />
+            
+            {/* Main circle */}
+            <div 
+              className={`relative w-40 h-40 rounded-full backdrop-blur-xl border flex items-center justify-center transition-all duration-1000 ${
+                breatheActive
+                  ? 'bg-gradient-to-br from-primary/20 via-accent/15 to-primary/25 border-primary/30 shadow-[0_0_40px_rgba(var(--primary-rgb),0.3)]'
+                  : breatheComplete
+                    ? 'bg-gradient-to-br from-green-500/20 via-green-400/15 to-green-500/25 border-green-500/30 shadow-[0_0_40px_rgba(34,197,94,0.3)]'
+                    : 'bg-gradient-to-br from-primary/10 via-accent/5 to-primary/15 border-primary/20'
+              }`}
+              style={{
+                animation: breatheActive ? 'breathe 4s ease-in-out infinite' : 'none'
+              }}
+            >
+              <span className={`text-4xl font-light transition-all duration-300 ${
+                breatheComplete ? 'text-green-500' : 'text-foreground'
+              }`}>
+                {breatheComplete ? '✓' : breatheSeconds}
+              </span>
+            </div>
+          </div>
+
+          {!breatheActive && !breatheComplete && (
+            <button
+              onClick={() => setBreatheActive(true)}
+              className="w-full py-4 px-6 bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl font-light transition-all shadow-lg"
+            >
+              Start breathing
+            </button>
+          )}
+
+          {breatheActive && (
+            <p className="text-sm text-muted-foreground font-light animate-pulse">
+              Breathe in... breathe out...
+            </p>
+          )}
+
+          {breatheComplete && (
+            <div className="space-y-4 w-full">
+              <p className="text-base text-foreground/80 font-light">
+                Now, what is your gut telling you?
+              </p>
+              <button
+                onClick={() => setTapStep("gut")}
+                className="w-full py-4 px-6 bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl font-light transition-all shadow-lg"
+              >
+                Continue
+              </button>
+            </div>
+          )}
+        </div>
+
+        <style>{`
+          @keyframes breathe {
+            0%, 100% {
+              transform: scale(1);
+            }
+            50% {
+              transform: scale(1.15);
+            }
+          }
+        `}</style>
+      </div>
+    );
+  }
+
+  if (tapStep === "gut") {
+    return (
+      <div className="min-h-screen bg-background flex flex-col p-6">
+        <button onClick={() => setTapStep("breathe")} className="self-start mb-8">
           <ArrowLeft className="w-6 h-6 text-foreground" />
         </button>
 
