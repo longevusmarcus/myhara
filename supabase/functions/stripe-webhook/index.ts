@@ -16,6 +16,12 @@ serve(async (req) => {
     apiVersion: "2025-08-27.basil",
   });
 
+  // Use service role key for database operations
+  const supabaseAdmin = createClient(
+    Deno.env.get("SUPABASE_URL") ?? "",
+    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
+  );
+
   const webhookSecret = Deno.env.get("STRIPE_WEBHOOK_SECRET");
   
   if (!webhookSecret) {
@@ -57,10 +63,46 @@ serve(async (req) => {
       case "checkout.session.completed": {
         const session = event.data.object as Stripe.Checkout.Session;
         console.log(`Payment successful for session: ${session.id}`);
-        console.log(`Customer email: ${session.customer_email || session.customer_details?.email}`);
         
-        // Payment was successful - you can add additional logic here
-        // For example, updating a database to mark the user as paid
+        const customerEmail = session.customer_email || session.customer_details?.email;
+        console.log(`Customer email: ${customerEmail}`);
+        
+        if (customerEmail) {
+          // Find user by email
+          const { data: userData, error: userError } = await supabaseAdmin.auth.admin.listUsers();
+          
+          if (userError) {
+            console.error("Error fetching users:", userError);
+            break;
+          }
+          
+          const user = userData.users.find(u => u.email === customerEmail);
+          
+          if (user) {
+            // Insert or update payment record
+            const { error: paymentError } = await supabaseAdmin
+              .from("user_payments")
+              .upsert({
+                user_id: user.id,
+                stripe_customer_id: session.customer as string,
+                stripe_session_id: session.id,
+                amount: session.amount_total || 499,
+                currency: session.currency || "usd",
+                status: "completed",
+                payment_type: "lifetime"
+              }, {
+                onConflict: "user_id,payment_type"
+              });
+            
+            if (paymentError) {
+              console.error("Error inserting payment:", paymentError);
+            } else {
+              console.log(`Payment recorded for user: ${user.id}`);
+            }
+          } else {
+            console.log(`No user found with email: ${customerEmail}`);
+          }
+        }
         break;
       }
       
