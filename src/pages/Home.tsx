@@ -19,15 +19,54 @@ const Home = () => {
   const [loadingInsights, setLoadingInsights] = useState(false);
   const [dailyFocus, setDailyFocus] = useState("return to your center — where gut-driven decisions are born");
   const [loadingFocus, setLoadingFocus] = useState(false);
-  const [showPaywall, setShowPaywall] = useState(false);
+  const [showPaywall, setShowPaywall] = useState(true); // Default to showing paywall
+  const [checkingPayment, setCheckingPayment] = useState(true);
+
+  // Check payment status from database
+  useEffect(() => {
+    const checkPaymentStatus = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) {
+          setCheckingPayment(false);
+          return;
+        }
+
+        // Check database for payment - use type assertion for new table
+        const { data: payment }: any = await supabase
+          .from("user_payments" as any)
+          .select("status")
+          .eq("user_id", user.id)
+          .eq("payment_type", "lifetime")
+          .eq("status", "completed")
+          .maybeSingle();
+
+        if (payment) {
+          setShowPaywall(false);
+          localStorage.setItem("hasPaid", "true"); // Cache locally too
+        } else {
+          // Also check localStorage as fallback (for users who just paid)
+          const hasPaidLocal = localStorage.getItem("hasPaid") === "true";
+          if (hasPaidLocal) {
+            setShowPaywall(false);
+          }
+        }
+      } catch (error) {
+        console.error("Error checking payment:", error);
+        // Fallback to localStorage
+        const hasPaidLocal = localStorage.getItem("hasPaid") === "true";
+        if (hasPaidLocal) {
+          setShowPaywall(false);
+        }
+      } finally {
+        setCheckingPayment(false);
+      }
+    };
+
+    checkPaymentStatus();
+  }, []);
 
   useEffect(() => {
-    // Check if user has paid
-    const hasPaid = localStorage.getItem("hasPaid") === "true";
-    if (!hasPaid) {
-      setShowPaywall(true);
-    }
-
     const storedEntries = JSON.parse(localStorage.getItem("gutEntries") || "[]");
     setEntries(storedEntries);
     setGamData(getGamificationData());
