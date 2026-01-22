@@ -99,7 +99,10 @@ const App = () => {
                     <Route path="*" element={<Navigate to="/about" replace />} />
                   </Routes>
                 ) : !hasCompletedOnboarding ? (
-                  <Onboarding onComplete={handleOnboardingComplete} />
+                  <Routes>
+                    <Route path="auth" element={<Navigate to="/home" replace />} />
+                    <Route path="*" element={<Onboarding onComplete={handleOnboardingComplete} />} />
+                  </Routes>
                 ) : (
                   <Routes>
                     <Route path="/" element={<Navigate to="/home" replace />} />
