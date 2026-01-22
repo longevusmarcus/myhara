@@ -6,6 +6,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { useState, useEffect } from "react";
 import { getGamificationData, calculateLevel, getLevelName } from "@/utils/gamification";
 import { supabase } from "@/integrations/supabase/client";
+import Paywall from "@/components/Paywall";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -18,8 +19,15 @@ const Home = () => {
   const [loadingInsights, setLoadingInsights] = useState(false);
   const [dailyFocus, setDailyFocus] = useState("return to your center — where gut-driven decisions are born");
   const [loadingFocus, setLoadingFocus] = useState(false);
+  const [showPaywall, setShowPaywall] = useState(false);
 
   useEffect(() => {
+    // Check if user has paid
+    const hasPaid = localStorage.getItem("hasPaid") === "true";
+    if (!hasPaid) {
+      setShowPaywall(true);
+    }
+
     const storedEntries = JSON.parse(localStorage.getItem("gutEntries") || "[]");
     setEntries(storedEntries);
     setGamData(getGamificationData());
@@ -317,7 +325,9 @@ const Home = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background pb-24">
+    <>
+      <Paywall open={showPaywall} />
+      <div className="min-h-screen bg-background pb-24">
       {/* Header */}
       <div className="p-6 flex justify-between items-center">
         <h1 className="text-4xl font-cursive text-foreground tracking-tight">Hey, {userName}</h1>
@@ -497,6 +507,7 @@ const Home = () => {
 
       <BottomNav />
     </div>
+    </>
   );
 };
 
