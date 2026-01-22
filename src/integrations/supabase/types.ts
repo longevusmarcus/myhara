@@ -44,45 +44,6 @@ export type Database = {
         }
         Relationships: []
       }
-      user_payments: {
-        Row: {
-          amount: number
-          created_at: string
-          currency: string
-          id: string
-          payment_type: string
-          status: string
-          stripe_customer_id: string | null
-          stripe_session_id: string | null
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          amount: number
-          created_at?: string
-          currency?: string
-          id?: string
-          payment_type?: string
-          status?: string
-          stripe_customer_id?: string | null
-          stripe_session_id?: string | null
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          amount?: number
-          created_at?: string
-          currency?: string
-          id?: string
-          payment_type?: string
-          status?: string
-          stripe_customer_id?: string | null
-          stripe_session_id?: string | null
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
     }
     Views: {
       [_ in never]: never

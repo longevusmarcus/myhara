@@ -6,7 +6,6 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { useState, useEffect } from "react";
 import { getGamificationData, calculateLevel, getLevelName } from "@/utils/gamification";
 import { supabase } from "@/integrations/supabase/client";
-import Paywall from "@/components/Paywall";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -19,52 +18,6 @@ const Home = () => {
   const [loadingInsights, setLoadingInsights] = useState(false);
   const [dailyFocus, setDailyFocus] = useState("return to your center — where gut-driven decisions are born");
   const [loadingFocus, setLoadingFocus] = useState(false);
-  const [showPaywall, setShowPaywall] = useState(true); // Default to showing paywall
-  const [checkingPayment, setCheckingPayment] = useState(true);
-
-  // Check payment status from database
-  useEffect(() => {
-    const checkPaymentStatus = async () => {
-      try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) {
-          setCheckingPayment(false);
-          return;
-        }
-
-        // Check database for payment - use type assertion for new table
-        const { data: payment }: any = await supabase
-          .from("user_payments" as any)
-          .select("status")
-          .eq("user_id", user.id)
-          .eq("payment_type", "lifetime")
-          .eq("status", "completed")
-          .maybeSingle();
-
-        if (payment) {
-          setShowPaywall(false);
-          localStorage.setItem("hasPaid", "true"); // Cache locally too
-        } else {
-          // Also check localStorage as fallback (for users who just paid)
-          const hasPaidLocal = localStorage.getItem("hasPaid") === "true";
-          if (hasPaidLocal) {
-            setShowPaywall(false);
-          }
-        }
-      } catch (error) {
-        console.error("Error checking payment:", error);
-        // Fallback to localStorage
-        const hasPaidLocal = localStorage.getItem("hasPaid") === "true";
-        if (hasPaidLocal) {
-          setShowPaywall(false);
-        }
-      } finally {
-        setCheckingPayment(false);
-      }
-    };
-
-    checkPaymentStatus();
-  }, []);
 
   useEffect(() => {
     const storedEntries = JSON.parse(localStorage.getItem("gutEntries") || "[]");
@@ -364,9 +317,7 @@ const Home = () => {
   };
 
   return (
-    <>
-      <Paywall open={showPaywall} />
-      <div className="min-h-screen bg-background pb-24">
+    <div className="min-h-screen bg-background pb-24">
       {/* Header */}
       <div className="p-6 flex justify-between items-center">
         <h1 className="text-4xl font-cursive text-foreground tracking-tight">Hey, {userName}</h1>
@@ -546,7 +497,6 @@ const Home = () => {
 
       <BottomNav />
     </div>
-    </>
   );
 };
 

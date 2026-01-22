@@ -24,7 +24,6 @@ import Cookie from "./pages/Cookie";
 import About from "./pages/About";
 import FAQ from "./pages/FAQ";
 import NotFound from "./pages/NotFound";
-import PaymentSuccess from "./pages/PaymentSuccess";
 
 const queryClient = new QueryClient();
 
@@ -38,10 +37,8 @@ const App = () => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       if (session?.user) {
-        // Check if user has paid (completed onboarding via payment)
-        const hasPaid = localStorage.getItem("hasPaid") === "true";
         const completed = localStorage.getItem(`onboarding_completed_${session.user.id}`);
-        setHasCompletedOnboarding(completed === "true" || hasPaid);
+        setHasCompletedOnboarding(completed === "true");
       }
       setLoading(false);
     });
@@ -50,9 +47,8 @@ const App = () => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
       if (session?.user) {
-        const hasPaid = localStorage.getItem("hasPaid") === "true";
         const completed = localStorage.getItem(`onboarding_completed_${session.user.id}`);
-        setHasCompletedOnboarding(completed === "true" || hasPaid);
+        setHasCompletedOnboarding(completed === "true");
       } else {
         setHasCompletedOnboarding(false);
       }
@@ -99,10 +95,7 @@ const App = () => {
                     <Route path="*" element={<Navigate to="/about" replace />} />
                   </Routes>
                 ) : !hasCompletedOnboarding ? (
-                  <Routes>
-                    <Route path="auth" element={<Navigate to="/home" replace />} />
-                    <Route path="*" element={<Onboarding onComplete={handleOnboardingComplete} />} />
-                  </Routes>
+                  <Onboarding onComplete={handleOnboardingComplete} />
                 ) : (
                   <Routes>
                     <Route path="/" element={<Navigate to="/home" replace />} />
@@ -115,7 +108,6 @@ const App = () => {
                     <Route path="settings" element={<Settings />} />
                     <Route path="help" element={<Help />} />
                     <Route path="achievements" element={<Achievements />} />
-                    <Route path="payment-success" element={<PaymentSuccess />} />
                     <Route path="*" element={<NotFound />} />
                   </Routes>
                 )}
