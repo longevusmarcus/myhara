@@ -50,7 +50,7 @@ const Paywall = ({ open, onOpenChange }: PaywallProps) => {
 
         <AnimatePresence>
           {open && (
-            <motion.div 
+            <motion.div
               className="flex flex-col justify-center items-center min-h-screen px-8 py-12"
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
@@ -58,7 +58,7 @@ const Paywall = ({ open, onOpenChange }: PaywallProps) => {
               transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
             >
               {/* Badge */}
-              <motion.div 
+              <motion.div
                 className="inline-flex items-center gap-2 mb-10"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -71,7 +71,7 @@ const Paywall = ({ open, onOpenChange }: PaywallProps) => {
               </motion.div>
 
               {/* Title */}
-              <motion.h2 
+              <motion.h2
                 className="text-2xl text-foreground mb-1 font-light text-center"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -79,7 +79,7 @@ const Paywall = ({ open, onOpenChange }: PaywallProps) => {
               >
                 Unlock Your
               </motion.h2>
-              <motion.h2 
+              <motion.h2
                 className="text-3xl font-cursive text-foreground/70 italic mb-4 text-center"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -89,7 +89,7 @@ const Paywall = ({ open, onOpenChange }: PaywallProps) => {
               </motion.h2>
 
               {/* Subtitle */}
-              <motion.p 
+              <motion.p
                 className="text-sm text-muted-foreground/50 font-light leading-relaxed mb-10 text-center max-w-xs"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -99,7 +99,7 @@ const Paywall = ({ open, onOpenChange }: PaywallProps) => {
               </motion.p>
 
               {/* Price */}
-              <motion.div 
+              <motion.div
                 className="mb-1 text-center"
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -109,7 +109,7 @@ const Paywall = ({ open, onOpenChange }: PaywallProps) => {
                 <span className="text-5xl text-foreground font-light">$4.99</span>
                 <span className="text-sm text-muted-foreground/50 ml-1">/lifetime</span>
               </motion.div>
-              <motion.p 
+              <motion.p
                 className="text-xs text-muted-foreground/40 mb-10"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -119,18 +119,18 @@ const Paywall = ({ open, onOpenChange }: PaywallProps) => {
               </motion.p>
 
               {/* Features */}
-              <motion.div 
-                className="space-y-3 mb-12 w-full max-w-xs mx-auto"
+              <motion.div
+                className="space-y-3 mb-12 w-full max-w-xs"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.4, duration: 0.5 }}
               >
                 {features.map((feature, index) => (
-                  <motion.div 
-                    key={index} 
-                    className="flex items-center justify-center gap-3"
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
+                  <motion.div
+                    key={index}
+                    className="flex items-center gap-3"
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.4 + index * 0.05, duration: 0.4 }}
                   >
                     <Check className="w-4 h-4 text-muted-foreground/40 flex-shrink-0" />
@@ -156,7 +156,7 @@ const Paywall = ({ open, onOpenChange }: PaywallProps) => {
               </motion.div>
 
               {/* Footer text */}
-              <motion.p 
+              <motion.p
                 className="text-[11px] text-muted-foreground/30 mt-5 font-light"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
