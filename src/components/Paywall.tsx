@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { X, Check, Sparkles } from "lucide-react";
+import { Check, Sparkles } from "lucide-react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
@@ -44,16 +44,8 @@ const Paywall = ({ open, onOpenChange }: PaywallProps) => {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="w-full h-full max-w-none max-h-none m-0 border-0 bg-background p-0 gap-0 rounded-none data-[state=open]:slide-in-from-bottom-0 data-[state=open]:fade-in-0">
+      <DialogContent className="w-full h-full max-w-none max-h-none m-0 border-0 bg-background p-0 gap-0 rounded-none data-[state=open]:slide-in-from-bottom-0 data-[state=open]:fade-in-0 [&>button]:right-5 [&>button]:top-5 [&>button]:text-muted-foreground/40">
         <DialogTitle className="sr-only">Unlock Full Access</DialogTitle>
-        
-        {/* Close button */}
-        <button
-          onClick={() => onOpenChange(false)}
-          className="absolute right-5 top-5 z-10 p-2 rounded-full text-muted-foreground/40 hover:text-foreground transition-colors"
-        >
-          <X className="w-5 h-5" />
-        </button>
 
         <div className="flex flex-col justify-center items-center min-h-screen px-8 py-12">
           {/* Badge */}
