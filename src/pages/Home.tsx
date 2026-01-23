@@ -24,14 +24,17 @@ const Home = () => {
   const [showPaywall, setShowPaywall] = useState(false);
   const [hasPaid, setHasPaid] = useState(localStorage.getItem("hara_paid") === "true");
 
-  // Check for payment success from URL params
+  // Check for payment success from URL params and sync with database
   useEffect(() => {
     const payment = searchParams.get("payment");
     if (payment === "success") {
-      // Store payment success
+      // Store payment success locally
       localStorage.setItem("hara_paid", "true");
       setHasPaid(true);
       toast.success("Payment successful! Welcome to Hara.");
+      
+      // Sync with database
+      syncPaymentToDatabase();
       
       // Clean up URL params
       searchParams.delete("payment");
@@ -42,6 +45,39 @@ const Home = () => {
       setSearchParams(searchParams, { replace: true });
     }
   }, [searchParams, setSearchParams]);
+
+  // Check payment status from database on mount
+  useEffect(() => {
+    const checkPaymentStatus = async () => {
+      try {
+        const { data, error } = await supabase.functions.invoke("check-payment");
+        if (error) {
+          console.error("Payment check error:", error);
+          return;
+        }
+        
+        if (data?.paid) {
+          localStorage.setItem("hara_paid", "true");
+          setHasPaid(true);
+        }
+      } catch (error) {
+        console.error("Payment verification error:", error);
+      }
+    };
+    
+    // Only check if not already paid locally
+    if (!hasPaid) {
+      checkPaymentStatus();
+    }
+  }, []);
+
+  const syncPaymentToDatabase = async () => {
+    try {
+      await supabase.functions.invoke("check-payment");
+    } catch (error) {
+      console.error("Failed to sync payment:", error);
+    }
+  };
 
   useEffect(() => {
     const storedEntries = JSON.parse(localStorage.getItem("gutEntries") || "[]");
