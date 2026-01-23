@@ -120,7 +120,7 @@ const Paywall = ({ open, onOpenChange }: PaywallProps) => {
 
               {/* Features */}
               <motion.div 
-                className="space-y-3 mb-12 w-full max-w-xs"
+                className="space-y-3 mb-12 w-full max-w-xs mx-auto"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.4, duration: 0.5 }}
@@ -128,9 +128,9 @@ const Paywall = ({ open, onOpenChange }: PaywallProps) => {
                 {features.map((feature, index) => (
                   <motion.div 
                     key={index} 
-                    className="flex items-center gap-3"
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
+                    className="flex items-center justify-center gap-3"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.4 + index * 0.05, duration: 0.4 }}
                   >
                     <Check className="w-4 h-4 text-muted-foreground/40 flex-shrink-0" />
