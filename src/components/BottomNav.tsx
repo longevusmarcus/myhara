@@ -1,11 +1,16 @@
 import { Home, Map, Plus, TrendingUp, User, Mic, Edit3 } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import Paywall from "./Paywall";
 
 const BottomNav = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [showCheckInModal, setShowCheckInModal] = useState(false);
+  const [showPaywall, setShowPaywall] = useState(false);
+
+  // Check if user has paid (stored in localStorage after successful payment)
+  const hasPaid = localStorage.getItem("hara_paid") === "true";
 
   const navItems = [
     { icon: Home, label: "Today", path: "/home" },
@@ -16,6 +21,10 @@ const BottomNav = () => {
   ];
 
   const handleCheckInClick = () => {
+    if (!hasPaid) {
+      setShowPaywall(true);
+      return;
+    }
     setShowCheckInModal(!showCheckInModal);
   };
 
@@ -83,6 +92,8 @@ const BottomNav = () => {
           </div>
         </div>
       </nav>
+
+      <Paywall open={showPaywall} onOpenChange={setShowPaywall} />
     </>
   );
 };
