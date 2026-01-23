@@ -19,7 +19,7 @@ const Paywall = ({ open, onOpenChange }: PaywallProps) => {
     "Pattern recognition insights",
     "Voice & tap journaling",
     "Personalized intuition training",
-    "Lifetime access, no subscriptions",
+    "Lifetime access",
   ];
 
   const handlePurchase = async () => {
@@ -44,56 +44,56 @@ const Paywall = ({ open, onOpenChange }: PaywallProps) => {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md border-0 bg-background p-0 gap-0 rounded-[1.5rem] overflow-hidden">
+      <DialogContent className="max-w-sm border-0 bg-background p-0 gap-0 rounded-[1.25rem] overflow-hidden mx-4">
         <DialogTitle className="sr-only">Unlock Full Access</DialogTitle>
         
         {/* Close button */}
         <button
           onClick={() => onOpenChange(false)}
-          className="absolute right-4 top-4 z-10 p-2 rounded-full text-muted-foreground/60 hover:text-foreground transition-colors"
+          className="absolute right-3 top-3 z-10 p-1.5 rounded-full text-muted-foreground/40 hover:text-foreground transition-colors"
         >
-          <X className="w-5 h-5" />
+          <X className="w-4 h-4" />
         </button>
 
-        <div className="p-8 pt-12 text-center">
+        <div className="px-6 py-8 text-center">
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 mb-8">
-            <Sparkles className="w-4 h-4 text-muted-foreground/60" />
-            <span className="text-xs tracking-[0.25em] uppercase text-muted-foreground/60 font-light">
+          <div className="inline-flex items-center gap-1.5 mb-6">
+            <Sparkles className="w-3 h-3 text-muted-foreground/50" />
+            <span className="text-[10px] tracking-[0.2em] uppercase text-muted-foreground/50 font-light">
               Early Founders
             </span>
           </div>
 
           {/* Title */}
-          <h2 className="text-3xl text-foreground mb-1">
+          <h2 className="text-xl text-foreground mb-0.5 font-light">
             Unlock Your
           </h2>
-          <h2 className="text-3xl font-cursive text-foreground/80 italic mb-4">
+          <h2 className="text-2xl font-cursive text-foreground/70 italic mb-3">
             Full Gut Potential
           </h2>
 
           {/* Subtitle */}
-          <p className="text-muted-foreground/60 font-light mb-8">
+          <p className="text-xs text-muted-foreground/50 font-light leading-relaxed mb-6">
             Join the founding members trusting their gut<br />
             with science-backed intuition training
           </p>
 
           {/* Price */}
-          <div className="mb-2">
-            <span className="text-2xl text-muted-foreground/40 line-through mr-3">$29</span>
-            <span className="text-5xl text-foreground font-light">$4.99</span>
-            <span className="text-muted-foreground/60 ml-2">/lifetime</span>
+          <div className="mb-1">
+            <span className="text-base text-muted-foreground/30 line-through mr-2">$29</span>
+            <span className="text-4xl text-foreground font-light">$4.99</span>
+            <span className="text-xs text-muted-foreground/50 ml-1">/lifetime</span>
           </div>
-          <p className="text-sm text-muted-foreground/50 mb-8">
+          <p className="text-[10px] text-muted-foreground/40 mb-6">
             One-time payment, forever access
           </p>
 
-          {/* Features */}
-          <div className="space-y-3 text-left mb-8">
+          {/* Features - 2 columns for compact layout */}
+          <div className="grid grid-cols-2 gap-x-3 gap-y-2 text-left mb-6">
             {features.map((feature, index) => (
-              <div key={index} className="flex items-center gap-3">
-                <Check className="w-4 h-4 text-muted-foreground/60 flex-shrink-0" />
-                <span className="text-muted-foreground/80 font-light">{feature}</span>
+              <div key={index} className="flex items-center gap-2">
+                <Check className="w-3 h-3 text-muted-foreground/40 flex-shrink-0" />
+                <span className="text-[11px] text-muted-foreground/60 font-light">{feature}</span>
               </div>
             ))}
           </div>
@@ -102,13 +102,13 @@ const Paywall = ({ open, onOpenChange }: PaywallProps) => {
           <Button
             onClick={handlePurchase}
             disabled={isLoading}
-            className="w-full rounded-full h-14 bg-foreground hover:bg-foreground/90 text-background text-base font-medium"
+            className="w-full rounded-full h-12 bg-foreground hover:bg-foreground/90 text-background text-sm font-medium"
           >
             {isLoading ? "Processing..." : "Start Your Journey"}
           </Button>
 
           {/* Footer text */}
-          <p className="text-xs text-muted-foreground/40 mt-4 font-light">
+          <p className="text-[10px] text-muted-foreground/30 mt-3 font-light">
             Secure payment via Stripe
           </p>
         </div>
