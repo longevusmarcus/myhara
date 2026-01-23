@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { ArrowRight, Flame, Pause, Sparkles, Shield, Loader2 } from "lucide-react";
 import BottomNav from "@/components/BottomNav";
+import Paywall from "@/components/Paywall";
 import { Card } from "@/components/ui/card";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useState, useEffect } from "react";
@@ -18,6 +19,10 @@ const Home = () => {
   const [loadingInsights, setLoadingInsights] = useState(false);
   const [dailyFocus, setDailyFocus] = useState("return to your center — where gut-driven decisions are born");
   const [loadingFocus, setLoadingFocus] = useState(false);
+  const [showPaywall, setShowPaywall] = useState(false);
+
+  // Check if user has paid
+  const hasPaid = localStorage.getItem("hara_paid") === "true";
 
   useEffect(() => {
     const storedEntries = JSON.parse(localStorage.getItem("gutEntries") || "[]");
@@ -418,7 +423,13 @@ const Home = () => {
           
           {/* Main orb */}
           <button
-            onClick={() => navigate("/check-in?mode=voice")}
+            onClick={() => {
+              if (!hasPaid) {
+                setShowPaywall(true);
+              } else {
+                navigate("/check-in?mode=voice");
+              }
+            }}
             className="relative w-56 h-56 rounded-full bg-gradient-to-br from-primary/90 via-accent/90 to-secondary/90 flex items-center justify-center shadow-2xl shadow-primary/20 transition-transform hover:scale-105 animate-pulse"
             style={{ animationDuration: '3s' }}
           >
@@ -496,6 +507,7 @@ const Home = () => {
       </div>
 
       <BottomNav />
+      <Paywall open={showPaywall} onOpenChange={setShowPaywall} />
     </div>
   );
 };
