@@ -15,12 +15,12 @@ const Paywall = ({ open, onOpenChange }: PaywallProps) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const features = [
-    "Unlimited gut check-ins",
-    "AI-powered gut coach",
-    "Pattern recognition insights",
-    "Voice & tap journaling",
-    "Personalized intuition training",
-    "Lifetime access",
+    "Unlimited gut check-ins anytime",
+    "Personalized gut coach for you",
+    "Deep pattern recognition insights",
+    "Easy voice & tap journaling",
+    "Personalized intuition training plan",
+    "Lifetime access, no limits",
   ];
 
   const handlePurchase = async () => {
