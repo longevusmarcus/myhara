@@ -1,7 +1,6 @@
 import { useState } from "react";
-import { Heart, Sparkles, Brain, TrendingUp, DollarSign, Users, Target, Frown, MessageSquareOff, AlertCircle, RefreshCcw, ShieldAlert, Zap, CheckCircle2 } from "lucide-react";
+import { Heart, Sparkles, Brain, TrendingUp, DollarSign, Users, Target, Frown, MessageSquareOff, AlertCircle, ShieldAlert, Zap, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import VoiceBubbleLogo from "./VoiceBubbleLogo";
 
 interface OnboardingProps {
@@ -11,21 +10,10 @@ interface OnboardingProps {
 const Onboarding = ({ onComplete }: OnboardingProps) => {
   const [step, setStep] = useState(1);
   const [selectedGoal, setSelectedGoal] = useState("");
-  const [accessCode, setAccessCode] = useState("");
-  const [codeError, setCodeError] = useState(false);
 
   const handleGoalSelect = (goal: string) => {
     setSelectedGoal(goal);
     setTimeout(() => setStep(step + 1), 300);
-  };
-
-  const handleCodeSubmit = () => {
-    if (accessCode.toLowerCase() === "gut") {
-      onComplete();
-    } else {
-      setCodeError(true);
-      setTimeout(() => setCodeError(false), 2000);
-    }
   };
 
   // Step 1: Science Introduction
@@ -318,75 +306,17 @@ const Onboarding = ({ onComplete }: OnboardingProps) => {
           </div>
 
           <Button
-            onClick={() => setStep(6)}
+            onClick={onComplete}
             className="w-full rounded-[1rem] h-12 bg-primary hover:bg-primary/90 text-primary-foreground"
           >
-            Continue
+            Start Listening
           </Button>
         </div>
       </div>
     );
   }
 
-  // Step 6: Paywall
-  return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-6">
-      <div className="max-w-md w-full animate-in fade-in zoom-in duration-700">
-        <div className="backdrop-blur-xl bg-card/40 border border-border/30 rounded-[1.5rem] p-8">
-          <div className="text-center mb-8">
-            <div className="mb-6 flex justify-center">
-              <VoiceBubbleLogo size="sm" animated={true} />
-            </div>
-            
-            <h2 className="text-2xl font-cursive text-foreground mb-3">
-              Enter your access code
-            </h2>
-            
-            <p className="text-base text-muted-foreground/70 font-light">
-              This early access is invite-only
-            </p>
-          </div>
-
-          <div className="space-y-4">
-            <Input
-              type="text"
-              placeholder="Enter code"
-              value={accessCode}
-              onChange={(e) => {
-                setAccessCode(e.target.value);
-                setCodeError(false);
-              }}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  handleCodeSubmit();
-                }
-              }}
-              className={`bg-background/60 border-border/40 rounded-[1rem] h-12 text-base text-center placeholder:text-muted-foreground/60 focus:border-primary/50 transition-all ${
-                codeError ? "border-destructive animate-pulse" : ""
-              }`}
-            />
-
-            {codeError && (
-              <p className="text-sm text-destructive font-light text-center animate-in fade-in duration-200">
-                Invalid code. Try again.
-              </p>
-            )}
-
-            <Button
-              onClick={handleCodeSubmit}
-              className="w-full rounded-[1rem] h-12 bg-primary hover:bg-primary/90 text-primary-foreground"
-            >
-              Continue
-            </Button>
-
-            <p className="text-xs text-muted-foreground/60 text-center font-light">
-              Hint: Think about your intuition
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+  return null;
 };
 
 export default Onboarding;
