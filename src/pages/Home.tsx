@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { ArrowRight, Flame, Pause, Sparkles, Shield, Loader2 } from "lucide-react";
 import BottomNav from "@/components/BottomNav";
 import Paywall from "@/components/Paywall";
@@ -7,9 +7,11 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { useState, useEffect } from "react";
 import { getGamificationData, calculateLevel, getLevelName } from "@/utils/gamification";
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 const Home = () => {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [entries, setEntries] = useState<any[]>([]);
   const [missions, setMissions] = useState<any[]>([]);
   const [insights, setInsights] = useState<string[]>([]);
@@ -20,9 +22,26 @@ const Home = () => {
   const [dailyFocus, setDailyFocus] = useState("return to your center — where gut-driven decisions are born");
   const [loadingFocus, setLoadingFocus] = useState(false);
   const [showPaywall, setShowPaywall] = useState(false);
+  const [hasPaid, setHasPaid] = useState(localStorage.getItem("hara_paid") === "true");
 
-  // Check if user has paid
-  const hasPaid = localStorage.getItem("hara_paid") === "true";
+  // Check for payment success from URL params
+  useEffect(() => {
+    const payment = searchParams.get("payment");
+    if (payment === "success") {
+      // Store payment success
+      localStorage.setItem("hara_paid", "true");
+      setHasPaid(true);
+      toast.success("Payment successful! Welcome to Hara.");
+      
+      // Clean up URL params
+      searchParams.delete("payment");
+      setSearchParams(searchParams, { replace: true });
+    } else if (payment === "canceled") {
+      toast.info("Payment was canceled.");
+      searchParams.delete("payment");
+      setSearchParams(searchParams, { replace: true });
+    }
+  }, [searchParams, setSearchParams]);
 
   useEffect(() => {
     const storedEntries = JSON.parse(localStorage.getItem("gutEntries") || "[]");
