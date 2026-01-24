@@ -45,13 +45,13 @@ const Paywall = ({ open, onOpenChange }: PaywallProps) => {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="w-full h-full max-w-none max-h-none m-0 border-0 bg-background p-0 gap-0 rounded-none [&>button]:right-5 [&>button]:top-5 [&>button]:text-muted-foreground/40">
+      <DialogContent className="w-full h-full max-w-none max-h-none m-0 border-0 bg-background p-0 gap-0 rounded-none [&>button]:right-5 [&>button]:top-5 [&>button]:text-muted-foreground/40 [&>button]:z-10">
         <DialogTitle className="sr-only">Unlock Full Access</DialogTitle>
 
         <AnimatePresence>
           {open && (
             <motion.div
-              className="flex flex-col justify-center items-center min-h-screen px-8 py-12"
+              className="flex flex-col justify-start items-center min-h-screen px-8 py-10 pb-[env(safe-area-inset-bottom,20px)] overflow-y-auto"
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 40 }}
@@ -59,7 +59,7 @@ const Paywall = ({ open, onOpenChange }: PaywallProps) => {
             >
               {/* Badge */}
               <motion.div
-                className="inline-flex items-center gap-2 mb-10"
+                className="inline-flex items-center gap-2 mb-6 mt-8"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1, duration: 0.5 }}
@@ -90,7 +90,7 @@ const Paywall = ({ open, onOpenChange }: PaywallProps) => {
 
               {/* Subtitle */}
               <motion.p
-                className="text-sm text-muted-foreground/50 font-light leading-relaxed mb-10 text-center max-w-xs"
+                className="text-sm text-muted-foreground/50 font-light leading-relaxed mb-6 text-center max-w-xs"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.25, duration: 0.5 }}
@@ -110,7 +110,7 @@ const Paywall = ({ open, onOpenChange }: PaywallProps) => {
                 <span className="text-sm text-muted-foreground/50 ml-1">/lifetime</span>
               </motion.div>
               <motion.p
-                className="text-xs text-muted-foreground/40 mb-10"
+                className="text-xs text-muted-foreground/40 mb-6"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.35, duration: 0.5 }}
@@ -120,7 +120,7 @@ const Paywall = ({ open, onOpenChange }: PaywallProps) => {
 
               {/* Features */}
               <motion.div
-                className="space-y-3 mb-12 w-full max-w-xs"
+                className="space-y-2.5 mb-8 w-full max-w-xs"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.4, duration: 0.5 }}
