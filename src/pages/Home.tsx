@@ -23,6 +23,7 @@ const Home = () => {
   const [loadingFocus, setLoadingFocus] = useState(false);
   const [showPaywall, setShowPaywall] = useState(false);
   const [hasPaid, setHasPaid] = useState(localStorage.getItem("hara_paid") === "true");
+  const [isCheckingPayment, setIsCheckingPayment] = useState(!localStorage.getItem("hara_paid"));
 
   // Check for payment success from URL params and sync with database
   useEffect(() => {
@@ -49,6 +50,13 @@ const Home = () => {
   // Check payment status from database on mount
   useEffect(() => {
     const checkPaymentStatus = async () => {
+      // Skip if already paid locally
+      if (localStorage.getItem("hara_paid") === "true") {
+        setIsCheckingPayment(false);
+        return;
+      }
+      
+      setIsCheckingPayment(true);
       try {
         const { data, error } = await supabase.functions.invoke("check-payment");
         if (error) {
@@ -62,13 +70,12 @@ const Home = () => {
         }
       } catch (error) {
         console.error("Payment verification error:", error);
+      } finally {
+        setIsCheckingPayment(false);
       }
     };
     
-    // Only check if not already paid locally
-    if (!hasPaid) {
-      checkPaymentStatus();
-    }
+    checkPaymentStatus();
   }, []);
 
   const syncPaymentToDatabase = async () => {
@@ -479,27 +486,40 @@ const Home = () => {
           {/* Main orb */}
           <button
             onClick={() => {
+              if (isCheckingPayment) return;
               if (!hasPaid) {
                 setShowPaywall(true);
               } else {
                 navigate("/check-in?mode=voice");
               }
             }}
-            className="relative w-56 h-56 rounded-full bg-gradient-to-br from-primary/90 via-accent/90 to-secondary/90 flex items-center justify-center shadow-2xl shadow-primary/20 transition-transform hover:scale-105 animate-pulse"
+            disabled={isCheckingPayment}
+            className="relative w-56 h-56 rounded-full bg-gradient-to-br from-primary/90 via-accent/90 to-secondary/90 flex items-center justify-center shadow-2xl shadow-primary/20 transition-transform hover:scale-105 animate-pulse disabled:opacity-80"
             style={{ animationDuration: '3s' }}
           >
             {/* Inner reflection/highlight */}
             <div className="absolute top-8 left-1/2 -translate-x-1/2 w-32 h-16 bg-white/30 rounded-full blur-2xl" />
             
-            {/* Subtle particles */}
-            <div className="absolute top-1/4 right-1/4 w-2 h-2 bg-white/60 rounded-full animate-pulse" />
-            <div className="absolute bottom-1/3 left-1/4 w-1.5 h-1.5 bg-white/50 rounded-full animate-pulse delay-75" />
-            <div className="absolute top-1/2 right-1/3 w-1 h-1 bg-white/40 rounded-full animate-pulse delay-150" />
+            {/* Loading spinner when checking payment */}
+            {isCheckingPayment && (
+              <Loader2 className="w-8 h-8 text-white/80 animate-spin" />
+            )}
+            
+            {/* Subtle particles - hide when loading */}
+            {!isCheckingPayment && (
+              <>
+                <div className="absolute top-1/4 right-1/4 w-2 h-2 bg-white/60 rounded-full animate-pulse" />
+                <div className="absolute bottom-1/3 left-1/4 w-1.5 h-1.5 bg-white/50 rounded-full animate-pulse delay-75" />
+                <div className="absolute top-1/2 right-1/3 w-1 h-1 bg-white/40 rounded-full animate-pulse delay-150" />
+              </>
+            )}
           </button>
         </div>
 
         {/* Tap to speak text */}
-        <p className="text-sm text-muted-foreground font-light mb-4">tap to speak</p>
+        <p className="text-sm text-muted-foreground font-light mb-4">
+          {isCheckingPayment ? "checking access..." : "tap to speak"}
+        </p>
 
         {/* Level & Days */}
         <div className="text-center space-y-1">
