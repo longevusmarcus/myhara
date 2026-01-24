@@ -33,7 +33,8 @@ const Paywall = ({ open, onOpenChange }: PaywallProps) => {
       if (error) throw error;
 
       if (data?.url) {
-        window.open(data.url, "_blank");
+        // Use location.href for better mobile compatibility (avoids popup blockers)
+        window.location.href = data.url;
       }
     } catch (error: any) {
       console.error("Payment error:", error);
