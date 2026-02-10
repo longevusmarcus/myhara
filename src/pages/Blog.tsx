@@ -10,7 +10,7 @@ const blogPosts = [
     category: "Understanding Intuition",
     date: "Jan 2025",
     readTime: "5 min read",
-    title: "Your Gut Feeling Is Not an Intrusive Thought — Here's How to Tell the Difference",
+    title: "Gut Feeling vs. Intrusive Thought — Know the Difference",
     excerpt:
       "Most people conflate the two. An intrusive thought is loud, anxious, and repetitive — it feeds on fear. A gut feeling is quiet, calm, and persistent. It doesn't scream; it just knows. Learning to distinguish between them is the first step toward trusting yourself again.",
     content: [
@@ -26,7 +26,7 @@ const blogPosts = [
     category: "The Science",
     date: "Dec 2024",
     readTime: "7 min read",
-    title: "The Science Behind Why Your Gut Is Right More Often Than You Think",
+    title: "Why Your Gut Is Right More Than You Think",
     excerpt:
       "Neuroscience calls it somatic intelligence — your body processing millions of data points before your conscious mind even registers a thought. Your gut isn't guessing. It's computing.",
     content: [
@@ -42,7 +42,7 @@ const blogPosts = [
     category: "Performance",
     date: "Nov 2024",
     readTime: "4 min read",
-    title: "Decision Fatigue Is Real — Your Intuition Is the Antidote",
+    title: "Decision Fatigue? Your Intuition Is the Antidote",
     excerpt:
       "The average person makes 35,000 decisions a day. No wonder we're exhausted. But what if the answer isn't more frameworks — it's learning to let your gut carry the load?",
     content: [
@@ -74,7 +74,7 @@ const blogPosts = [
     category: "Philosophy",
     date: "Sep 2024",
     readTime: "6 min read",
-    title: "The Trust Yourself Framework: From Self-Doubt to Self-Authority",
+    title: "From Self-Doubt to Self-Authority",
     excerpt:
       "Self-trust isn't something you're born with or without. It's built — through repeated evidence that your inner voice knows what it's talking about. Here's how.",
     content: [
