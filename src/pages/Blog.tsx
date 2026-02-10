@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { ArrowRight, ArrowLeft, Clock, BookOpen } from "lucide-react";
@@ -86,185 +87,259 @@ const blogPosts = [
   },
 ];
 
+// JSON-LD structured data for SEO
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Blog",
+  name: "The Hara Journal",
+  description: "Essays on trusting yourself, the science of gut feelings, and the art of making decisions that feel right.",
+  url: "https://myhara.lovable.app/blog",
+  publisher: {
+    "@type": "Organization",
+    name: "Hara",
+    url: "https://myhara.lovable.app",
+  },
+  blogPost: blogPosts.map((post) => ({
+    "@type": "BlogPosting",
+    headline: post.title,
+    description: post.excerpt,
+    datePublished: post.date,
+    articleSection: post.category,
+    author: { "@type": "Organization", name: "Hara" },
+  })),
+};
+
 const Blog = () => {
+  useEffect(() => {
+    document.title = "Blog — Hara | Thoughts on Intuition & Decision-Making";
+
+    const setMeta = (name: string, content: string, attr = "name") => {
+      let el = document.querySelector(`meta[${attr}="${name}"]`) as HTMLMetaElement | null;
+      if (!el) {
+        el = document.createElement("meta");
+        el.setAttribute(attr, name);
+        document.head.appendChild(el);
+      }
+      el.setAttribute("content", content);
+    };
+
+    const desc =
+      "Essays on trusting yourself, the science of gut feelings, and the art of making decisions that feel right. The Hara Journal.";
+    setMeta("description", desc);
+    setMeta("og:title", "Blog — Hara | Thoughts on Intuition", "property");
+    setMeta("og:description", desc, "property");
+    setMeta("og:type", "website", "property");
+    setMeta("twitter:title", "Blog — Hara | Thoughts on Intuition");
+    setMeta("twitter:description", desc);
+
+    // Canonical URL
+    let canonical = document.querySelector("link[rel='canonical']") as HTMLLinkElement | null;
+    if (!canonical) {
+      canonical = document.createElement("link");
+      canonical.setAttribute("rel", "canonical");
+      document.head.appendChild(canonical);
+    }
+    canonical.setAttribute("href", "https://myhara.lovable.app/blog");
+
+    // JSON-LD
+    const script = document.createElement("script");
+    script.type = "application/ld+json";
+    script.textContent = JSON.stringify(jsonLd);
+    document.head.appendChild(script);
+
+    return () => {
+      document.title = "Hara — Trust Your Gut, Make Better Decisions";
+      script.remove();
+    };
+  }, []);
+
   return (
     <div className="min-h-screen bg-background">
       {/* Navigation */}
-      <nav className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-5xl">
-        <div className="bg-card/40 backdrop-blur-xl border border-border/50 rounded-full px-6 py-3 flex items-center justify-between shadow-lg shadow-background/20">
-          <div className="flex items-center gap-8">
-            <Link
-              to="/about"
-              className="text-xl font-light tracking-wide bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent"
-            >
-              Hara
-            </Link>
-            <div className="hidden md:flex items-center gap-6 text-sm text-muted-foreground">
-              <Link to="/about" className="hover:text-foreground transition-colors">
-                Home
-              </Link>
-              <span className="text-foreground">Blog</span>
-            </div>
-          </div>
-          <Button asChild size="sm" className="rounded-full bg-primary hover:bg-primary/90">
-            <Link to="/auth">
-              Start Free <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
-            </Link>
-          </Button>
-        </div>
-      </nav>
-
-      {/* Hero */}
-      <section className="pt-32 pb-16 px-6">
-        <div className="max-w-4xl mx-auto text-center">
-          <motion.p
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-xs tracking-[0.3em] uppercase text-muted-foreground/60 mb-6"
-          >
-            The Hara Journal
-          </motion.p>
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="text-4xl md:text-6xl text-foreground mb-6"
-          >
-            <span className="font-light">Thoughts on </span>
-            <span className="font-cormorant italic font-light text-accent">intuition</span>
-          </motion.h1>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="text-lg text-muted-foreground max-w-xl mx-auto"
-          >
-            Essays on trusting yourself, the science of gut feelings, and the art of making decisions that feel right.
-          </motion.p>
-        </div>
-      </section>
-
-      {/* Featured Post */}
-      <section className="px-6 mb-16">
-        <div className="max-w-5xl mx-auto">
-          <motion.article
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.6 }}
-            className="bg-gradient-to-br from-primary/8 via-secondary/10 to-accent/8 border border-border/30 rounded-3xl p-8 md:p-12 cursor-pointer group"
-            onClick={() => document.getElementById(blogPosts[0].id)?.scrollIntoView({ behavior: "smooth" })}
-          >
-            <div className="flex items-center gap-3 mb-6">
-              <span className="text-xs tracking-wider uppercase text-primary/80 bg-primary/10 px-3 py-1 rounded-full">
-                Featured
-              </span>
-              <span className="text-xs text-muted-foreground">{blogPosts[0].category}</span>
-            </div>
-            <h2 className="text-2xl md:text-4xl font-light text-foreground mb-4 group-hover:text-primary/90 transition-colors leading-tight">
-              {blogPosts[0].title}
-            </h2>
-            <p className="text-base md:text-lg text-muted-foreground leading-relaxed max-w-3xl mb-6">
-              {blogPosts[0].excerpt}
-            </p>
-            <div className="flex items-center gap-4 text-sm text-muted-foreground/70">
-              <span className="flex items-center gap-1.5">
-                <Clock className="h-3.5 w-3.5" />
-                {blogPosts[0].readTime}
-              </span>
-              <span>{blogPosts[0].date}</span>
-            </div>
-          </motion.article>
-        </div>
-      </section>
-
-      {/* All Posts */}
-      <section className="px-6 pb-24">
-        <div className="max-w-5xl mx-auto">
-          <div className="space-y-12">
-            {blogPosts.map((post, index) => (
-              <motion.article
-                key={post.id}
-                id={post.id}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-50px" }}
-                transition={{ duration: 0.5 }}
-                className="border-b border-border/20 pb-12 last:border-0"
+      <header>
+        <nav className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-5xl" aria-label="Blog navigation">
+          <div className="bg-card/40 backdrop-blur-xl border border-border/50 rounded-full px-6 py-3 flex items-center justify-between shadow-lg shadow-background/20">
+            <div className="flex items-center gap-8">
+              <Link
+                to="/about"
+                className="text-xl font-light tracking-wide bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent"
+                aria-label="Hara homepage"
               >
-                {/* Post Header */}
-                <div className="flex items-center gap-3 mb-4">
-                  <span className="text-xs tracking-wider uppercase text-accent/80 bg-accent/10 px-3 py-1 rounded-full">
-                    {post.category}
-                  </span>
-                  <span className="text-xs text-muted-foreground flex items-center gap-1.5">
-                    <Clock className="h-3 w-3" />
-                    {post.readTime}
-                  </span>
-                  <span className="text-xs text-muted-foreground">{post.date}</span>
-                </div>
-
-                {/* Title */}
-                <h2 className="text-xl md:text-3xl font-light text-foreground mb-4 leading-tight">
-                  {post.title}
-                </h2>
-
-                {/* Excerpt */}
-                <p className="text-base text-muted-foreground leading-relaxed mb-6 max-w-3xl font-light italic">
-                  {post.excerpt}
-                </p>
-
-                {/* Content */}
-                <div className="space-y-5 max-w-3xl">
-                  {post.content.map((paragraph, pIdx) => (
-                    <p
-                      key={pIdx}
-                      className="text-sm md:text-base text-foreground/80 leading-relaxed font-light"
-                    >
-                      {paragraph}
-                    </p>
-                  ))}
-                </div>
-              </motion.article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA */}
-      <section className="px-6 pb-24">
-        <div className="max-w-3xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="bg-gradient-to-br from-primary/10 via-secondary/15 to-accent/10 border border-border/30 rounded-3xl p-10 md:p-14 text-center"
-          >
-            <h3 className="text-2xl md:text-3xl text-foreground mb-4">
-              <span className="font-light">Ready to start </span>
-              <span className="font-cormorant italic text-accent">listening</span>
-              <span className="font-light">?</span>
-            </h3>
-            <p className="text-muted-foreground mb-8 max-w-md mx-auto text-sm md:text-base">
-              Your intuition has been trying to tell you something. Hara helps you hear it.
-            </p>
-            <Button
-              asChild
-              size="lg"
-              className="rounded-full text-base px-8 py-6 shadow-lg shadow-primary/20"
-            >
+                Hara
+              </Link>
+              <div className="hidden md:flex items-center gap-6 text-sm text-muted-foreground">
+                <Link to="/about" className="hover:text-foreground transition-colors">
+                  Home
+                </Link>
+                <span className="text-foreground" aria-current="page">Blog</span>
+              </div>
+            </div>
+            <Button asChild size="sm" className="rounded-full bg-primary hover:bg-primary/90">
               <Link to="/auth">
-                Begin Your Journey <ArrowRight className="ml-2 h-5 w-5" />
+                Start Free <ArrowRight className="ml-1.5 h-3.5 w-3.5" aria-hidden="true" />
               </Link>
             </Button>
-          </motion.div>
-        </div>
-      </section>
+          </div>
+        </nav>
+      </header>
+
+      <main>
+        {/* Hero */}
+        <section className="pt-32 pb-16 px-6" aria-labelledby="blog-heading">
+          <div className="max-w-4xl mx-auto text-center">
+            <motion.p
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-xs tracking-[0.3em] uppercase text-muted-foreground/60 mb-6"
+            >
+              The Hara Journal
+            </motion.p>
+            <motion.h1
+              id="blog-heading"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="text-4xl md:text-6xl text-foreground mb-6"
+            >
+              <span className="font-light">Thoughts on </span>
+              <span className="font-cormorant italic font-light text-accent">intuition</span>
+            </motion.h1>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="text-lg text-muted-foreground max-w-xl mx-auto"
+            >
+              Essays on trusting yourself, the science of gut feelings, and the art of making decisions that feel right.
+            </motion.p>
+          </div>
+        </section>
+
+        {/* Featured Post */}
+        <section className="px-6 mb-16" aria-label="Featured article">
+          <div className="max-w-5xl mx-auto">
+            <motion.article
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3, duration: 0.6 }}
+              className="bg-gradient-to-br from-primary/8 via-secondary/10 to-accent/8 border border-border/30 rounded-3xl p-8 md:p-12 cursor-pointer group"
+              onClick={() => document.getElementById(blogPosts[0].id)?.scrollIntoView({ behavior: "smooth" })}
+              role="link"
+              tabIndex={0}
+              onKeyDown={(e) => e.key === "Enter" && document.getElementById(blogPosts[0].id)?.scrollIntoView({ behavior: "smooth" })}
+            >
+              <div className="flex items-center gap-3 mb-6">
+                <span className="text-xs tracking-wider uppercase text-primary/80 bg-primary/10 px-3 py-1 rounded-full">
+                  Featured
+                </span>
+                <span className="text-xs text-muted-foreground">{blogPosts[0].category}</span>
+              </div>
+              <h2 className="text-2xl md:text-4xl font-light text-foreground mb-4 group-hover:text-primary/90 transition-colors leading-tight">
+                {blogPosts[0].title}
+              </h2>
+              <p className="text-base md:text-lg text-muted-foreground leading-relaxed max-w-3xl mb-6">
+                {blogPosts[0].excerpt}
+              </p>
+              <div className="flex items-center gap-4 text-sm text-muted-foreground/70">
+                <span className="flex items-center gap-1.5">
+                  <Clock className="h-3.5 w-3.5" aria-hidden="true" />
+                  <time>{blogPosts[0].readTime}</time>
+                </span>
+                <time>{blogPosts[0].date}</time>
+              </div>
+            </motion.article>
+          </div>
+        </section>
+
+        {/* All Posts */}
+        <section className="px-6 pb-24" aria-label="All articles">
+          <div className="max-w-5xl mx-auto">
+            <div className="space-y-12">
+              {blogPosts.map((post) => (
+                <motion.article
+                  key={post.id}
+                  id={post.id}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-50px" }}
+                  transition={{ duration: 0.5 }}
+                  className="border-b border-border/20 pb-12 last:border-0"
+                >
+                  {/* Post Header */}
+                  <div className="flex items-center gap-3 mb-4">
+                    <span className="text-xs tracking-wider uppercase text-accent/80 bg-accent/10 px-3 py-1 rounded-full">
+                      {post.category}
+                    </span>
+                    <span className="text-xs text-muted-foreground flex items-center gap-1.5">
+                      <Clock className="h-3 w-3" aria-hidden="true" />
+                      <time>{post.readTime}</time>
+                    </span>
+                    <time className="text-xs text-muted-foreground">{post.date}</time>
+                  </div>
+
+                  {/* Title */}
+                  <h2 className="text-xl md:text-3xl font-light text-foreground mb-4 leading-tight">
+                    {post.title}
+                  </h2>
+
+                  {/* Excerpt */}
+                  <p className="text-base text-muted-foreground leading-relaxed mb-6 max-w-3xl font-light italic">
+                    {post.excerpt}
+                  </p>
+
+                  {/* Content */}
+                  <div className="space-y-5 max-w-3xl">
+                    {post.content.map((paragraph, pIdx) => (
+                      <p
+                        key={pIdx}
+                        className="text-sm md:text-base text-foreground/80 leading-relaxed font-light"
+                      >
+                        {paragraph}
+                      </p>
+                    ))}
+                  </div>
+                </motion.article>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* CTA */}
+        <section className="px-6 pb-24" aria-label="Call to action">
+          <div className="max-w-3xl mx-auto">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="bg-gradient-to-br from-primary/10 via-secondary/15 to-accent/10 border border-border/30 rounded-3xl p-10 md:p-14 text-center"
+            >
+              <h3 className="text-2xl md:text-3xl text-foreground mb-4">
+                <span className="font-light">Ready to start </span>
+                <span className="font-cormorant italic text-accent">listening</span>
+                <span className="font-light">?</span>
+              </h3>
+              <p className="text-muted-foreground mb-8 max-w-md mx-auto text-sm md:text-base">
+                Your intuition has been trying to tell you something. Hara helps you hear it.
+              </p>
+              <Button
+                asChild
+                size="lg"
+                className="rounded-full text-base px-8 py-6 shadow-lg shadow-primary/20"
+              >
+                <Link to="/auth">
+                  Begin Your Journey <ArrowRight className="ml-2 h-5 w-5" aria-hidden="true" />
+                </Link>
+              </Button>
+            </motion.div>
+          </div>
+        </section>
+      </main>
 
       {/* Footer */}
       <footer className="py-12 px-6 border-t border-border/30">
         <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <Link to="/about" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
-            <ArrowLeft className="h-3.5 w-3.5" />
+            <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
             Back to Hara
           </Link>
           <p className="text-sm text-muted-foreground">© 2026 Hara. All rights reserved.</p>
