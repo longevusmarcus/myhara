@@ -911,9 +911,12 @@ const About = () => {
                 <a href="#testimonials" className="hover:text-foreground transition-colors">
                   Stories
                 </a>
-                <a href="#journey" className="hover:text-foreground transition-colors">
+              <a href="#journey" className="hover:text-foreground transition-colors">
                   Why Hara
                 </a>
+                <Link to="/blog" className="hover:text-foreground transition-colors">
+                  Blog
+                </Link>
               </div>
             </div>
 
