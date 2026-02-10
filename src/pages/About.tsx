@@ -811,7 +811,7 @@ const About = () => {
               },
               {
                 quote:
-                  "The pattern insights changed how I run my company. I discovered my intuition peaks in the morning—so I make all critical decisions before noon. Game changer.",
+                  "The pattern insights lowkey changed how i run my whole company. found out my intuition literally peaks in the morning so now i make all the big calls before noon. absolute game changer ngl",
                 name: "Halina S",
                 role: "Founder, Seed HealthTech",
                 image: testimonial2,
