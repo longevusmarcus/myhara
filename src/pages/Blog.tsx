@@ -267,7 +267,7 @@ const Blog = () => {
             <ArrowLeft className="h-3.5 w-3.5" />
             Back to Hara
           </Link>
-          <p className="text-sm text-muted-foreground">© 2025 Hara. All rights reserved.</p>
+          <p className="text-sm text-muted-foreground">© 2026 Hara. All rights reserved.</p>
         </div>
       </footer>
     </div>
