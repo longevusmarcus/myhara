@@ -804,7 +804,7 @@ const About = () => {
             {[
               {
                 quote:
-                  "As a founder, I used to overthink every decision until I was paralyzed. Hara showed me my gut was right 85% of the time on hiring. Now I move fast and trust myself.",
+                  "Honestly as a founder, I always knew my gut was right — the problem was I couldn't tell the difference between intuition and intrusive thoughts. Hara helped me separate the signal from the noise. Now I trust myself and move fast without second-guessing everything.",
                 name: "M B",
                 role: "Founder & CEO, Stealth Startup",
                 image: testimonial1,
