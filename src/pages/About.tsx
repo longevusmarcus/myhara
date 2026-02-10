@@ -28,7 +28,7 @@ import showcaseHome from "@/assets/showcase-home.png";
 import showcaseScience from "@/assets/showcase-science.png";
 import testimonial1 from "@/assets/testimonial-1.png";
 import testimonial2 from "@/assets/testimonial-2.jpeg";
-import testimonial3 from "@/assets/testimonial-3.jpeg";
+
 
 // Component for manifesto text that highlights as one whole unit on scroll
 const ManifestoText = () => {
@@ -800,7 +800,7 @@ const About = () => {
             </p>
           </motion.div>
 
-          <div className="grid md:grid-cols-3 gap-6 mb-16">
+          <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto mb-16">
             {[
               {
                 quote:
@@ -815,13 +815,6 @@ const About = () => {
                 name: "Halina S",
                 role: "Founder, Seed HealthTech",
                 image: testimonial2,
-              },
-              {
-                quote:
-                  "I recommend Hara to my patients dealing with decision anxiety. The data-driven approach helps them build evidence for their intuition instead of dismissing it.",
-                name: "Dr. James Wright",
-                role: "Clinical Psychologist",
-                image: testimonial3,
               },
             ].map((testimonial, index) => (
               <motion.div
