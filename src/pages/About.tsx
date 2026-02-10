@@ -803,7 +803,7 @@ const About = () => {
             {[
               {
                 quote:
-                  "Honestly as a founder, I always knew my gut was right, the problem was I couldn't tell the difference between intuition and intrusive thoughts. Hara helped me separate the signal from the noise. Now I trust myself and move fast without second-guessing everything.",
+                  "Honestly as a founder, I always knew my gut was right, the problem was sometimes I couldn't tell the difference between intuition and intrusive thoughts. Hara helped me separate the signal from the noise. Now I trust myself way more and move fast without second-guessing everything.",
                 name: "M B",
                 role: "Founder & CEO, Stealth Startup",
                 image: testimonial1,
