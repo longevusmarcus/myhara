@@ -22,6 +22,7 @@ import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
 import Cookie from "./pages/Cookie";
 import About from "./pages/About";
+import Blog from "./pages/Blog";
 import FAQ from "./pages/FAQ";
 import NotFound from "./pages/NotFound";
 
@@ -74,6 +75,7 @@ const App = () => {
           <Routes>
             {/* About page - accessible on all devices */}
             <Route path="/about" element={<About />} />
+            <Route path="/blog" element={<Blog />} />
             
             {/* Root redirects to about on all devices */}
             <Route path="/" element={<Navigate to="/about" replace />} />
