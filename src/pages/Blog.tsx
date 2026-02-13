@@ -40,7 +40,7 @@ const blogPosts = [
   {
     id: "decision-fatigue-and-intuition",
     category: "Performance",
-    date: "Dec 2026",
+    date: "Dec 2025",
     readTime: "4 min read",
     title: "Decision Fatigue? Your Intuition Is the Antidote",
     excerpt:
@@ -56,7 +56,7 @@ const blogPosts = [
   {
     id: "morning-intuition-peak",
     category: "Patterns",
-    date: "Nov 2026",
+    date: "Nov 2025",
     readTime: "5 min read",
     title: "Why Your Best Decisions Happen Before Noon",
     excerpt:
@@ -72,7 +72,7 @@ const blogPosts = [
   {
     id: "trust-yourself-framework",
     category: "Philosophy",
-    date: "Oct 2026",
+    date: "Jan 2025",
     readTime: "6 min read",
     title: "From Self-Doubt to Self-Authority",
     excerpt:
@@ -92,7 +92,8 @@ const jsonLd = {
   "@context": "https://schema.org",
   "@type": "Blog",
   name: "The Hara Journal",
-  description: "Essays on trusting yourself, the science of gut feelings, and the art of making decisions that feel right.",
+  description:
+    "Essays on trusting yourself, the science of gut feelings, and the art of making decisions that feel right.",
   url: "https://myhara.lovable.app/blog",
   publisher: {
     "@type": "Organization",
@@ -171,7 +172,9 @@ const Blog = () => {
                 <Link to="/about" className="hover:text-foreground transition-colors">
                   Home
                 </Link>
-                <span className="text-foreground" aria-current="page">Blog</span>
+                <span className="text-foreground" aria-current="page">
+                  Blog
+                </span>
               </div>
             </div>
             <Button asChild size="sm" className="rounded-full bg-primary hover:bg-primary/90">
@@ -226,7 +229,9 @@ const Blog = () => {
               onClick={() => document.getElementById(blogPosts[0].id)?.scrollIntoView({ behavior: "smooth" })}
               role="link"
               tabIndex={0}
-              onKeyDown={(e) => e.key === "Enter" && document.getElementById(blogPosts[0].id)?.scrollIntoView({ behavior: "smooth" })}
+              onKeyDown={(e) =>
+                e.key === "Enter" && document.getElementById(blogPosts[0].id)?.scrollIntoView({ behavior: "smooth" })
+              }
             >
               <div className="flex items-center gap-3 mb-6">
                 <span className="text-xs tracking-wider uppercase text-primary/80 bg-primary/10 px-3 py-1 rounded-full">
@@ -278,9 +283,7 @@ const Blog = () => {
                   </div>
 
                   {/* Title */}
-                  <h2 className="text-xl md:text-3xl font-light text-foreground mb-4 leading-tight">
-                    {post.title}
-                  </h2>
+                  <h2 className="text-xl md:text-3xl font-light text-foreground mb-4 leading-tight">{post.title}</h2>
 
                   {/* Excerpt */}
                   <p className="text-base text-muted-foreground leading-relaxed mb-6 max-w-3xl font-light italic">
@@ -290,10 +293,7 @@ const Blog = () => {
                   {/* Content */}
                   <div className="space-y-5 max-w-3xl">
                     {post.content.map((paragraph, pIdx) => (
-                      <p
-                        key={pIdx}
-                        className="text-sm md:text-base text-foreground/80 leading-relaxed font-light"
-                      >
+                      <p key={pIdx} className="text-sm md:text-base text-foreground/80 leading-relaxed font-light">
                         {paragraph}
                       </p>
                     ))}
@@ -321,11 +321,7 @@ const Blog = () => {
               <p className="text-muted-foreground mb-8 max-w-md mx-auto text-sm md:text-base">
                 Your intuition has been trying to tell you something. Hara helps you hear it.
               </p>
-              <Button
-                asChild
-                size="lg"
-                className="rounded-full text-base px-8 py-6 shadow-lg shadow-primary/20"
-              >
+              <Button asChild size="lg" className="rounded-full text-base px-8 py-6 shadow-lg shadow-primary/20">
                 <Link to="/auth">
                   Begin Your Journey <ArrowRight className="ml-2 h-5 w-5" aria-hidden="true" />
                 </Link>
@@ -338,7 +334,10 @@ const Blog = () => {
       {/* Footer */}
       <footer className="py-12 px-6 border-t border-border/30">
         <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-          <Link to="/about" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
+          <Link
+            to="/about"
+            className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+          >
             <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
             Back to Hara
           </Link>
