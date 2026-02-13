@@ -170,7 +170,7 @@ const ManifestoWord = ({
 };
 
 const MEMBER_START = 311;
-const LAUNCH_TIME = new Date('2026-02-13T00:00:00Z').getTime();
+const LAUNCH_TIME = 1739404800000; // Feb 13, 2026 12:00:00 UTC
 const INTERVAL_MS = 20 * 60 * 1000;
 
 const getMemberCount = () => {
