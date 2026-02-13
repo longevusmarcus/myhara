@@ -8,7 +8,7 @@ const blogPosts = [
   {
     id: "gut-feeling-vs-intrusive-thoughts",
     category: "Understanding Intuition",
-    date: "Jan 2025",
+    date: "Feb 2026",
     readTime: "5 min read",
     title: "Gut Feeling vs. Intrusive Thought — Know the Difference",
     excerpt:
@@ -24,7 +24,7 @@ const blogPosts = [
   {
     id: "science-of-intuition",
     category: "The Science",
-    date: "Dec 2024",
+    date: "Jan 2026",
     readTime: "7 min read",
     title: "Why Your Gut Is Right More Than You Think",
     excerpt:
@@ -40,7 +40,7 @@ const blogPosts = [
   {
     id: "decision-fatigue-and-intuition",
     category: "Performance",
-    date: "Nov 2024",
+    date: "Dec 2025",
     readTime: "4 min read",
     title: "Decision Fatigue? Your Intuition Is the Antidote",
     excerpt:
@@ -56,7 +56,7 @@ const blogPosts = [
   {
     id: "morning-intuition-peak",
     category: "Patterns",
-    date: "Oct 2024",
+    date: "Nov 2025",
     readTime: "5 min read",
     title: "Why Your Best Decisions Happen Before Noon",
     excerpt:
@@ -72,7 +72,7 @@ const blogPosts = [
   {
     id: "trust-yourself-framework",
     category: "Philosophy",
-    date: "Sep 2024",
+    date: "Oct 2025",
     readTime: "6 min read",
     title: "From Self-Doubt to Self-Authority",
     excerpt:
