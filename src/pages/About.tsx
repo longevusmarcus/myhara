@@ -169,8 +169,8 @@ const ManifestoWord = ({
   );
 };
 
-const MEMBER_START = 311;
-const LAUNCH_TIME = 1739448035000; // Feb 13, 2026 ~12:00 UTC — counter starts at 311 from this moment
+const MEMBER_START = 301;
+const LAUNCH_TIME = 1770984035000; // Feb 13, 2026 ~12:00 UTC — counter starts at 301 from this moment
 const INTERVAL_MS = 20 * 60 * 1000;
 
 const getMemberCount = () => {
