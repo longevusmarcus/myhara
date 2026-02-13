@@ -40,7 +40,7 @@ const blogPosts = [
   {
     id: "decision-fatigue-and-intuition",
     category: "Performance",
-    date: "Dec 2025",
+    date: "Jan 2026",
     readTime: "4 min read",
     title: "Decision Fatigue? Your Intuition Is the Antidote",
     excerpt:
@@ -56,7 +56,7 @@ const blogPosts = [
   {
     id: "morning-intuition-peak",
     category: "Patterns",
-    date: "Nov 2025",
+    date: "Jan 2026",
     readTime: "5 min read",
     title: "Why Your Best Decisions Happen Before Noon",
     excerpt:
@@ -72,7 +72,7 @@ const blogPosts = [
   {
     id: "trust-yourself-framework",
     category: "Philosophy",
-    date: "Jan 2025",
+    date: "Jan 2026",
     readTime: "6 min read",
     title: "From Self-Doubt to Self-Authority",
     excerpt:
