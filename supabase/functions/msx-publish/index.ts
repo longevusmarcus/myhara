@@ -6,12 +6,16 @@ const MSX_BUILDER_ID = Deno.env.get("MSX_BUILDER_ID") ?? "";
 
 const MANIFEST = {
   appId: "hara",
-  name: "Hara — Trust Your Gut",
+  slug: "hara",
+  name: "Hara",
   summary: "AI-guided gut check-ins that help you reconnect with your intuition and make decisions you trust.",
   desire: "I want to stop second-guessing myself and learn to trust my gut in everyday decisions.",
+  source: "https://trusthara.com",
   entrypoint: "https://trusthara.com",
   access: "subscriber",
+  method: "api",
   billingMode: "msx_managed",
+  runtimeClass: "embedded",
   shellCapabilities: ["launch_token_verify", "shell_auth_bridge"],
   version: "2026.03.31",
 };
