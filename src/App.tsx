@@ -7,7 +7,9 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { Session } from "@supabase/supabase-js";
 import { ScrollToTop } from "./components/ScrollToTop";
-import { useMsxLaunch } from "./hooks/useMsxLaunch";
+import { MsxBootProvider, useMsxBoot } from "./components/MsxBootProvider";
+import MsxOpeningScreen from "./components/MsxOpeningScreen";
+import MsxLaunchErrorScreen from "./components/MsxLaunchErrorScreen";
 import Onboarding from "./components/Onboarding";
 import MobileOnly from "./components/MobileOnly";
 import Home from "./pages/Home";
@@ -29,15 +31,13 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
-const App = () => {
+const AppShell = () => {
+  const msx = useMsxBoot();
   const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState(false);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
-  // Verify MSX launch token (if launched from MSX shell) and bypass paywall when entitled
-  useMsxLaunch();
 
   useEffect(() => {
-    // Check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       if (session?.user) {
@@ -47,7 +47,6 @@ const App = () => {
       setLoading(false);
     });
 
-    // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
       if (session?.user) {
@@ -68,62 +67,74 @@ const App = () => {
     }
   };
 
+  // MSX boot gate — short-circuits the normal auth flow while opening from the shell.
+  if (msx.status === "booting") {
+    return <MsxOpeningScreen />;
+  }
+  if (msx.status === "failed") {
+    return <MsxLaunchErrorScreen stage={msx.failStage} detail={msx.failDetail} />;
+  }
+
   return (
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <ScrollToTop />
-          <Routes>
-            {/* About page - accessible on all devices */}
-            <Route path="/about" element={<About />} />
-            <Route path="/blog" element={<Blog />} />
-            
-            {/* Root redirects to about on all devices */}
-            <Route path="/" element={<Navigate to="/about" replace />} />
-            
-            {/* All other routes wrapped in MobileOnly */}
-            <Route path="/*" element={
-              <MobileOnly>
-                {loading ? (
-                  <div className="min-h-screen bg-background flex items-center justify-center">
-                    <p className="text-muted-foreground font-light">Loading...</p>
-                  </div>
-                ) : !session ? (
-                  <Routes>
-                    <Route path="auth" element={<Auth />} />
-                    <Route path="terms" element={<Terms />} />
-                    <Route path="privacy" element={<Privacy />} />
-                    <Route path="cookie" element={<Cookie />} />
-                    <Route path="faq" element={<FAQ />} />
-                    <Route path="*" element={<Navigate to="/about" replace />} />
-                  </Routes>
-                ) : !hasCompletedOnboarding ? (
-                  <Onboarding onComplete={handleOnboardingComplete} />
-                ) : (
-                  <Routes>
-                    <Route path="/" element={<Navigate to="/home" replace />} />
-                    <Route path="auth" element={<Navigate to="/home" replace />} />
-                    <Route path="home" element={<Home />} />
-                    <Route path="check-in" element={<CheckIn />} />
-                    <Route path="insights" element={<Insights />} />
-                    <Route path="map" element={<GutMap />} />
-                    <Route path="gut" element={<GutMap />} />
-                    <Route path="profile" element={<Profile />} />
-                    <Route path="settings" element={<Settings />} />
-                    <Route path="help" element={<Help />} />
-                    <Route path="achievements" element={<Achievements />} />
-                    <Route path="*" element={<NotFound />} />
-                  </Routes>
-                )}
-              </MobileOnly>
-            } />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
-    </QueryClientProvider>
+    <Routes>
+      {/* Public pages */}
+      <Route path="/about" element={<About />} />
+      <Route path="/blog" element={<Blog />} />
+      <Route path="/" element={<Navigate to={msx.status === "ready" ? "/home" : "/about"} replace />} />
+
+      <Route path="/*" element={
+        <MobileOnly>
+          {loading ? (
+            <div className="min-h-screen bg-background flex items-center justify-center">
+              <p className="text-muted-foreground font-light">Loading...</p>
+            </div>
+          ) : !session ? (
+            <Routes>
+              {/* Inside MSX, never show the login form — hard redirect home (boot will hydrate). */}
+              <Route path="auth" element={msx.inMsx ? <Navigate to="/home" replace /> : <Auth />} />
+              <Route path="terms" element={<Terms />} />
+              <Route path="privacy" element={<Privacy />} />
+              <Route path="cookie" element={<Cookie />} />
+              <Route path="faq" element={<FAQ />} />
+              <Route path="*" element={<Navigate to={msx.inMsx ? "/home" : "/about"} replace />} />
+            </Routes>
+          ) : !hasCompletedOnboarding ? (
+            <Onboarding onComplete={handleOnboardingComplete} />
+          ) : (
+            <Routes>
+              <Route path="/" element={<Navigate to="/home" replace />} />
+              <Route path="auth" element={<Navigate to="/home" replace />} />
+              <Route path="home" element={<Home />} />
+              <Route path="check-in" element={<CheckIn />} />
+              <Route path="insights" element={<Insights />} />
+              <Route path="map" element={<GutMap />} />
+              <Route path="gut" element={<GutMap />} />
+              <Route path="profile" element={<Profile />} />
+              <Route path="settings" element={<Settings />} />
+              <Route path="help" element={<Help />} />
+              <Route path="achievements" element={<Achievements />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          )}
+        </MobileOnly>
+      } />
+    </Routes>
   );
 };
+
+const App = () => (
+  <QueryClientProvider client={queryClient}>
+    <TooltipProvider>
+      <Toaster />
+      <Sonner />
+      <BrowserRouter>
+        <ScrollToTop />
+        <MsxBootProvider>
+          <AppShell />
+        </MsxBootProvider>
+      </BrowserRouter>
+    </TooltipProvider>
+  </QueryClientProvider>
+);
 
 export default App;
