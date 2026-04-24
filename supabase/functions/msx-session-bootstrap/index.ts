@@ -60,7 +60,24 @@ Deno.serve(async (req) => {
 
     // ---- 3. find or create local user ----
     let userId: string | null = null;
-    {
+
+    // Try to find existing user first via paginated scan with email filter
+    async function findUserByEmail(targetEmail: string): Promise<string | null> {
+      const perPage = 1000;
+      for (let page = 1; page <= 20; page++) {
+        const { data, error } = await admin.auth.admin.listUsers({ page, perPage });
+        if (error) return null;
+        const found = data?.users?.find((u) => u.email?.toLowerCase() === targetEmail);
+        if (found) return found.id;
+        if (!data?.users || data.users.length < perPage) return null;
+      }
+      return null;
+    }
+
+    const existingId = await findUserByEmail(email);
+    if (existingId) {
+      userId = existingId;
+    } else {
       const { data: created, error: createErr } = await admin.auth.admin.createUser({
         email,
         email_confirm: true,
@@ -74,11 +91,9 @@ Deno.serve(async (req) => {
       if (created?.user) {
         userId = created.user.id;
       } else if (createErr && /already (registered|exists)/i.test(createErr.message)) {
-        // Fall back to lookup
-        const { data: list } = await admin.auth.admin.listUsers({ page: 1, perPage: 200 });
-        const found = list?.users?.find((u) => u.email?.toLowerCase() === email);
-        if (!found) return fail("find_or_create_user", 500, createErr);
-        userId = found.id;
+        // Race / pagination miss — try one more lookup
+        userId = await findUserByEmail(email);
+        if (!userId) return fail("find_or_create_user", 500, createErr);
       } else if (createErr) {
         return fail("find_or_create_user", 500, createErr);
       }
