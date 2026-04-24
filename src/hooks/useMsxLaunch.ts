@@ -41,7 +41,7 @@ export function useMsxLaunch(): MsxState {
     (async () => {
       try {
         const { data, error } = await supabase.functions.invoke("msx-launch-verify", {
-          body: { launchToken, slug },
+          body: { token: launchToken, appSlug: slug },
         });
         if (error) throw error;
 

@@ -7,9 +7,13 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
   try {
-    const { launchToken, slug } = await req.json();
-    if (!launchToken || !slug) {
-      return new Response(JSON.stringify({ error: "launchToken and slug required" }), {
+    const body = await req.json();
+    // Accept both new + legacy field names
+    const token = body.token ?? body.launchToken;
+    const appSlug = body.appSlug ?? body.slug ?? "hara";
+
+    if (!token || !appSlug) {
+      return new Response(JSON.stringify({ error: "token and appSlug required" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
@@ -21,7 +25,7 @@ Deno.serve(async (req) => {
         "Content-Type": "application/json",
         Authorization: `Bearer ${MSX_TOKEN}`,
       },
-      body: JSON.stringify({ launchToken, slug, credential: MSX_TOKEN }),
+      body: JSON.stringify({ token, appSlug }),
     });
 
     const data = await res.json().catch(() => ({}));
