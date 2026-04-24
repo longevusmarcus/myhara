@@ -7,6 +7,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { Session } from "@supabase/supabase-js";
 import { ScrollToTop } from "./components/ScrollToTop";
+import { useMsxLaunch } from "./hooks/useMsxLaunch";
 import Onboarding from "./components/Onboarding";
 import MobileOnly from "./components/MobileOnly";
 import Home from "./pages/Home";
@@ -32,6 +33,8 @@ const App = () => {
   const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState(false);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  // Verify MSX launch token (if launched from MSX shell) and bypass paywall when entitled
+  useMsxLaunch();
 
   useEffect(() => {
     // Check for existing session
