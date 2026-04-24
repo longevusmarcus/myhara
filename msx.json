@@ -1,0 +1,11 @@
+{
+  "appId": "hara",
+  "name": "Hara — Trust Your Gut",
+  "summary": "AI-guided gut check-ins that help you reconnect with your intuition and make decisions you trust.",
+  "desire": "I want to stop second-guessing myself and learn to trust my gut in everyday decisions.",
+  "entrypoint": "https://trusthara.com",
+  "access": "subscriber",
+  "billingMode": "msx_managed",
+  "shellCapabilities": ["launch_token_verify", "shell_auth_bridge"],
+  "version": "2026.03.31"
+}
