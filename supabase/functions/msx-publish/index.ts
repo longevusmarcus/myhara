@@ -43,9 +43,9 @@ Deno.serve(async (req) => {
     const results: Record<string, unknown> = {};
 
     if (action === "publish" || action === "all") {
-      const payload: Record<string, unknown> = { ...MANIFEST, credential: MSX_TOKEN };
+      const payload: Record<string, unknown> = { manifest: MANIFEST, credential: MSX_TOKEN, source: "lovable-publish" };
       if (MSX_BUILDER_ID) payload.builderId = MSX_BUILDER_ID;
-      results.publish = await msx("/v1/apps", payload);
+      results.publish = await msx("/v1/publish", payload);
     }
 
     if (action === "verify" || action === "all") {
